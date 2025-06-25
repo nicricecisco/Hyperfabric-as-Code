@@ -1,11 +1,22 @@
 import requests, json, os
+from pprint import pprint
+from schemas.fabric_schema import validate_fabric
 
-API_URL = "https://hyperfabric.example.com/api/fabrics"
-TOKEN = os.getenv("HYPERFABRIC_TOKEN")
+base_url = "https://hyperfabric.cisco.com/api/v1"
+token = os.environ['HYPERFABRIC_TOKEN']
 
-headers = {"Authorization": f"Bearer {TOKEN}"}
-response = requests.get(API_URL, headers=headers) # put in try catch or smthn
-response.raise_for_status()
+headers = {
+  "Content-Type": "application/json",
+  "Accept": "application/json",
+  "Authorization": "Bearer " + token,
+}
 
-with open("data/fabrics.json", "w") as f:
-    json.dump(response.json(), f, indent=2)
+def get_fabrics():
+    url = base_url + "/fabrics"
+    response = requests.request('GET', url, headers=headers)
+    fabrics = response.json()
+
+    return fabrics['fabrics']
+
+
+
