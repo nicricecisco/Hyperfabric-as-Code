@@ -1,0 +1,31 @@
+fabrics:
+  - fabricId: aad67c8c-495e-4985-b3c1-1bdc4b18923b
+    name: example-fabric
+    description: Updated description of example-fabric.
+    location: DC-1000
+    city: Milpitas
+    country: US
+    topology: SPINE_LEAF
+  - fabricId: 782805c6-7652-499f-bf38-a86e86fcd913
+    name: postman-fabric3
+    description: An example fabric for demonstration
+    location: CA-95134
+    address: 300 East Tasman Drive
+    city: San Jose
+    country: US
+    labels:
+      - TAG_ONE
+      - TAG_TWO
+    topology: SPINE_LEAF
+  - fabricId: 12eff278-23e5-48fd-b99a-07dab31ed430
+    name: postman-fabric4
+    topology: SPINE_LEAF
+  - fabricId: 0e737710-46f3-4592-88fc-072b97036705
+    name: test
+    description: hihi
+    location: crap
+    address: random
+    topology: SPINE_LEAF
+  - fabricId: 5eeb0428-2a0a-472d-bfd7-a14a43507bc7
+    name: test2
+    topology: SPINE_LEAF

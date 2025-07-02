@@ -1,0 +1,23 @@
+fabrics:
+  - name: from-python4
+    description: I am updated from pythonnnnnnnn
+    location: CA-95134
+    address: 300 East Tasman Drive
+    city: Milpitas
+    country: US
+    labels:
+      - TAG_ONE
+      - TAG_TWO
+    topology: SPINE_LEAF
+    
+    # nodes:
+    #   - name: Leaf01
+    #     description: Leaf Switch 01
+    #     model: HF6100-32D
+    #     roles: [LEAF]
+    #     location: sj01-1-101-AAA01
+    #   - name: Leaf02
+    #     description: Leaf Switch 02
+    #     model: HF6100-32D
+    #     roles: [LEAF]
+    #     location: sj01-1-101-AAA02
