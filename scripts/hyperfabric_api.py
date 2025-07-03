@@ -14,33 +14,6 @@ headers = {
 def _make_get_request(headers, url, params=None):
     return requests.get(url, headers=headers, params=params)
 
-# def _make_get_request(headers, url, params=None):
-#     try:
-#         response = requests.get(url, headers=headers, params=params)
-#         response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
-
-#         try:
-#             return response.json()
-#         except json.JSONDecodeError:
-#             print(f"JSON Decode Error: Response could not be decoded into JSON.  Raw response text: {response.text}")
-#             return response.text # Return raw text if JSON decoding fails
-
-#     except requests.exceptions.HTTPError as e:
-#         try:
-#             error_message = response.json()
-#         except json.JSONDecodeError:
-#             error_message = response.text
-
-#         print(f"HTTP Error making GET request to {url}: {e}.  Status code: {response.status_code}.  Response content: {error_message}")
-#         return None
-#     except requests.exceptions.RequestException as e:
-#         print(f"Request failed for GET to {url}: {e}")
-#         return None
-#     except Exception as e:
-#         print(f"An unexpected error occurred during GET request to {url}: {e}")
-#         return None
-
-
 def _make_delete_request(headers, url):
     try:
         response = requests.delete(url, headers=headers)
@@ -68,61 +41,10 @@ def _make_delete_request(headers, url):
 
 def _make_put_request(headers, url, payload=None):
     return requests.put(url, headers=headers, json=payload)
-
-# def _make_put_request(headers, url, payload=None):
-#     try:
-#         response = requests.put(url, headers=headers, json=payload)
-#         response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
-
-#         try:
-#             return response.json()
-#         except json.JSONDecodeError:
-#             print(f"JSON Decode Error: Response could not be decoded into JSON.  Raw response text: {response.text}")
-#             return response.text # if cannot decode json return the raw response
-
-#     except requests.exceptions.HTTPError as e:
-#         try:
-#             error_message = response.json()
-#         except json.JSONDecodeError:
-#             error_message = response.text
-
-#         print(f"HTTP Error making PUT request to {url}: {e}.  Status code: {response.status_code}.  Response content: {error_message}")
-#         return None
-#     except requests.exceptions.RequestException as e:
-#         print(f"Request failed for PUT to {url}: {e}")
-#         return None
-#     except Exception as e:
-#         print(f"An unexpected error occurred during PUT request to {url}: {e}")
-#         return None
     
 def _make_post_request(headers, url, payload=None):
     return requests.post(url, headers=headers, json=payload)
     
-# def _make_post_request(headers, url, payload=None):
-#     try:
-#         response = requests.post(url, headers=headers, json=payload)
-#         response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
-#         try:
-#             return response.json() # try to decode response to json
-#         except json.JSONDecodeError:
-#             print(f"JSON Decode Error: Response could not be decoded into JSON.  Raw response text: {response.text}")
-#             return response.text # if cannot decode json return the raw response.
-
-#     except requests.exceptions.HTTPError as e:
-#         try:
-#             error_message = response.json()  # Attempt to get the error message from the JSON response
-#         except json.JSONDecodeError:
-#             error_message = response.text  # If JSON decoding fails, get the raw response text
-
-#         print(f"HTTP Error making POST request to {url}: {e}.  Status code: {response.status_code}.  Response content: {error_message}")
-#         return None # Return None on error
-#     except requests.exceptions.RequestException as e:
-#         print(f"Request failed for POST to {url}: {e}")
-#         return None  # Return None on error
-#     except Exception as e:
-#         print(f"An unexpected error occurred during POST request to {url}: {e}")
-#         return None
-
 # /fabrics
 def get_fabrics():
     url = f"{BASE_URL}/fabrics"
@@ -147,10 +69,15 @@ def create_fabric(fabric_data):
         dict: JSON response containing the created fabric information, or None on error.
     """
 
+    payload = {"fabrics": [fabric_data]}
     url = f"{BASE_URL}/fabrics"
-    response = _make_post_request(headers, url, payload=fabric_data)
+    response = _make_post_request(headers, url, payload=payload)
 
     return response
+
+
+# ------------------------------ FABRICS ------------------------------
+
 
 # /fabrics/{fabricId}
 def get_fabric(fabric_data):
@@ -163,7 +90,7 @@ def get_fabric(fabric_data):
     Returns:
         dict: JSON response containing the fabric information, or None on error.
     """
-    fabricId = fabric_data["fabrics"][0]["name"]
+    fabricId = fabric_data["name"]
     response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}")
     
     # response = requests.get(f"{BASE_URL}/fabrics/{fabricId}", headers=headers)
@@ -200,8 +127,8 @@ def update_fabric(fabric_data):
     Returns:
         dict: JSON response containing the updated fabric information, or None on error.
     """
-    fabricId = fabric_data["fabrics"][0]["name"]
-    response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}", payload=fabric_data["fabrics"][0])
+    fabricId = fabric_data["name"]
+    response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}", payload=fabric_data)
     return response
 
 def delete_fabric(auth, fabricId):
@@ -215,6 +142,358 @@ def delete_fabric(auth, fabricId):
     response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}")
     return response
 
+
+# ------------------------------ NODES ------------------------------
+
+
+# /fabrics/{fabricId}/nodes/{nodeId}
+def get_fabric_node(fabric_data_obj):
+    """
+    Retrieves a specific node by ID or name.
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        nodeId (str): The ID or name of the node.
+        candidate (str, optional): The candidate configuration name. Defaults to None.
+        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+
+    Returns:
+        dict: JSON response, or None on error.
+    """
+    fabricId = fabric_data_obj["fabric_id"]
+    nodeId = fabric_data_obj["node"]["name"]
+    response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}")
+    return response
+
+def add_fabric_nodes(fabric_data_obj):
+    """
+    Adds one or more nodes to a fabric.
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        nodes (list): A list of node objects to add.
+         Example:
+            ```json
+             [
+              {
+               "name": "node-leaf0",
+               "description": "example fabric node leaf zero",
+               "enabled": true,
+               "serialNumber": "RESTAA2000",
+               "modelName": "HF6100-60L4D",
+               "roles": [
+                "LEAF"
+               ],
+               "labels": [
+                "TAG_ONE_ZERO"
+               ]
+              },
+              {
+               "name": "node-leaf1",
+               "description": "example fabric node leaf one",
+               "enabled": true,
+               "serialNumber": "RESTAA2001",
+               "modelName": "HF6100-32D"
+              },
+             ]
+            ```
+    Returns:
+        dict: JSON response, or None on error.
+    """
+    fabric_name = fabric_data_obj["fabric_id"]
+    payload = {"nodes": [fabric_data_obj["node"]]}
+    response = _make_post_request(headers, f"{BASE_URL}/fabrics/{fabric_name}/nodes", payload=payload)
+    return response
+
+def update_fabric_node(fabric_data_obj):
+    """
+    Updates a specific node.
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        nodeId (str): The ID or name of the node.
+        payload (dict): A JSON payload containing the updated node properties.
+
+    Returns:
+        dict: JSON response, or None on error.
+    """
+    fabricId = fabric_data_obj["fabric_id"]
+    nodeId = fabric_data_obj["node"]["name"]
+    payload = fabric_data_obj["node"]
+    response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}", payload=payload)
+    return response
+
+def delete_fabric_node(auth, fabricId, nodeId):
+    """
+    Deletes a specific node.
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        nodeId (str): The ID or name of the node.
+
+    Returns:
+        int: HTTP status code, or None on error.
+    """
+    response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}")
+    return response
+
+
+# ------------------------------ MANAGEMENT PORTS ------------------------------
+
+
+# /fabrics/{fabricId}/nodes/{nodeId}/managementPorts/{id}
+def get_management_port(mgmt_port_data_obj):
+    """
+    Retrieves information on the management port specified
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        nodeId (str):  The node id or name from which a device is bound.
+        id (str): ID of the port
+
+    Returns:
+        dict: JSON response
+    """
+    fabricId = mgmt_port_data_obj["fabric_id"]
+    nodeId = mgmt_port_data_obj["node_id"]
+    id = mgmt_port_data_obj["mgmt_port"]["name"]
+    response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts/{id}")
+    return response
+
+def add_management_ports(mgmt_port_data_obj):
+    """
+    Creates or updates one or more ManagementPorts for a fabric node
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        nodeId (str):  The node id or name from which a device is bound.
+        ports (list): A list of one or more ports to update.
+              Example payload:
+              ```json
+               [
+                 {
+                  "name": "eth0",
+                  "ipv4Address": "10.1.1.250/31",
+                  "ipv4Gateway": "10.1.1.251",
+                  "ipv6Address": "2a02:1243:5687:0:9c09:2c7a:7c78:9ffc/64",
+                  "ipv6Gateway": "2a02:1243:5687:0:8d91:ba6b:b24d:9b41",
+                  "dnsAddresses": [
+                   "8.8.8.8",
+                   "8.8.4.4"
+                  ],
+                  "proxyAddress": "https://10.1.1.10:8080",
+                  "proxyUsername": "admin",
+                  "proxyPassword": "admin123",
+                  "enabled": true,
+                  "cloudUrls": [
+                   "https://a.b.com"
+                  ],
+                  "setProxyPassword": true,
+                  "noProxy": [
+                   "10.0.0.0/8",
+                   "68.0.0.0/8",
+                   "72.0.0.0/8",
+                   "172.0.0.0/8",
+                   "172.0.0.0/8",
+                   "173.0.0.0/8",
+                   "cisco.com",
+                   "localhost",
+                   "127.0.0.1",
+                   ".local"
+                  ]
+                 }
+                ]
+              ```
+
+    Returns:
+        dict: JSON response
+    """
+    fabricId = mgmt_port_data_obj["fabric_id"]
+    nodeId = mgmt_port_data_obj["node_id"]
+    payload = {"ports": [mgmt_port_data_obj["mgmt_port"]]}
+    response =_make_post_request(headers,
+            f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts",payload=payload)
+    return response
+
+def update_management_port(mgmt_port_data_obj):
+    """
+    Updates the settings on a management port
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        nodeId (str):  The node id or name from which a device is bound.
+        ports (list): A list of one or more ports to update.
+
+    Returns:
+        dict: JSON response
+    """
+    fabricId = mgmt_port_data_obj["fabric_id"]
+    nodeId = mgmt_port_data_obj["node_id"]
+    id = mgmt_port_data_obj["mgmt_port"]["name"]
+    payload = mgmt_port_data_obj["mgmt_port"]
+    response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts/{id}", payload=payload)
+    return response
+
+
+# ------------------------------ PORTS ------------------------------
+
+
+# /fabrics/{fabricId}/nodes/{nodeId}/ports/{portId}
+def get_port(port_data_obj):
+    """
+    Retrieves a specific port by its ID.
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        nodeId (str): The ID or name of the node.
+        portId (str): The ID of the port.
+        candidate (str, optional): The candidate configuration name. Defaults to None.
+        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+
+    Returns:
+        dict: JSON response, or None on error.
+    """
+    params = {key: port_data_obj["port"][key] for key in ["candidate", "includeMetadata"] if key in port_data_obj["port"]}
+    fabricId = port_data_obj["fabric_id"]
+    nodeId = port_data_obj["node_id"]
+    portId = port_data_obj["port"]["name"]
+    response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/ports/{portId}", params=params)
+    return response
+
+def update_port(port_data_obj):
+    """
+    Updates a specific port.
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        nodeId (str): The ID or name of the node.
+        portId (str): The ID of the port.
+        payload (dict): A JSON payload containing the updated port properties.
+
+    Returns:
+        dict: JSON response, or None on error.
+    """
+    fabricId = port_data_obj["fabric_id"]
+    nodeId = port_data_obj["node_id"]
+    portId = port_data_obj["port"]["name"]
+    payload = port_data_obj["port"]
+    response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/ports/{portId}", payload=payload)
+    return response
+
+def reset_port(auth, fabricId, nodeId, portId):
+    """Resets a specific port
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        nodeId (str): The ID or name of the node.
+        portId (str): The ID of the port.
+    """
+    response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/ports/{portId}")
+    return response
+
+
+# ------------------------------ CONNECTIONS ------------------------------
+
+
+# /fabrics/{fabricId}/connections
+def get_fabric_connections(connection_data_obj):
+    """
+    Retrieves a list of connections within a fabric.
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        candidate (str, optional): The candidate configuration name. Defaults to None.
+
+    Returns:
+        dict: JSON response, or None on error.
+    """
+    fabricId = connection_data_obj["fabric_id"]
+    response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/connections")
+    return response
+
+# /fabrics/{fabricId}/connections/{connectionId}
+def get_fabric_connection(connection_data_obj):
+    """
+    Retrieves a specific connection by ID.
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        connectionId (str): The ID of the connection.
+        candidate (str, optional):  Candidate configuration name. Defaults to None.
+
+    Returns:
+        dict: JSON response, or None on error.
+    """
+    params = {key: connection_data_obj["connection"][key] for key in ["candidate"] if key in connection_data_obj["connection"]}
+    fabricId = connection_data_obj["fabric_id"]
+    connectionId = connection_data_obj["connection"]["connection_id"]
+    response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/connections/{connectionId}", params=params)
+    return response
+
+def add_fabric_connections(connection_data_obj):
+    """
+    Adds one or more connections to a fabric.
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        connections (list): A list of connections to add.
+            Example:
+            ```json
+            [
+              {
+                "local": {
+                  "portName": "Ethernet1_19",
+                  "nodeName": "node-leaf0"
+                },
+                "remote": {
+                  "portName": "Ethernet1_19",
+                  "nodeName": "node-spine0"
+                }
+              },
+              {
+                "local": {
+                  "portName": "Ethernet1_22",
+                  "nodeName": "node-leaf1"
+                },
+                "remote": {
+                  "portName": "Ethernet1_22",
+                  "nodeName": "node-spine0"
+                }
+              }
+            ]
+            ```
+    Returns:
+        dict: JSON response, or None on error.
+    """
+    payload = {"connections": [connection_data_obj["connection"]]}
+    fabricId = connection_data_obj["fabric_id"]
+    response = _make_post_request(headers, f"{BASE_URL}/fabrics/{fabricId}/connections", payload=payload)
+    return response
+
+def set_fabric_connections(auth, fabricId, connections):
+    """
+    Replaces all connections in a fabric with a new set of connections.
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        connections (list): A list of connections to set.
+
+    Returns:
+        dict: JSON response, or None on error.
+    """
+    payload = {"connections": connections}
+    response = _make_put_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections", payload=payload)
+    return response
+
+def delete_fabric_connection(auth, fabricId, connectionId):
+  """
+    Delete a specific connection.
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        connectionId (str): The ID of the connection.
+    """
+  response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections/{connectionId}")
+  return response
 
 # ------------------------------ FROM HYPERFABRIC_SDK ------------------------------
 
@@ -524,77 +803,77 @@ def revert_fabric_candidate(auth, fabricId, name):
     response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/candidates/{name}")
     return response
 
-# /fabrics/{fabricId}/connections
-def get_fabric_connections(auth, fabricId, candidate=None):
-    """
-    Retrieves a list of connections within a fabric.
+# # /fabrics/{fabricId}/connections
+# def get_fabric_connections(auth, fabricId, candidate=None):
+#     """
+#     Retrieves a list of connections within a fabric.
 
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        candidate (str, optional): The candidate configuration name. Defaults to None.
+#     Args:
+#         fabricId (str): The ID or name of the fabric.
+#         candidate (str, optional): The candidate configuration name. Defaults to None.
 
-    Returns:
-        dict: JSON response, or None on error.
-    """
-    params = {}
-    if candidate:
-        params["candidate"] = candidate
-    response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections", params=params)
-    return response
+#     Returns:
+#         dict: JSON response, or None on error.
+#     """
+#     params = {}
+#     if candidate:
+#         params["candidate"] = candidate
+#     response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections", params=params)
+#     return response
 
-def add_fabric_connections(auth, fabricId, connections):
-    """
-    Adds one or more connections to a fabric.
+# def add_fabric_connections(auth, fabricId, connections):
+#     """
+#     Adds one or more connections to a fabric.
 
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        connections (list): A list of connections to add.
-            Example:
-            ```json
-            [
-              {
-                "local": {
-                  "portName": "Ethernet1_19",
-                  "nodeName": "node-leaf0"
-                },
-                "remote": {
-                  "portName": "Ethernet1_19",
-                  "nodeName": "node-spine0"
-                }
-              },
-              {
-                "local": {
-                  "portName": "Ethernet1_22",
-                  "nodeName": "node-leaf1"
-                },
-                "remote": {
-                  "portName": "Ethernet1_22",
-                  "nodeName": "node-spine0"
-                }
-              }
-            ]
-            ```
-    Returns:
-        dict: JSON response, or None on error.
-    """
-    payload = {"connections": connections}
-    response = _make_post_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections", payload=payload)
-    return response
+#     Args:
+#         fabricId (str): The ID or name of the fabric.
+#         connections (list): A list of connections to add.
+#             Example:
+#             ```json
+#             [
+#               {
+#                 "local": {
+#                   "portName": "Ethernet1_19",
+#                   "nodeName": "node-leaf0"
+#                 },
+#                 "remote": {
+#                   "portName": "Ethernet1_19",
+#                   "nodeName": "node-spine0"
+#                 }
+#               },
+#               {
+#                 "local": {
+#                   "portName": "Ethernet1_22",
+#                   "nodeName": "node-leaf1"
+#                 },
+#                 "remote": {
+#                   "portName": "Ethernet1_22",
+#                   "nodeName": "node-spine0"
+#                 }
+#               }
+#             ]
+#             ```
+#     Returns:
+#         dict: JSON response, or None on error.
+#     """
+#     payload = {"connections": connections}
+#     response = _make_post_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections", payload=payload)
+#     return response
 
-def set_fabric_connections(auth, fabricId, connections):
-    """
-    Replaces all connections in a fabric with a new set of connections.
+# def set_fabric_connections(auth, fabricId, connections):
+#     """
+#     Replaces all connections in a fabric with a new set of connections.
 
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        connections (list): A list of connections to set.
+#     Args:
+#         fabricId (str): The ID or name of the fabric.
+#         connections (list): A list of connections to set.
 
-    Returns:
-        dict: JSON response, or None on error.
-    """
-    payload = {"connections": connections}
-    response = _make_put_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections", payload=payload)
-    return response
+#     Returns:
+#         dict: JSON response, or None on error.
+#     """
+#     payload = {"connections": connections}
+#     response = _make_put_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections", payload=payload)
+#     return response
 
 def delete_fabric_connections(auth, fabricId):
     """
@@ -605,36 +884,36 @@ def delete_fabric_connections(auth, fabricId):
     response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections")
     return response
 
-# /fabrics/{fabricId}/connections/{connectionId}
-def get_fabric_connection(auth, fabricId, connectionId, candidate=None):
-    """
-    Retrieves a specific connection by ID.
+# # /fabrics/{fabricId}/connections/{connectionId}
+# def get_fabric_connection(auth, fabricId, connectionId, candidate=None):
+#     """
+#     Retrieves a specific connection by ID.
 
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        connectionId (str): The ID of the connection.
-        candidate (str, optional):  Candidate configuration name. Defaults to None.
+#     Args:
+#         fabricId (str): The ID or name of the fabric.
+#         connectionId (str): The ID of the connection.
+#         candidate (str, optional):  Candidate configuration name. Defaults to None.
 
-    Returns:
-        dict: JSON response, or None on error.
-    """
-    params = {}
-    if candidate:
-        params["candidate"] = candidate
-    response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections/{connectionId}", params=params)
-    return response
+#     Returns:
+#         dict: JSON response, or None on error.
+#     """
+#     params = {}
+#     if candidate:
+#         params["candidate"] = candidate
+#     response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections/{connectionId}", params=params)
+#     return response
 
-def delete_fabric_connection(auth, fabricId, connectionId):
-  """
-    Delete a specific connection.
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        connectionId (str): The ID of the connection.
-    """
-  response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections/{connectionId}")
-  return response
+# def delete_fabric_connection(auth, fabricId, connectionId):
+#   """
+#     Delete a specific connection.
+#     Args:
+#         fabricId (str): The ID or name of the fabric.
+#         connectionId (str): The ID of the connection.
+#     """
+#   response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections/{connectionId}")
+#   return response
 
-# /fabrics/{fabricId}/nodes
+# # /fabrics/{fabricId}/nodes
 def get_fabric_nodes(auth, fabricId, candidate=None, includeMetadata=None):
     """
     Retrieves a list of nodes within a fabric.
@@ -655,95 +934,95 @@ def get_fabric_nodes(auth, fabricId, candidate=None, includeMetadata=None):
     response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes", params=params)
     return response
 
-def add_fabric_nodes(auth, fabric_name, nodes):
-    """
-    Adds one or more nodes to a fabric.
+# def add_fabric_nodes(auth, fabric_name, nodes):
+#     """
+#     Adds one or more nodes to a fabric.
 
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        nodes (list): A list of node objects to add.
-         Example:
-            ```json
-             [
-              {
-               "name": "node-leaf0",
-               "description": "example fabric node leaf zero",
-               "enabled": true,
-               "serialNumber": "RESTAA2000",
-               "modelName": "HF6100-60L4D",
-               "roles": [
-                "LEAF"
-               ],
-               "labels": [
-                "TAG_ONE_ZERO"
-               ]
-              },
-              {
-               "name": "node-leaf1",
-               "description": "example fabric node leaf one",
-               "enabled": true,
-               "serialNumber": "RESTAA2001",
-               "modelName": "HF6100-32D"
-              },
-             ]
-            ```
-    Returns:
-        dict: JSON response, or None on error.
-    """
-    payload = {"nodes": nodes}
-    response = _make_post_request(auth, f"{BASE_URL}/fabrics/{fabric_name}/nodes", payload=payload)
-    return response
+#     Args:
+#         fabricId (str): The ID or name of the fabric.
+#         nodes (list): A list of node objects to add.
+#          Example:
+#             ```json
+#              [
+#               {
+#                "name": "node-leaf0",
+#                "description": "example fabric node leaf zero",
+#                "enabled": true,
+#                "serialNumber": "RESTAA2000",
+#                "modelName": "HF6100-60L4D",
+#                "roles": [
+#                 "LEAF"
+#                ],
+#                "labels": [
+#                 "TAG_ONE_ZERO"
+#                ]
+#               },
+#               {
+#                "name": "node-leaf1",
+#                "description": "example fabric node leaf one",
+#                "enabled": true,
+#                "serialNumber": "RESTAA2001",
+#                "modelName": "HF6100-32D"
+#               },
+#              ]
+#             ```
+#     Returns:
+#         dict: JSON response, or None on error.
+#     """
+#     payload = {"nodes": nodes}
+#     response = _make_post_request(auth, f"{BASE_URL}/fabrics/{fabric_name}/nodes", payload=payload)
+#     return response
 
-# /fabrics/{fabricId}/nodes/{nodeId}
-def get_fabric_node(auth, fabricId, nodeId, candidate=None, includeMetadata=None):
-    """
-    Retrieves a specific node by ID or name.
+# # /fabrics/{fabricId}/nodes/{nodeId}
+# def get_fabric_node(auth, fabricId, nodeId, candidate=None, includeMetadata=None):
+#     """
+#     Retrieves a specific node by ID or name.
 
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
-        candidate (str, optional): The candidate configuration name. Defaults to None.
-        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+#     Args:
+#         fabricId (str): The ID or name of the fabric.
+#         nodeId (str): The ID or name of the node.
+#         candidate (str, optional): The candidate configuration name. Defaults to None.
+#         includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
 
-    Returns:
-        dict: JSON response, or None on error.
-    """
-    params = {}
-    if candidate:
-        params["candidate"] = candidate
-    if includeMetadata:
-        params["includeMetadata"] = includeMetadata
-    response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}", params=params)
-    return response
+#     Returns:
+#         dict: JSON response, or None on error.
+#     """
+#     params = {}
+#     if candidate:
+#         params["candidate"] = candidate
+#     if includeMetadata:
+#         params["includeMetadata"] = includeMetadata
+#     response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}", params=params)
+#     return response
 
-def update_fabric_node(auth, fabricId, nodeId, payload):
-    """
-    Updates a specific node.
+# def update_fabric_node(auth, fabricId, nodeId, payload):
+#     """
+#     Updates a specific node.
 
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
-        payload (dict): A JSON payload containing the updated node properties.
+#     Args:
+#         fabricId (str): The ID or name of the fabric.
+#         nodeId (str): The ID or name of the node.
+#         payload (dict): A JSON payload containing the updated node properties.
 
-    Returns:
-        dict: JSON response, or None on error.
-    """
-    response = _make_put_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}", payload=payload)
-    return response
+#     Returns:
+#         dict: JSON response, or None on error.
+#     """
+#     response = _make_put_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}", payload=payload)
+#     return response
 
-def delete_fabric_node(auth, fabricId, nodeId):
-    """
-    Deletes a specific node.
+# def delete_fabric_node(auth, fabricId, nodeId):
+#     """
+#     Deletes a specific node.
 
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
+#     Args:
+#         fabricId (str): The ID or name of the fabric.
+#         nodeId (str): The ID or name of the node.
 
-    Returns:
-        int: HTTP status code, or None on error.
-    """
-    response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}")
-    return response
+#     Returns:
+#         int: HTTP status code, or None on error.
+#     """
+#     response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}")
+#     return response
 # /fabrics/{fabricId}/nodes/{nodeId}/devices/{deviceId}
 def bind_device(auth, fabricId, nodeId, deviceId):
     """
@@ -793,94 +1072,94 @@ def get_management_ports(auth, fabricId, nodeId, candidate=None, includeMetadata
     response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts", params=params)
     return response
 
-def add_management_ports(auth, fabricId, nodeId, ports):
-    """
-    Creates or updates one or more ManagementPorts for a fabric node
+# def add_management_ports(auth, fabricId, nodeId, ports):
+#     """
+#     Creates or updates one or more ManagementPorts for a fabric node
 
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str):  The node id or name from which a device is bound.
-        ports (list): A list of one or more ports to update.
-              Example payload:
-              ```json
-               [
-                 {
-                  "name": "eth0",
-                  "ipv4Address": "10.1.1.250/31",
-                  "ipv4Gateway": "10.1.1.251",
-                  "ipv6Address": "2a02:1243:5687:0:9c09:2c7a:7c78:9ffc/64",
-                  "ipv6Gateway": "2a02:1243:5687:0:8d91:ba6b:b24d:9b41",
-                  "dnsAddresses": [
-                   "8.8.8.8",
-                   "8.8.4.4"
-                  ],
-                  "proxyAddress": "https://10.1.1.10:8080",
-                  "proxyUsername": "admin",
-                  "proxyPassword": "admin123",
-                  "enabled": true,
-                  "cloudUrls": [
-                   "https://a.b.com"
-                  ],
-                  "setProxyPassword": true,
-                  "noProxy": [
-                   "10.0.0.0/8",
-                   "68.0.0.0/8",
-                   "72.0.0.0/8",
-                   "172.0.0.0/8",
-                   "172.0.0.0/8",
-                   "173.0.0.0/8",
-                   "cisco.com",
-                   "localhost",
-                   "127.0.0.1",
-                   ".local"
-                  ]
-                 }
-                ]
-              ```
+#     Args:
+#         fabricId (str): The ID or name of the fabric.
+#         nodeId (str):  The node id or name from which a device is bound.
+#         ports (list): A list of one or more ports to update.
+#               Example payload:
+#               ```json
+#                [
+#                  {
+#                   "name": "eth0",
+#                   "ipv4Address": "10.1.1.250/31",
+#                   "ipv4Gateway": "10.1.1.251",
+#                   "ipv6Address": "2a02:1243:5687:0:9c09:2c7a:7c78:9ffc/64",
+#                   "ipv6Gateway": "2a02:1243:5687:0:8d91:ba6b:b24d:9b41",
+#                   "dnsAddresses": [
+#                    "8.8.8.8",
+#                    "8.8.4.4"
+#                   ],
+#                   "proxyAddress": "https://10.1.1.10:8080",
+#                   "proxyUsername": "admin",
+#                   "proxyPassword": "admin123",
+#                   "enabled": true,
+#                   "cloudUrls": [
+#                    "https://a.b.com"
+#                   ],
+#                   "setProxyPassword": true,
+#                   "noProxy": [
+#                    "10.0.0.0/8",
+#                    "68.0.0.0/8",
+#                    "72.0.0.0/8",
+#                    "172.0.0.0/8",
+#                    "172.0.0.0/8",
+#                    "173.0.0.0/8",
+#                    "cisco.com",
+#                    "localhost",
+#                    "127.0.0.1",
+#                    ".local"
+#                   ]
+#                  }
+#                 ]
+#               ```
 
-    Returns:
-        dict: JSON response
-    """
-    payload = {"ports": ports}
-    response =_make_post_request(auth,
-            f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts",payload=payload)
-    return response
+#     Returns:
+#         dict: JSON response
+#     """
+#     payload = {"ports": ports}
+#     response =_make_post_request(auth,
+#             f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts",payload=payload)
+#     return response
 
-# /fabrics/{fabricId}/nodes/{nodeId}/managementPorts/{id}
-def get_management_port(auth, fabricId, nodeId, id, candidate=None, includeMetadata=None):
-    """
-    Retrieves information on the management port specified
+# # /fabrics/{fabricId}/nodes/{nodeId}/managementPorts/{id}
+# def get_management_port(auth, fabricId, nodeId, id, candidate=None, includeMetadata=None):
+#     """
+#     Retrieves information on the management port specified
 
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str):  The node id or name from which a device is bound.
-        id (str): ID of the port
+#     Args:
+#         fabricId (str): The ID or name of the fabric.
+#         nodeId (str):  The node id or name from which a device is bound.
+#         id (str): ID of the port
 
-    Returns:
-        dict: JSON response
-    """
-    params = {}
-    if candidate:
-        params["candidate"] = candidate
-    if includeMetadata:
-        params["includeMetadata"] = includeMetadata
-    response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts/{id}", params=params)
-    return response
+#     Returns:
+#         dict: JSON response
+#     """
+#     params = {}
+#     if candidate:
+#         params["candidate"] = candidate
+#     if includeMetadata:
+#         params["includeMetadata"] = includeMetadata
+#     response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts/{id}", params=params)
+#     return response
 
-def update_management_port(auth, fabricId, nodeId, id, payload):
-    """
-    Updates the settings on a management port
+# def update_management_port(auth, fabricId, nodeId, id, payload):
+#     """
+#     Updates the settings on a management port
 
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str):  The node id or name from which a device is bound.
-        ports (list): A list of one or more ports to update.
+#     Args:
+#         fabricId (str): The ID or name of the fabric.
+#         nodeId (str):  The node id or name from which a device is bound.
+#         ports (list): A list of one or more ports to update.
 
-    Returns:
-        dict: JSON response
-    """
-    response = _make_put_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts/{id}", payload=payload)
-    return response
+#     Returns:
+#         dict: JSON response
+#     """
+#     response = _make_put_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts/{id}", payload=payload)
+#     return response
 
 # /fabrics/{fabricId}/nodes/{nodeId}/ports
 def get_ports(auth, fabricId, nodeId, candidate=None, includeMetadata=None):
@@ -954,55 +1233,55 @@ def set_ports(auth, fabricId, nodeId, ports):
     response = _make_put_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/ports", payload=payload)
     return response
 
-# /fabrics/{fabricId}/nodes/{nodeId}/ports/{portId}
-def get_port(auth, fabricId, nodeId, portId, candidate=None, includeMetadata=None):
-    """
-    Retrieves a specific port by its ID.
+# # /fabrics/{fabricId}/nodes/{nodeId}/ports/{portId}
+# def get_port(auth, fabricId, nodeId, portId, candidate=None, includeMetadata=None):
+#     """
+#     Retrieves a specific port by its ID.
 
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
-        portId (str): The ID of the port.
-        candidate (str, optional): The candidate configuration name. Defaults to None.
-        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+#     Args:
+#         fabricId (str): The ID or name of the fabric.
+#         nodeId (str): The ID or name of the node.
+#         portId (str): The ID of the port.
+#         candidate (str, optional): The candidate configuration name. Defaults to None.
+#         includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
 
-    Returns:
-        dict: JSON response, or None on error.
-    """
-    params = {}
-    if candidate:
-        params["candidate"] = candidate
-    if includeMetadata:
-        params["includeMetadata"] = includeMetadata
-    response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/ports/{portId}", params=params)
-    return response
+#     Returns:
+#         dict: JSON response, or None on error.
+#     """
+#     params = {}
+#     if candidate:
+#         params["candidate"] = candidate
+#     if includeMetadata:
+#         params["includeMetadata"] = includeMetadata
+#     response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/ports/{portId}", params=params)
+#     return response
 
-def update_port(auth, fabricId, nodeId, portId, payload):
-    """
-    Updates a specific port.
+# def update_port(auth, fabricId, nodeId, portId, payload):
+#     """
+#     Updates a specific port.
 
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
-        portId (str): The ID of the port.
-        payload (dict): A JSON payload containing the updated port properties.
+#     Args:
+#         fabricId (str): The ID or name of the fabric.
+#         nodeId (str): The ID or name of the node.
+#         portId (str): The ID of the port.
+#         payload (dict): A JSON payload containing the updated port properties.
 
-    Returns:
-        dict: JSON response, or None on error.
-    """
-    response = _make_put_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/ports/{portId}", payload=payload)
-    return response
+#     Returns:
+#         dict: JSON response, or None on error.
+#     """
+#     response = _make_put_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/ports/{portId}", payload=payload)
+#     return response
 
-def reset_port(auth, fabricId, nodeId, portId):
-    """Resets a specific port
+# def reset_port(auth, fabricId, nodeId, portId):
+#     """Resets a specific port
 
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
-        portId (str): The ID of the port.
-    """
-    response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/ports/{portId}")
-    return response
+#     Args:
+#         fabricId (str): The ID or name of the fabric.
+#         nodeId (str): The ID or name of the node.
+#         portId (str): The ID of the port.
+#     """
+#     response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/ports/{portId}")
+#     return response
 
 # /fabrics/{fabricId}/vnis
 def get_fabric_vnis(auth, fabricId, candidate=None, includeMetadata=None):

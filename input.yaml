@@ -1,6 +1,6 @@
 fabrics:
-  - name: from-python4
-    description: I am updated from pythonnnnnnnn
+  - name: from-python
+    description: I am from python
     location: CA-95134
     address: 300 East Tasman Drive
     city: Milpitas
@@ -10,14 +10,144 @@ fabrics:
       - TAG_TWO
     topology: SPINE_LEAF
     
-    # nodes:
-    #   - name: Leaf01
-    #     description: Leaf Switch 01
-    #     model: HF6100-32D
-    #     roles: [LEAF]
-    #     location: sj01-1-101-AAA01
-    #   - name: Leaf02
-    #     description: Leaf Switch 02
-    #     model: HF6100-32D
-    #     roles: [LEAF]
-    #     location: sj01-1-101-AAA02
+    nodes:
+      - name: Leaf01
+        description: Leaf Switch 01
+        modelName: HF6100-32D
+        roles: [LEAF]
+        labels:
+          - TAG_ONE
+      - name: Leaf02
+        description: Leaf Switch 02
+        modelName: HF6100-32D
+        roles: [LEAF]
+        location: sj01-1-101-AAA02
+        managementPorts:
+          - name: eth0
+            ipv4Address: 10.1.1.250/31
+            ipv4Gateway: 10.1.1.251
+            ipv6Address: 2a02:1243:5687:0:9c09:2c7a:7c78:9ffc/64
+            ipv6Gateway: 2a02:1243:5687:0:8d91:ba6b:b24d:9b41
+            dnsAddresses:
+              - 8.8.8.8
+              - 8.8.4.4
+            proxyAddress: https://10.1.1.10:8080
+            proxyUsername: admin
+            proxyPassword: admin123
+            enabled: true
+            cloudUrls:
+              - https://a.b.com
+            setProxyPassword: true
+            noProxy:
+              - 10.0.0.0/8
+              - 68.0.0.0/8
+              - 72.0.0.0/8
+              - 172.0.0.0/8
+              - 172.0.0.0/8
+              - 173.0.0.0/8
+              - cisco.com
+              - localhost
+              - 127.0.0.1
+              - .local
+        ports:
+          - name: Ethernet1_5
+            enabled: true
+            roles: 
+              - "HOST_PORT"
+          - name: Ethernet1_6
+            enabled: true
+            roles: 
+              - "HOST_PORT"
+      - name: Spine01
+        description: Spine Switch 01
+        modelName: HF6100-32D
+        roles: [SPINE]
+    connections:
+      - local:
+          portName: Ethernet1_19
+          nodeName: Leaf01
+        remote:
+          portName: Ethernet1_19
+          nodeName: Spine01
+      - local:
+          portName: Ethernet1_23
+          nodeName: Leaf01
+        remote:
+          portName: Ethernet1_23
+          nodeName: Spine01
+            
+
+# nodes[]:
+#   node:
+#       name*: string
+#       roles*: enum = ["LEAF", "SPINE", "SERVER"]
+#       modelname*: enum = ["HF6100-32D", "HF6100-60L4D"]
+#       location: string
+#       description: string
+#       serialnumber: string
+#       labels: string[]
+#       psuAirflows: map
+#           airflow: enum = ["AIRFLOW_TYPE_PORT_SIDE_INTAKE", "AIRFLOW_TYPE_PORT_SIDE_EXHAUST"], default = "AIRFLOW_TYPE_PORT_SIDE_INTAKE"
+
+# managementPorts[]:
+#             managementPort:
+#                 configOrigin: enum = ["CONFIG_ORIGIN_CLOUD", "CONFIG_ORIGIN_DEVICE"], default = "CONFIG_ORIGIN_CLOUD"
+#                 connectedState: enum = ["CONNECTED_STATE_NOT_CONNECTED", "CONNECTED_STATE_CONNECTED"], default = "CONNECTED_STATE_NOT_CONNECTED"
+#                 name*: string
+#                 description: string
+#                 ipv4ConfigType: enum = ["CONFIG_TYPE_STATIC", "CONFIG_TYPE_DHCP"], default = "CONFIG_TYPE_STATIC"
+#                 ipv4Address: IP string
+#                 ipv4Gateway: IP string
+#                 ipv6ConfigType:: enum = ["CONFIG_TYPE_STATIC", "CONFIG_TYPE_DHCP"], default = "CONFIG_TYPE_STATIC"
+#                 ipv6Address: IP string
+#                 ipv6Address: IP string
+#                 DNS addresses: IP string[]
+#                 proxyAddress: string
+#                 proxyPassword: string
+#                 proxyPassword: string
+#                 proxyUsername: string
+#                 enabled: boolean
+#                 setProxyPassword: boolean
+#                 cloudUrls: string[]
+#                 noProxy: string[]
+
+# Ports[]:
+#   Port:
+#       description: string
+#       name*: string, predefined immutable Ethernet1_[N] where N is range 1-32 / 1-64
+#       mtu: integer, range 1500-9100 default 9100
+#       fec: string, set of {rs, none} must be "none" for 100G DR/FR/LR pluggable optics
+#       pluggable: string, cable list {...}
+#       speed: string, set of {1x40G(N), 1x100G(N), 1x100G(N), 1x200G(N), 1x400G} where N is {2,4} cannot be set for port in breakout mode
+#       enabled: boolean
+#       linkDown: boolean, enabled must be true + role must be {UNUSED_PORT, ROUTED_PORT, HOST_PORT}
+#       labels: string[]
+#       roles: enum = ["UNUSED_PORT", "FABRIC_PORT", "HOST_PORT", "ROUTED_PORT", "LAG_PORT"], default ["UNUSED PORT]
+#           if ROUTED_PORT:
+#               vrfId: string, vrf must exist in DB (inclusive of "Default VRF")
+#               ipv4Address: string, IP must exist if no ipv6
+#               ipv6Address: string, IP must exist if no ipv4
+#       annotations: map
+
+# "connections": [
+#     {
+#       "local": {
+#         "portName": "Ethernet1_19",
+#         "nodeName": "node-leaf0"
+#       },
+#       "remote": {
+#         "portName": "Ethernet1_19",
+#         "nodeName": "node-spine0"
+#       }
+#     },
+#     {
+#       "local": {
+#         "portName": "Ethernet1_22",
+#         "nodeName": "node-leaf1"
+#       },
+#       "remote": {
+#         "portName": "Ethernet1_22",
+#         "nodeName": "node-spine0"
+#       }
+#     }
+#   ]

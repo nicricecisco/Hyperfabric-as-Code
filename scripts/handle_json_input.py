@@ -1,111 +1,141 @@
-import requests
-import json
-import logging
 from pprint import pprint
-from scripts.hyperfabric_api import create_fabric, get_fabric, update_fabric
+from scripts.api_call_handler import handle_get
+from scripts.hyperfabric_api import get_fabric, create_fabric, update_fabric, \
+    get_fabric_node, add_fabric_nodes, update_fabric_node, \
+    get_management_port, add_management_ports, update_management_port, \
+    get_port, update_port, \
+    get_fabric_connections, get_fabric_connection, add_fabric_connections, set_fabric_connections
 
-# Setup logger
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger(__name__)
+def _parse_fabric_attributes(fabric):
+    # Pull this from an official schema?
+    fabric_attributes = ["name", "address", "city", "country", "description", "location", "topology", "labels", "annotations"]
+    fabric_pure = {key: fabric[key] for key in fabric if key in fabric_attributes}
+    fabric_other = {key: fabric[key] for key in fabric if key not in fabric_attributes}
 
-def _handle_put(put_func, func_input):
-    logger.info("Handling PUT...")
-    response = None
-    put_func_name = getattr(put_func, '__name__', str(put_func))
-    try:
-        response = put_func(func_input)
-        response.raise_for_status()
-        return response
+    return fabric_pure, fabric_other
 
-    except requests.exceptions.HTTPError as e:
-        try:
-            error_message = response.json()
-        except (json.JSONDecodeError, ValueError):
-            error_message = response.text
+def _parse_node_attributes(node):
+    # Pull this from an official schema?
+    node_attributes = ["name", "roles", "modelName", "location", "description", "serialNumber", "labels", "psuAirflows"]
+    node_pure = {key: node[key] for key in node if key in node_attributes}
+    node_other = {key: node[key] for key in node if key not in node_attributes}
 
-        logger.error(f"[PUT HANDLER] HTTP Error in {put_func_name}: {e}. "
-                     f"Status code: {response.status_code}. Response: {error_message}")
-        return None
-    except requests.exceptions.RequestException as e:
-        logger.error(f"[PUT HANDLER] Request failed in {put_func_name}: {e}")
-        return None
-    except Exception as e:
-        logger.exception(f"[PUT HANDLER] Unexpected error in {put_func_name}: {e}")
-        return None
+    return node_pure, node_other
 
-def _handle_post(post_func, func_input):
-    logger.info("Handling POST...")
-    response = None
-    post_func_name = getattr(post_func, '__name__', str(post_func))
-    try:
-        response = post_func(func_input)
-        response.raise_for_status()
-        return response
+def _extract_connection_info(connections_data):
+    return [
+        {
+            'id': conn['id'],
+            'local': conn['local'],
+            'remote': conn['remote']
+        }
+        for conn in connections_data.get('connections', [])
+    ]
 
-    except requests.exceptions.HTTPError as e:
-        try:
-            error_message = response.json()
-        except (json.JSONDecodeError, ValueError):
-            error_message = response.text
+def _connection_exists(connections, target_connection):
+    target_local = target_connection.get('local', {})
+    target_remote = target_connection.get('remote', {})
 
-        logger.error(f"[POST HANDLER] HTTP Error in {post_func_name}: {e}. "
-                     f"Status code: {response.status_code}. Response: {error_message}")
-        return None
-    except requests.exceptions.RequestException as e:
-        logger.error(f"[POST HANDLER] Request failed in {post_func_name}: {e}")
-        return None
-    except Exception as e:
-        logger.exception(f"[POST HANDLER] Unexpected error in {post_func_name}: {e}")
-        return None
+    for conn in connections:
+        local = conn.get('local', {})
+        remote = conn.get('remote', {})
 
-def _handle_get(get_func, post_func, put_func, func_input):
-    """
-    Attempts GET → if not found (404), POST → if found, PUT.
-    Returns: response object or None
-    """
-    logger.info("Handling GET...")
-    response = None
-    get_func_name = getattr(get_func, '__name__', str(get_func))
+        if (local.get('nodeName') == target_local.get('nodeName') and
+            local.get('portName') == target_local.get('portName') and
+            remote.get('nodeName') == target_remote.get('nodeName') and
+            remote.get('portName') == target_remote.get('portName')):
+            return conn.get('id', {})  # Match found, return id of connection
 
-    try:
-        response = get_func(func_input)
-        response.raise_for_status()
-        return _handle_put(put_func, func_input)
+    return None  # No match, no id
 
-    except requests.exceptions.HTTPError as http_err:
-        if response is not None and response.status_code == 404:
-            try:
-                err_json = response.json()
-                logger.warning(f"[GET HANDLER] Not Found: {err_json.get('message')}")
-            except (json.JSONDecodeError, ValueError):
-                logger.warning("[GET HANDLER] 404 error with no JSON body.")
-            return _handle_post(post_func, func_input)
-        else:
-            try:
-                error_message = response.json()
-            except (json.JSONDecodeError, ValueError):
-                error_message = response.text if response else "No response object"
-            logger.error(f"[GET HANDLER] HTTP error in {get_func_name}: {http_err}. "
-                         f"Status code: {response.status_code if response else 'N/A'}. Response: {error_message}")
-            return None
+def _loop_through_attributes(fabric_other, FABRIC_ID):
+    # Nodes
+    if "nodes" in fabric_other:
+        fabric_nodes = {"nodes": fabric_other["nodes"]}
+        for node in fabric_nodes["nodes"]:
+            pprint(node)
+            node_pure, node_other = _parse_node_attributes(node)
+            node_data_obj = {
+                "fabric_id": FABRIC_ID,
+                "node": node_pure
+            }
+            result_node = handle_get(get_fabric_node, add_fabric_nodes, update_fabric_node, node_data_obj)
+            print("Node result:")
+            pprint(result_node)
 
-    except requests.exceptions.RequestException as req_err:
-        try:
-            error_message = response.json()
-        except (json.JSONDecodeError, ValueError):
-            error_message = response.text if response else "No response object"
-        logger.error(f"[GET HANDLER] RequestException in {get_func_name}: {req_err}. "
-                     f"Status code: {response.status_code if response else 'N/A'}. Response: {error_message}")
-        return None
+            # Management ports
+            if "managementPorts" in node_other:
+                node_mgmt_ports = {"managementPorts": node_other["managementPorts"]}
+                for mgmt_port in node_mgmt_ports["managementPorts"]:
+                    # Pure/Other is not required, but maybe it would be a good idea to include once we get the schema anyways
+                    pprint(mgmt_port)
+                    mgmt_port_data_obj = {
+                        "fabric_id": FABRIC_ID,
+                        "node_id": node_pure["name"],
+                        "mgmt_port": mgmt_port
+                    }
+                    result_mgmt_port = handle_get(get_management_port, add_management_ports, update_management_port, mgmt_port_data_obj)
+                    print("Management port result: ")
+                    pprint(result_mgmt_port)
 
-    except Exception as e:
-        logger.exception(f"[GET HANDLER] Unexpected error in {get_func_name}: {e}")
-        return None
+            # Ports
+            if "ports" in node_other:
+                node_ports = {"ports": node_other["ports"]}
+                for port in node_ports["ports"]:
+                    # Pure/Other is not required, but maybe it would be a good idea to include once we get the schema anyways
+                    pprint(port)
+                    port_data_obj = {
+                        "fabric_id": FABRIC_ID,
+                        "node_id": node_pure["name"],
+                        "port": port
+                    }
+                    result_port = handle_get(get_port, None, update_port, port_data_obj)
+                    pprint(result_port)
+    if "connections" in fabric_other:
+        fabric_connections = {"connections": fabric_other["connections"]}
+        connection_data_obj = {
+            "fabric_id": FABRIC_ID,
+        }
+        full_connections = handle_get(get_fabric_connections, None, None, connection_data_obj)
+        current_connections = _extract_connection_info(full_connections)
+        for connection in fabric_connections["connections"]:
+            # Pure/Other is not required, but maybe it would be a good idea to include once we get the schema anyways
+            conn_id = _connection_exists(current_connections, connection)
+            print(conn_id)
+            if (conn_id is None):
+                connection_data_obj["connection"] = connection
+                connection_data_obj["connection_id"] = conn_id
+                print(connection)
+                result_connection = handle_get(None, add_fabric_connections, None, connection_data_obj)
+                pprint(result_connection)
+            
+                    
 
 def handle_json_input(json_input):
+    FABRIC_ID = None
+    # Validate schema first
+    if "fabrics" not in json_input:
+        pprint("Input missing 'fabrics' attribute")
+        return
+    if not isinstance(json_input["fabrics"], list):
+        pprint("'fabrics' attribute must contain a list")
+        return
+    if "name" in json_input["fabrics"][0]:
+        FABRIC_ID = json_input["fabrics"][0]["name"]
+        print("FABRIC_ID: ", FABRIC_ID)
+
+    # Split fabric attributes
+    fabric_pure, fabric_other = _parse_fabric_attributes(json_input["fabrics"][0])
+
     """
     Attempts GET → if not found, POST → if found, PUT.
     Logs and prints final response object.
+    Takes functions for GET, POST, PUT, then function input
     """
-    response = _handle_get(get_fabric, create_fabric, update_fabric, json_input)
+    response = handle_get(get_fabric, create_fabric, update_fabric, fabric_pure)
     pprint(response)
+
+    # Handle sub-fabric attributes
+    _loop_through_attributes(fabric_other, FABRIC_ID)
+
+
