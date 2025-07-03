@@ -7,9 +7,9 @@ fabric:
     country: xyz
     topology: xyz
     labels:
-      - xyz
+        xyz
     annotations:
-      - xyz
+        xyz
   
     nodes:
       - name: xyz
@@ -18,38 +18,33 @@ fabric:
         modelName: xyz
         roles: xyz 
         serialNumber: xyz
-        psuAirflows: xyz
+        psuAirflows:
+          - airflow: xyz
+          - psuModel: xyz
         labels: 
-          - xyz
-
-
+          xyz
+#WIP BELOW
         managementPorts:
-          - name: eth0
-            ipv4Address: 10.1.1.250/31
-            ipv4Gateway: 10.1.1.251
-            ipv6Address: 2a02:1243:5687:0:9c09:2c7a:7c78:9ffc/64
-            ipv6Gateway: 2a02:1243:5687:0:8d91:ba6b:b24d:9b41
-            dnsAddresses:
-              - 8.8.8.8
-              - 8.8.4.4
-            proxyAddress: https://10.1.1.10:8080
-            proxyUsername: admin
-            proxyPassword: admin123
-            enabled: true
-            cloudUrls:
-              - https://a.b.com
-            setProxyPassword: true
-            noProxy:
-              - 10.0.0.0/8
-              - 68.0.0.0/8
-              - 72.0.0.0/8
-              - 172.0.0.0/8
-              - 172.0.0.0/8
-              - 173.0.0.0/8
-              - cisco.com
-              - localhost
-              - 127.0.0.1
-              - .local
+          - configOrigin: enum = ["CONFIG_ORIGIN_CLOUD", "CONFIG_ORIGIN_DEVICE"], default = "CONFIG_ORIGIN_CLOUD"
+            connectedState: enum = ["CONNECTED_STATE_NOT_CONNECTED", "CONNECTED_STATE_CONNECTED"], default = "CONNECTED_STATE_NOT_CONNECTED"
+            name*: string
+            description: string
+            ipv4ConfigType: xyz
+            ipv4Address: string, IP
+            ipv4Gateway: string, IP
+            ipv6ConfigType:: enum = ["CONFIG_TYPE_STATIC", "CONFIG_TYPE_DHCP"], default = "CONFIG_TYPE_STATIC"
+            ipv6Address: string, IP
+            ipv6Address: string, IP 
+            DNS addresses: string[], IP 
+            proxyAddress: string URL
+            proxyPassword: string
+            proxyPassword: string
+            proxyUsername: string
+            enabled: boolean
+            setProxyPassword: boolean
+            cloudUrls: string[] URLs
+            noProxy: string[]
+
         ports:
           - name: Ethernet1_5
             enabled: true

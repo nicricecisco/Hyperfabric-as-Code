@@ -1,0 +1,84 @@
+fabric:
+  - name*: xyz
+    description: xyz
+    location: xyz
+    address: xyz
+    city: xyz
+    country: xyz
+    topology: xyz
+    labels:
+        xyz
+    annotations:
+        xyz
+  
+    nodes:
+      - name: xyz
+        description: xyz
+        location: xyz
+        modelName*: xyz
+        roles*: xyz 
+        serialNumber: xyz
+        psuAirflows:
+          - airflow: xyz
+          - psuModel: xyz
+        labels: 
+          xyz
+
+        managementPorts:
+          - name*: xyz
+            description: xyz          
+            configOrigin: xyz
+            connectedState: xyz
+            ipv4ConfigType: xyz
+            --ipv4Address: xyz
+            --ipv4Gateway: xyz
+            ipv6ConfigType: xyz
+            --ipv6Address: xyz
+            --ipv6Gateway: xyz 
+            DNS addresses: 
+              xyz
+            proxyAddress: xyz
+            proxyPassword: xyz
+            proxyPassword: xyz
+            proxyUsername: xyz
+            enabled: xyz
+            setProxyPassword: xyz
+            cloudUrls:
+              xyz
+            noProxy:
+              xyz
+
+        ports:
+          - name*: xyz
+            description: xyz
+            mtu: xyz
+            fec: xyz
+            pluggable: xyz
+            speed: xyz
+            enabled: xyz
+            roles: xyz
+            --linkDown: xyz
+            --vrfId*: xyz
+            --ipv4Address**: xyz
+            --ipv6Address**: xyz
+            annotations:
+              xyz
+            
+          vni:
+            - name*: xyz
+              description: xyz
+              vni: xyz
+              mtu: xyz
+              svis:
+                - enabled: xyz
+                  ipv4Addresses:
+                      xyz
+                  ipv6Addresses:
+                      xyz
+            - members:
+                - vlanId: xyz
+                  untagged: xyz #WIP PAST (currently at multiple nodeNames / portNames -- check on cloudcontroller)
+                  nodeName
+
+            
+              

@@ -21,6 +21,7 @@ fabric:
             labels: string[]
             psuAirflows: map
                 airflow: enum = ["AIRFLOW_TYPE_PORT_SIDE_INTAKE", "AIRFLOW_TYPE_PORT_SIDE_EXHAUST"], default = "AIRFLOW_TYPE_PORT_SIDE_INTAKE"
+                psuModel: string
 
 fabricname:
     nodename:
@@ -35,7 +36,7 @@ fabricname:
                 ipv4Gateway: string, IP
                 ipv6ConfigType:: enum = ["CONFIG_TYPE_STATIC", "CONFIG_TYPE_DHCP"], default = "CONFIG_TYPE_STATIC"
                 ipv6Address: string, IP
-                ipv6Address: string, IP 
+                ipv6Gateway: string, IP 
                 DNS addresses: string[], IP 
                 proxyAddress: string URL
                 proxyPassword: string
@@ -86,8 +87,10 @@ fabricname:
             member:
                 vlanId: integer, range 2-3600
                 untagged: boolean, if false vlanId must be set & if true ???wip
-                nodeName*: string, set of node names in fabric
-                portName*: string, predefined immutable Ethernet1_[N] where N is range 1-32 / 1-64
+                port:
+                    nodeName*: string, set of node names in fabric
+                    portName*: string, predefined immutable Ethernet1_[N] where N is range 1-32 / 1-64
+                
                 
 fabricname:
     vrfs[]:
