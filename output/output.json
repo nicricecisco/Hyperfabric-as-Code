@@ -1,0 +1,17 @@
+{
+    "fabrics": [
+        {
+            "name": "from-python",
+            "description": "I am from python",
+            "location": "CA-95134",
+            "address": "300 East Tasman Drive",
+            "city": "Milpitas",
+            "country": "US",
+            "labels": [
+                "TAG_ONE",
+                "TAG_TWO"
+            ],
+            "topology": "SPINE_LEAF"
+        }
+    ]
+}
