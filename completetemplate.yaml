@@ -1,0 +1,78 @@
+fabric:
+  - name: xyz
+    description: xyz
+    location: xyz
+    address: xyz
+    city: xyz
+    country: xyz
+    topology: xyz
+    labels:
+      - xyz
+    annotations:
+      - xyz
+  
+    nodes:
+      - name: xyz
+        description: xyz
+        location: xyz
+        modelName: xyz
+        roles: xyz 
+        serialNumber: xyz
+        psuAirflows: xyz
+        labels: 
+          - xyz
+
+
+        managementPorts:
+          - name: eth0
+            ipv4Address: 10.1.1.250/31
+            ipv4Gateway: 10.1.1.251
+            ipv6Address: 2a02:1243:5687:0:9c09:2c7a:7c78:9ffc/64
+            ipv6Gateway: 2a02:1243:5687:0:8d91:ba6b:b24d:9b41
+            dnsAddresses:
+              - 8.8.8.8
+              - 8.8.4.4
+            proxyAddress: https://10.1.1.10:8080
+            proxyUsername: admin
+            proxyPassword: admin123
+            enabled: true
+            cloudUrls:
+              - https://a.b.com
+            setProxyPassword: true
+            noProxy:
+              - 10.0.0.0/8
+              - 68.0.0.0/8
+              - 72.0.0.0/8
+              - 172.0.0.0/8
+              - 172.0.0.0/8
+              - 173.0.0.0/8
+              - cisco.com
+              - localhost
+              - 127.0.0.1
+              - .local
+        ports:
+          - name: Ethernet1_5
+            enabled: true
+            roles: 
+              - "HOST_PORT"
+          - name: Ethernet1_6
+            enabled: true
+            roles: 
+              - "HOST_PORT"
+      - name: Spine01
+        description: Spine Switch 01
+        modelName: HF6100-32D
+        roles: [SPINE]
+    connections:
+      - local:
+          portName: Ethernet1_19
+          nodeName: Leaf01
+        remote:
+          portName: Ethernet1_19
+          nodeName: Spine01
+      - local:
+          portName: Ethernet1_23
+          nodeName: Leaf01
+        remote:
+          portName: Ethernet1_23
+          nodeName: Spine01

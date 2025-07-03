@@ -1,0 +1,137 @@
+fabric:
+    name*: string
+    address: string
+    city: string
+    country: string
+    description: string
+    location: string
+    topology: enum = ["MESH", "SPINE_LEAF"], default = "MESH"
+    labels: string[]
+    annotations: map
+
+ fabricname:
+    nodes[]:
+        node:
+            name*: string
+            roles*: enum = ["LEAF", "SPINE", "SERVER"]
+            modelname*: enum = ["HF6100-32D", "HF6100-60L4D"]
+            location: string
+            description: string
+            serialnumber: string
+            labels: string[]
+            psuAirflows: map
+                airflow: enum = ["AIRFLOW_TYPE_PORT_SIDE_INTAKE", "AIRFLOW_TYPE_PORT_SIDE_EXHAUST"], default = "AIRFLOW_TYPE_PORT_SIDE_INTAKE"
+
+fabricname:
+    nodename:
+        managementPorts[]:
+            managementPort:
+                configOrigin: enum = ["CONFIG_ORIGIN_CLOUD", "CONFIG_ORIGIN_DEVICE"], default = "CONFIG_ORIGIN_CLOUD"
+                connectedState: enum = ["CONNECTED_STATE_NOT_CONNECTED", "CONNECTED_STATE_CONNECTED"], default = "CONNECTED_STATE_NOT_CONNECTED"
+                name*: string
+                description: string
+                ipv4ConfigType: enum = ["CONFIG_TYPE_STATIC", "CONFIG_TYPE_DHCP"], default = "CONFIG_TYPE_STATIC"
+                ipv4Address: string, IP
+                ipv4Gateway: string, IP
+                ipv6ConfigType:: enum = ["CONFIG_TYPE_STATIC", "CONFIG_TYPE_DHCP"], default = "CONFIG_TYPE_STATIC"
+                ipv6Address: string, IP
+                ipv6Address: string, IP 
+                DNS addresses: string[], IP 
+                proxyAddress: string URL
+                proxyPassword: string
+                proxyPassword: string
+                proxyUsername: string
+                enabled: boolean
+                setProxyPassword: boolean
+                cloudUrls: string[] URLs
+                noProxy: string[]
+
+fabricname:
+    nodename:
+        Ports[]:
+            Port:
+                description: string
+                name*: string, predefined immutable Ethernet1_[N] where N is range 1-32 / 1-64
+                mtu: integer, range 1500-9100 default 9100
+                fec: string, set of {rs, none} must be "none" for 100G DR/FR/LR pluggable optics
+                pluggable: string, cable list {...}
+                speed: string, set of {1x40G(N), 1x100G(N), 1x100G(N), 1x200G(N), 1x400G} where N is {2,4} cannot be set for port in breakout mode
+                enabled: boolean
+                linkDown: boolean, enabled must be true + role must be {UNUSED_PORT, ROUTED_PORT, HOST_PORT}
+                labels: string[]
+                roles: enum = ["UNUSED_PORT", "FABRIC_PORT", "HOST_PORT", "ROUTED_PORT", "LAG_PORT"], default ["UNUSED PORT]
+                    if ROUTED_PORT:
+                        vrfId*: string, vrf must exist in DB (inclusive of "Default VRF")
+                        ipv4Address**: string, IP must exist if no ipv6
+                        ipv6Address**: string, IP must exist if no ipv4
+                annotations: map
+
+fabricname:
+    vnis[]:
+        vni:
+            name*: string
+            description: string
+            vni: integer, range 2-6000000
+            mtu: integer, range 1500-9100 default 9100
+            labels: string[]
+            annotations: map
+            svis[]:
+                enabled: boolean
+                ipv4Addresses: string[], IP
+                ipv6Addresses: string[], IP
+        
+fabricname:
+    vniname:
+        members[]:
+            member:
+                vlanId: integer, range 2-3600
+                untagged: boolean, if false vlanId must be set & if true ???wip
+                nodeName*: string, set of node names in fabric
+                portName*: string, predefined immutable Ethernet1_[N] where N is range 1-32 / 1-64
+                
+fabricname:
+    vrfs[]:
+        vrf:
+            name*: string
+            enabled*: true
+            ?asn: integer
+            vni: integer, range 2-6000000
+            description: string
+            labels: string[]
+            annotations: map
+
+fabricname:
+    vrfname:
+        staticroutes[]:
+            staticroute:
+                name*: string
+                description: string
+                enabled: boolean
+                labels: string[]
+                annotations: map
+                routes[]:
+                    route:
+                        preference: integer, range 1-255
+                        ?interface: string, WIP
+                        nextHop: string, WIP
+                        nextVrf: string, WIP
+                        nodeId: string, WIP
+                        prefix: string, IP CIDR notation
+                        tag: enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", ...] default = "TAG_AMBER"
+                        discard: boolean, if true/false WIP
+
+fabricname:
+    connections[]:
+        connection:
+                description: string
+                osType: enum = ["HYPER_FABRIC", "NEXUS", "IOS_XE", "IOS_XR", "LINUX", ...] default = "HYPER_FABRIC"
+                pluggable: string, cable list {...}
+                local:
+                    portName*: string, predefined immutable Ethernet1_[N] where N is range 1-32 / 1-64
+                    nodeName*: string, set of node names in fabric
+                remote:
+                    portName*: string, predefined immutable Ethernet1_[N] where N is range 1-32 / 1-64
+                    nodeName*: string, set of node names in fabric
+                        
+
+            
