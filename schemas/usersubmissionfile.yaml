@@ -1,5 +1,5 @@
 fabric:
-  - name*: xyz
+  - name: xyz
     description: xyz
     location: xyz
     address: xyz
@@ -15,8 +15,8 @@ fabric:
       - name: xyz
         description: xyz
         location: xyz
-        modelName*: xyz
-        roles*: xyz 
+        modelName: xyz
+        roles: xyz 
         serialNumber: xyz
         psuAirflows:
           - airflow: xyz
@@ -25,16 +25,16 @@ fabric:
           xyz
 
         managementPorts:
-          - name*: xyz
+          - name: xyz
             description: xyz          
             configOrigin: xyz
             connectedState: xyz
             ipv4ConfigType: xyz
-            --ipv4Address: xyz
-            --ipv4Gateway: xyz
+            ipv4Address: xyz
+            ipv4Gateway: xyz
             ipv6ConfigType: xyz
-            --ipv6Address: xyz
-            --ipv6Gateway: xyz 
+            ipv6Address: xyz
+            ipv6Gateway: xyz 
             DNS addresses: 
               xyz
             proxyAddress: xyz
@@ -49,7 +49,7 @@ fabric:
               xyz
 
         ports:
-          - name*: xyz
+          - name: xyz
             description: xyz
             mtu: xyz
             fec: xyz
@@ -57,15 +57,26 @@ fabric:
             speed: xyz
             enabled: xyz
             roles: xyz
-            --linkDown: xyz
-            --vrfId*: xyz
-            --ipv4Address**: xyz
-            --ipv6Address**: xyz
+            linkDown: xyz
+            vrfId: xyz
+            ipv4Address: xyz
+            ipv6Address: xyz
             annotations:
               xyz
-            
+    
+    connections:
+      - description: xyz
+        osType: xyz
+        pluggable: xyz
+        local:
+          portName: xyz
+          nodeName: xyz
+        remote:
+          portName: xyz  
+          nodeName: xyz
+        
     vnis:
-      - name*: xyz
+      - name: xyz
         description: xyz
         vni: xyz
         mtu: xyz
@@ -74,16 +85,16 @@ fabric:
             ipv4Addresses:
               xyz
             ipv6Addresses:
-                xyz
+              xyz
       - members:
           - untagged: xyz
-            --vlanId: xyz
+            vlanId: xyz
             port:
-              nodeName*: xyz
-              portName*: xyz
+              nodeName: xyz
+              portName: xyz
 
     vrfs:
-      - name*: xyz
+      - name: xyz
         description: xyz
         enabled: true
         asn: xyz
@@ -93,7 +104,7 @@ fabric:
         annotations:
           xyz
         staticroute:
-          - name*: xyz
+          - name: xyz
             description: xyz
             enabled: xyz
             labels: 
@@ -109,17 +120,6 @@ fabric:
                 nextVrf: xyz
                 tag: xyz
                 discard: xyz
-
-    connections:
-      - description: xyz
-        osType: xyz
-        pluggable: xyz
-        local:
-          portName*: xyz
-          nodeName*: xyz
-        remote:
-          portName*: xyz  
-          nodeName*: xyz
 
 
             

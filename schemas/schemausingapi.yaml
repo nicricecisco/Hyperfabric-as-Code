@@ -44,7 +44,7 @@ fabricname:
                 proxyUsername: string
                 enabled: boolean
                 setProxyPassword: boolean
-                cloudUrls: string[] URLs
+                cloudUrls: string[] URL
                 noProxy: string[]
 
 fabricname:
@@ -58,7 +58,7 @@ fabricname:
                 pluggable: string, cable list {...}
                 speed: string, set of {1x40G(N), 1x100G(N), 1x100G(N), 1x200G(N), 1x400G} where N is {2,4} cannot be set for port in breakout mode
                 enabled: boolean
-                linkDown: boolean, enabled must be true + role must be {UNUSED_PORT, ROUTED_PORT, HOST_PORT}
+                linkDown: boolean, role must be {UNUSED_PORT, ROUTED_PORT, HOST_PORT}
                 labels: string[]
                 roles: enum = ["UNUSED_PORT", "FABRIC_PORT", "HOST_PORT", "ROUTED_PORT", "LAG_PORT"], default ["UNUSED PORT]
                     if ROUTED_PORT:
