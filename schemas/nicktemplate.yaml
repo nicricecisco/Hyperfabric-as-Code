@@ -64,21 +64,62 @@ fabric:
             annotations:
               xyz
             
-          vni:
-            - name*: xyz
-              description: xyz
-              vni: xyz
-              mtu: xyz
-              svis:
-                - enabled: xyz
-                  ipv4Addresses:
-                      xyz
-                  ipv6Addresses:
-                      xyz
-            - members:
-                - vlanId: xyz
-                  untagged: xyz #WIP PAST (currently at multiple nodeNames / portNames -- check on cloudcontroller)
-                  nodeName
+    vni:
+      - name*: xyz
+        description: xyz
+        vni: xyz
+        mtu: xyz
+        svis:
+          - enabled: xyz
+            ipv4Addresses:
+              xyz
+            ipv6Addresses:
+                xyz
+      - members:
+          - untagged: xyz
+            --vlanId: xyz
+            port:
+              nodeName*: xyz
+              portName*: xyz
+
+    vrf:
+      - name*: xyz
+        description: xyz
+        enabled: true
+        asn: xyz
+        vni: xyz
+        labels: 
+          xyz
+        annotations:
+          xyz
+        staticroute:
+          - name*: xyz
+            description: xyz
+            enabled: xyz
+            labels: 
+              xyz
+            annotations:
+              xyz
+            routes:
+              - nodeId: xyz
+                interface: xyz
+                preference: xyz
+                prefix: xyz
+                nextHop: xyz
+                nextVrf: xyz
+                tag: xyz
+                discard: xyz
+    connection:
+      - description: xyz
+        osType: xyz
+        pluggable: xyz
+        local:
+          portName*: xyz
+          nodeName*: xyz
+        remote:
+          portName*: xyz  
+          nodeName*: xyz
+
 
             
               
