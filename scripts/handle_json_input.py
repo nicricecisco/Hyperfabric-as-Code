@@ -154,20 +154,6 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
                     print("Static route result:")
                     pprint(result_static_route)
 
-# if "managementPorts" in node_other:
-#                 node_mgmt_ports = {"managementPorts": node_other["managementPorts"]}
-#                 for mgmt_port in node_mgmt_ports["managementPorts"]:
-#                     # Pure/Other is not required, but maybe it would be a good idea to include once we get the schema anyways
-#                     pprint(mgmt_port)
-#                     mgmt_port_data_obj = {
-#                         "fabric_id": FABRIC_ID,
-#                         "node_id": node_pure["name"],
-#                         "mgmt_port": mgmt_port
-#                     }
-#                     result_mgmt_port = handle_get(get_management_port, add_management_ports, update_management_port, mgmt_port_data_obj)
-#                     print("Management port result: ")
-#                     pprint(result_mgmt_port)
-
 def handle_json_input(json_input):
     FABRIC_ID = None
     # Validate schema first

@@ -146,7 +146,7 @@ def delete_fabric(auth, fabricId):
 
 
 # /fabrics/{fabricId}/nodes/{nodeId}
-def get_fabric_node(fabric_data_obj):
+def get_fabric_node(node_data_obj):
     """
     Retrieves a specific node by ID or name.
 
@@ -159,12 +159,13 @@ def get_fabric_node(fabric_data_obj):
     Returns:
         dict: JSON response, or None on error.
     """
-    fabricId = fabric_data_obj["fabric_id"]
-    nodeId = fabric_data_obj["node"]["name"]
-    response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}")
+    params = {key: node_data_obj["node"][key] for key in ["candidate", "includeMetadata"] if key in node_data_obj["node"]}
+    fabricId = node_data_obj["fabric_id"]
+    nodeId = node_data_obj["node"]["name"]
+    response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}", params=params)
     return response
 
-def add_fabric_nodes(fabric_data_obj):
+def add_fabric_nodes(node_data_obj):
     """
     Adds one or more nodes to a fabric.
 
@@ -199,12 +200,12 @@ def add_fabric_nodes(fabric_data_obj):
     Returns:
         dict: JSON response, or None on error.
     """
-    fabric_name = fabric_data_obj["fabric_id"]
-    payload = {"nodes": [fabric_data_obj["node"]]}
+    fabric_name = node_data_obj["fabric_id"]
+    payload = {"nodes": [node_data_obj["node"]]}
     response = _make_post_request(headers, f"{BASE_URL}/fabrics/{fabric_name}/nodes", payload=payload)
     return response
 
-def update_fabric_node(fabric_data_obj):
+def update_fabric_node(node_data_obj):
     """
     Updates a specific node.
 
@@ -216,9 +217,9 @@ def update_fabric_node(fabric_data_obj):
     Returns:
         dict: JSON response, or None on error.
     """
-    fabricId = fabric_data_obj["fabric_id"]
-    nodeId = fabric_data_obj["node"]["name"]
-    payload = fabric_data_obj["node"]
+    fabricId = node_data_obj["fabric_id"]
+    nodeId = node_data_obj["node"]["name"]
+    payload = node_data_obj["node"]
     response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}", payload=payload)
     return response
 
@@ -406,8 +407,9 @@ def get_fabric_connections(connection_data_obj):
     Returns:
         dict: JSON response, or None on error.
     """
+    params = {key: connection_data_obj["connection"][key] for key in ["candidate"] if key in connection_data_obj["connection"]}
     fabricId = connection_data_obj["fabric_id"]
-    response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/connections")
+    response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/connections", params=params)
     return response
 
 # /fabrics/{fabricId}/connections/{connectionId}
