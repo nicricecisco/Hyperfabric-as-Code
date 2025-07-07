@@ -407,7 +407,7 @@ def get_fabric_connections(connection_data_obj):
     Returns:
         dict: JSON response, or None on error.
     """
-    params = {key: connection_data_obj["connection"][key] for key in ["candidate"] if key in connection_data_obj["connection"]}
+    params = {key: connection_data_obj["connection"][key] for key in ["candidate"] if "connection" in connection_data_obj and key in connection_data_obj["connection"]}
     fabricId = connection_data_obj["fabric_id"]
     response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/connections", params=params)
     return response
