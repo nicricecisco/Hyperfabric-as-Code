@@ -1,0 +1,131 @@
+fabric:
+  - name*: string min length 3, max length 120 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+    description: string
+    location: string
+    address: string
+    city: string
+    country: string 
+    topology: enum = ["MESH", "SPINE_LEAF"], default = "MESH"
+    labels:
+        string[]
+    annotations:
+        string[]
+  
+    nodes:
+      - name*: string, min length 3, max length 120 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+        description: string
+        location: string
+        modelName*: enum = ["HF6100-32D", "HF6100-60L4D"]
+        roles*: enum = ["LEAF", "SPINE", "SERVER"] 
+        serialNumber: string, min length 3, max length 30 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+        psuAirflows:
+          - airflow: enum = ["AIRFLOW_TYPE_PORT_SIDE_INTAKE", "AIRFLOW_TYPE_PORT_SIDE_EXHAUST"] default = "AIRFLOW_TYPE_PORT_SIDE_INTAKE"
+          - psuModel: string
+        labels: 
+          string[]
+
+        managementPorts:
+          - name: string, min 3, max 120 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+            description: string          
+            configOrigin: enum = ["CONFIG_ORIGIN_CLOUD", "CONFIG_ORIGIN_DEVICE"] default = "CONFIG_ORIGIN_CLOUD"
+            connectedState: enum = ["CONNECTED_STATE_NOT_CONNECTED", "CONNECTED_STATE_CONNECTED"] default = "CONNECTED_STATE_NOT_CONNECTED"
+            ipv4ConfigType: enum = ["CONFIG_TYPE_STATIC", "CONFIG_TYPE_DHCP"] default = "CONFIG_TYPE_STATIC"
+            -IF ipv4ConfigType == "CONFIG_TYPE_STATIC":
+            --ipv4Address: string, valid IPv4 address
+            --ipv4Gateway: string, valid IPv4 address
+            ipv6ConfigType: enum = ["CONFIG_TYPE_STATIC", "CONFIG_TYPE_DHCP"] default = "CONFIG_TYPE_STATIC"
+            -IF ipv6ConfigType == "CONFIG_TYPE_STATIC":
+            --ipv6Address: string, valid IPv6 address
+            --ipv6Gateway: string, valid IPv6 address
+            DNS addresses: 
+              string[], valid IPv4 or IPv6 addresses
+            proxyAddress: string, URL
+            proxyPassword: string
+            proxyPassword: string
+            proxyUsername: string
+            enabled: boolean
+            setProxyPassword: boolean
+            cloudUrls:
+              string[] URL
+            noProxy:
+              string[]
+
+        ports:
+          - name*: string, must match pattern "Ethernet1_[N]" in which N is between 1-64
+            description: string
+            mtu: integer, range 1500-9100 default 9100
+            fec: string, set of {rs, none} must be "none" for 100G DR/FR/LR pluggable optics
+            pluggable: string, cable list {...}
+            speed: string, set of {1x40G(4), 1x100G(2), 1x100G(4), 1x200G(4), 1x400G} or set of {1x10G(1), 1x25G(1), 1x50G(1)}
+            enabled: boolean
+            roles: enum = ["UNUSED_PORT", "FABRIC_PORT", "HOST_PORT", "ROUTED_PORT", "LAG_PORT"] default ["UNUSED PORT]
+            -IF roles != "FABRIC_PORT" OR "LAG_PORT":
+            --linkDown: boolean
+            -IF roles = "ROUTED_PORT":
+            --vrfId*: string, must match pattern "Default VRF" or "VRF[A-Za-z0-9]{1,100}"
+            --ipv4Address**: string, IP must exist if no ipv6
+            --ipv6Address**: string, IP must exist if no ipv4"
+            annotations:
+              string[]
+    
+    connections:
+      - description: string
+        osType: enum = ["HYPER_FABRIC", "NEXUS", "IOS_XE", "IOS_XR", "LINUX", ...] default = "HYPER_FABRIC"
+        pluggable: string, cable list {...}
+        local:
+          portName*: string, predefined immutable Ethernet1_[N] where N is range 1-32 / 1-64
+          nodeName*: string, set of nodes in fabric, pattern
+        remote:
+          portName*: string, predefined immutable Ethernet1_[N] where N is range 1-32 / 1-64  
+          nodeName*: string, set of nodes in fabric must not match local node
+        
+    vnis:
+      - name*: string min length 3, max length 120 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+        description: string
+        vni: integer, range 2-6000000
+        mtu: integer, range 1500-9100 default 9100
+        svis:
+          - enabled: boolean
+            ipv4Addresses:
+              string[], IP
+            ipv6Addresses:
+              string[], IP
+      - members:
+          - untagged: boolean
+            -IF untagged == false:
+            --vlanId: integer, range 2-3600
+            port:
+              nodeName*: string, set of node names in fabric
+              portName*: string, predefined immutable Ethernet1_[N] where N is range 1-32 / 1-64
+
+    vrfs:
+      - name*: string min length 3, max length 120 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+        description: string
+        enabled: true
+        asn: integer, range 1-4294967294, not 23456 or 65535
+        vni: integer, range 2-6000000
+        labels: 
+          string[]
+        annotations:
+          string[]
+        staticroute:
+          - name*: string min length 3, max length 120 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+            description: string
+            enabled: boolean
+            labels: 
+              string[]
+            annotations:
+              string[]
+            routes:
+              - nodeId*: string, node must exist in fabric
+                interface: string
+                preference: integer, range 1-255
+                prefix: string, IP CIDR notation
+                nextHop*: string, valid IPv4 or IPv6 address
+                nextVrf*: string, must match pattern "Default VRF" or "VRF[A-Za-z0-9]{1,100}"
+                tag*: enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", ...] default = "TAG_AMBER"
+                discard: boolean
+
+
+            
+              

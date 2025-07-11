@@ -1,0 +1,20 @@
+fabric:
+  - name: yamltest1  # required, string
+    topology: "MESH"  # enum: [MESH, SPINE_LEAF], default = MESH
+    labels: [
+      label1,
+      label2
+    ]  # string list, write using dash with new line for each item
+    annotations: []  # string list
+
+    nodes:
+      - name: nodeOne  # required, string
+        description: dasd
+        location: ""
+        modelName: "HF6100-32D"  # required, enum: [HF6100-32D, HF6100-60L4D]
+        roles: ["LEAF"]  # required, enum: [LEAF, SPINE, SERVER]
+        serialNumber: ""
+        psuAirflows:
+          - airflow: "AIRFLOW_TYPE_PORT_SIDE_INTAKE"  # enum: [AIRFLOW_TYPE_PORT_SIDE_INTAKE, AIRFLOW_TYPE_PORT_SIDE_EXHAUST]
+            psuModel: ""
+        labels: [] 

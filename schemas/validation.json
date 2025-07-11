@@ -1,0 +1,403 @@
+{
+  "type": "object",
+  "properties": {
+    "fabric": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string", "minLength": 3, "maxLength": 120, "pattern": "^(?!(?:\\d+)$)[A-Za-z0-9](?:[A-Za-z0-9@/_\\- ]*[A-Za-z0-9])?$"},
+          "description": { "type": "string" },
+          "location": { "type": "string" },
+          "address": { "type": "string" },
+          "city": { "type": "string" },
+          "country": { "type": "string" },
+          "topology": {
+            "type": "string",
+            "enum": ["MESH", "SPINE_LEAF"],
+            "default": "MESH"
+          },
+          "labels": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "annotations": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "modelName", "roles"],
+              "properties": {
+                "name": { "type": "string", "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"},
+                "description": { "type": "string" },
+                "location": { "type": "string" },
+                "modelName": {
+                  "type": "string",
+                  "enum": ["HF6100-32D", "HF6100-60L4D"]
+                },
+                "roles": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["LEAF", "SPINE", "SERVER"]
+                        }
+                      }
+                    }
+                  }
+                },
+                "serialNumber": { "type": "string", "minLength": 3, "maxLength": 30, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"},
+                "psuAirflows": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "airflow": {
+                        "type": "string",
+                        "enum": ["AIRFLOW_TYPE_PORT_SIDE_INTAKE", "AIRFLOW_TYPE_PORT_SIDE_EXHAUST"],
+                        "default": "AIRFLOW_TYPE_PORT_SIDE_INTAKE"
+                      },
+                      "psuModel": { "type": "string" }
+                    }
+                  }
+                },
+                "labels": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "managementPorts": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": ["name"],
+                        "properties": {
+                            "name": { "type": "string" },
+                            "description": { "type": "string" },
+                            "configOrigin": {
+                                "type": "string",
+                                "enum": ["CONFIG_ORIGIN_CLOUD", "CONFIG_ORIGIN_DEVICE"],
+                                "default": "CONFIG_ORIGIN_CLOUD"
+                            },
+                            "connectedState": {
+                                "type": "string",
+                                "enum": ["CONNECTED_STATE_NOT_CONNECTED", "CONNECTED_STATE_CONNECTED"],
+                                "default": "CONNECTED_STATE_NOT_CONNECTED"
+                            },
+                            "ipv4ConfigType": {
+                                "type": "string",
+                                "enum": ["CONFIG_TYPE_STATIC", "CONFIG_TYPE_DHCP"],
+                                "default": "CONFIG_TYPE_STATIC"
+                            },
+                            "ipv4Address": { "type": "string", "format": "ipv4" },
+                            "ipv4Gateway": { "type": "string", "format": "ipv4" },
+                            "ipv6ConfigType": {
+                                "type": "string",
+                                "enum": ["CONFIG_TYPE_STATIC", "CONFIG_TYPE_DHCP"],
+                                "default": "CONFIG_TYPE_STATIC"
+                            },
+                            "ipv6Address": { "type": "string", "format": "ipv6" },
+                            "ipv6Gateway": {
+                                "type": "string", "format": "ipv6" },
+                            "DNS_addresses": {
+                                "type": "array",
+                                "items": { "type": "string", "format": "ipv4" }
+                            },
+                            "proxyAddress": { "type": "string", "format": "uri" },
+                            "proxyPassword": { "type": "string" },
+                            "proxyUsername": { "type": "string" },
+                            "enabled": { "type": "boolean" },
+                            "setProxyPassword": { "type": "boolean" },
+                            "cloudUrls": {
+                                "type": "array",
+                                "items": { "type": "string", "format": "uri" }
+                            },
+                            "noProxy": {
+                                "type": "array",
+                                "items": { "type": "string" }
+                            }
+                        },
+                        "allOf": [
+                            {
+                                "if": {
+                                    "properties": {
+                                    "ipv4ConfigType": { "const": "CONFIG_TYPE_STATIC" }
+                                    }
+                                },
+                                "then": {
+                                    "required": ["ipv4Address", "ipv4Gateway"]
+                                }
+                            },
+                            {
+                                "if": {
+                                    "properties": {
+                                    "ipv6ConfigType": { "const": "CONFIG_TYPE_STATIC" }
+                                    }
+                                },
+                                "then": {
+                                    "required": ["ipv6Address", "ipv6Gateway"]
+                                }
+                            }
+                        ]
+                    }
+                },
+                "ports": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["name"],
+                    "properties": {
+                      "name": { "type": "string", "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$"},
+                      "description": { "type": "string" },
+                      "mtu": { "type": "integer", "minimum": 1500, "maximum": 9100 },
+                      "fec": { "type": "string", "enum": ["rs", "none"] },
+                      "pluggable": { "type": "string" },
+                      "speed": { "type": "string", "pattern": "^(1x40G\\(4\\)|1x100G\\(2\\)|1x100G\\(4\\)|1x200G\\(4\\)|1x400G|1x10G\\(1\\)|1x25G\\(1\\)|1x50G\\(1\\))$" },
+                      "enabled": { "type": "boolean" },
+                      "roles": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": ["UNUSED_PORT", "FABRIC_PORT", "HOST_PORT", "ROUTED_PORT", "LAG_PORT"]
+                        }
+                      },
+                      "linkDown": { "type": "boolean" },
+                      "vrfId": { "type": "string", "pattern": "^(Default VRF|VRF[A-Za-z0-9]{1,100})$" },
+                      "ipv4Address": { "type": "string", "format": "ipv4" },
+                      "ipv6Address": { "type": "string", "format": "ipv6" },
+                      "annotations": {
+                        "type": "array",
+                        "items": { "type": "string" }
+                      }
+                    },
+                    "allOf": [
+                      {
+                        "if": {
+                          "properties": {
+                            "roles": {
+                              "contains": { "const": "ROUTED_PORT" }
+                            }
+                          }
+                        },
+                        "then": {
+                          "required": ["vrfId"],
+                          "anyOf": [
+                            { "required": ["ipv4Address"] },
+                            { "required": ["ipv6Address"] }
+                          ]
+                        }
+                      },
+                      {
+                        "if": {
+                          "properties": {
+                            "roles": {
+                              "contains": {
+                                "enum": ["UNUSED_PORT", "ROUTED_PORT", "HOST_PORT"]
+                              }
+                            }
+                          }
+                        },
+                        "then": {
+                          "properties": {
+                            "linkDown": { "type": "boolean" }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+          "connections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": { "type": "string" },
+                "osType": {
+                  "type": "string",
+                  "enum": ["HYPER_FABRIC", "NEXUS", "IOS_XE", "IOS_XR", "LINUX"],
+                  "default": "HYPER_FABRIC"
+                },
+                "pluggable": { "type": "string" },
+                "local": {
+                  "type": "object",
+                  "required": ["portName", "nodeName"],
+                  "properties": {
+                    "portName": { "type": "string", "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$"},
+                    "nodeName": { "type": "string", "minLength":3, "maxLength":120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" }
+                  }
+                },
+                "remote": {
+                  "type": "object",
+                  "required": ["portName", "nodeName"],
+                  "properties": {
+                    "portName": { "type": "string", "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$"},
+                    "nodeName": { "type": "string", "minLength":3, "maxLength":120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" }
+                  }
+                }
+              }
+            }
+          },
+          "vnis": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name"],
+              "properties": {
+                "name": { "type": "string", "minLength":3, "maxLength":120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" },
+                "description": { "type": "string" },
+                "vni": { "type": "integer", "minimum": 2, "maximum": 6000000 },
+                "mtu": { "type": "integer", "minimum": 1500, "maximum": 9100 },
+                "svis": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "enabled": { "type": "boolean" },
+                      "ipv4Addresses": {
+                        "type": "array",
+                        "items": { "type": "string", "format": "ipv4"}
+                      },
+                      "ipv6Addresses": {
+                        "type": "array",
+                        "items": { "type": "string", "format": "ipv6" }
+                      }
+                    }
+                  }
+                },
+                "members": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "untagged": { "type": "boolean" },
+                      "vlanId": { "type": "integer", "minimum": 2, "maximum": 3600 },
+                      "port": {
+                        "type": "object",
+                        "required": ["nodeName", "portName"],
+                        "properties": {
+                          "nodeName": { "type": "string", "minLength":3, "maxLength":120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" },
+                          "portName": { "type": "string", "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "vrfs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name"],
+              "properties": {
+                "name": { "type": "string", "minLength": 3, "maxLength": 120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" },
+                "description": { "type": "string" },
+                "enabled": { "type": "boolean" },
+                "asn": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 4294967294,
+                  "not": { "enum": [23456, 65535] },
+                },
+                "vni": { "type": "integer", "minimum": 2, "maximum": 6000000 },
+                "labels": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "annotations": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "staticroute": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["name"],
+                    "properties": {
+                      "name": { "type": "string", "minLength": 3, "maxLength": 120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" },
+                      "description": { "type": "string" },
+                      "enabled": { "type": "boolean" },
+                      "labels": {
+                        "type": "array",
+                        "items": { "type": "string" }
+                      },
+                      "annotations": {
+                        "type": "array",
+                        "items": { "type": "string" }
+                      },
+                      "routes": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": ["nodeId", "nextVrf", "discard"],
+                          "properties": {
+                            "nodeId": { "type": "string" },
+                            "interface": { "type": "string" },
+                            "preference": { "type": "integer", "minimum": 1, "maximum": 255 },
+                            "prefix": { "anyOf": [
+                                { "type": "string", "format": "ipv4" },
+                                { "type": "string", "format": "ipv6" }
+                              ]},
+                            "nextHop": {
+                              "anyOf": [
+                                { "type": "string", "format": "ipv4" },
+                                { "type": "string", "format": "ipv6" }
+                              ]
+                            },
+                            "nextVrf": { "type": "string", "pattern": "^(Default VRF|VRF[A-Za-z0-9]{1,100})$" },
+                            "tag": {
+                              "type": "string",
+                              "enum": ["TAG_AMBER", "TAG_BLUE", "TAG_GREEN", "TAG_RED", "TAG_PURPLE", "TAG_YELLOW"]
+                            },
+                            "discard": { "type": "boolean" }
+                          },
+                          "allOf": [
+                            {
+                              "if": {
+                                "properties": {
+                                  "discard": { "const": true }
+                                }
+                              },
+                              "then": {
+                                "not": {
+                                  "required": ["nextHop"]
+                                },
+                                "properties": {
+                                  "tag": { "const": "TAG_BLACK" }
+                                }
+                              }
+                            },
+                            {
+                              "if": {
+                                "properties": {
+                                  "discard": { "const": false }
+                                }
+                              },
+                              "then": {
+                                "required": ["nextHop"],
+                                "properties": {
+                                  "tag": {
+                                    "type": "string",
+                                    "enum": ["TAG_AMBER", "TAG_BLUE", "TAG_GREEN", "TAG_RED", "TAG_PURPLE", "TAG_YELLOW"]  // excludes TAG_BLACK
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
