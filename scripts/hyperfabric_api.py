@@ -13,45 +13,21 @@ headers = {
 
 def _make_get_request(headers, url, params=None):
     return requests.get(url, headers=headers, params=params)
-
-def _make_delete_request(headers, url):
-    try:
-        response = requests.delete(url, headers=headers)
-        response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
-
-        try:
-            return response.json()
-        except json.JSONDecodeError:
-            return response.status_code  # success, but text instead of json.
-
-    except requests.exceptions.HTTPError as e:
-        try:
-            error_message = response.json()
-        except json.JSONDecodeError:
-            error_message = response.text
-
-        print(f"HTTP Error making DELETE request to {url}: {e}.  Status code: {response.status_code}.  Response content: {error_message}")
-        return None
-    except requests.exceptions.RequestException as e:
-        print(f"Request failed for DELETE to {url}: {e}")
-        return None
-    except Exception as e:
-        print(f"An unexpected error occurred during DELETE request to {url}: {e}")
-        return None
-
+        
 def _make_put_request(headers, url, payload=None):
     return requests.put(url, headers=headers, json=payload)
     
 def _make_post_request(headers, url, payload=None):
     return requests.post(url, headers=headers, json=payload)
+
+def _make_delete_request(headers, url):
+    return requests.delete(url, headers=headers)
+
+
+# ------------------------------ FABRICS ------------------------------
+
     
 # /fabrics
-def get_fabrics():
-    url = f"{BASE_URL}/fabrics"
-    response = _make_get_request(headers, url)
-
-    return response
-
 def create_fabric(fabric_data):
     """
     Creates a new fabric.
@@ -74,10 +50,6 @@ def create_fabric(fabric_data):
     response = _make_post_request(headers, url, payload=payload)
 
     return response
-
-
-# ------------------------------ FABRICS ------------------------------
-
 
 # /fabrics/{fabricId}
 def get_fabric(fabric_data):
@@ -130,7 +102,7 @@ def update_fabric(fabric_data):
     response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}", payload=fabric_data)
     return response
 
-def delete_fabric(auth, fabricId):
+def delete_fabric(fabric_data):
     """
     Deletes a specific fabric.
     Args:
@@ -138,7 +110,8 @@ def delete_fabric(auth, fabricId):
     Returns:
         int: HTTP status code, or None on error.
     """
-    response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}")
+    fabricId = fabric_data["name"]
+    response = _make_delete_request(headers, f"{BASE_URL}/fabrics/{fabricId}")
     return response
 
 
@@ -219,11 +192,12 @@ def update_fabric_node(node_data_obj):
     """
     fabricId = node_data_obj["fabric_id"]
     nodeId = node_data_obj["node"]["name"]
+    node_data_obj["node"]["enabled"] = True # Enabled must be an attribute and it must be set to true
     payload = node_data_obj["node"]
     response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}", payload=payload)
     return response
 
-def delete_fabric_node(auth, fabricId, nodeId):
+def delete_fabric_node(node_data_obj):
     """
     Deletes a specific node.
 
@@ -234,12 +208,32 @@ def delete_fabric_node(auth, fabricId, nodeId):
     Returns:
         int: HTTP status code, or None on error.
     """
-    response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}")
+    fabricId = node_data_obj["fabric_id"]
+    nodeId = node_data_obj["node"]["name"]
+    response = _make_delete_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}")
     return response
 
 
 # ------------------------------ MANAGEMENT PORTS ------------------------------
 
+
+# /fabrics/{fabricId}/nodes/{nodeId}/managementPorts
+def get_management_ports(mgmt_port_data_obj):
+    """
+    Retrieves a list of management ports for a specific node.
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        nodeId (str): The ID or name of the node.
+        candidate (str, optional): The candidate configuration name. Defaults to None.
+        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+    Returns:
+        dict: JSON response containing the list of management ports, or None on error.
+    """
+    params = {key: mgmt_port_data_obj["mgmt_port"][key] for key in ["candidate", "includeMetadata"] if "mgmt_port" in mgmt_port_data_obj and key in mgmt_port_data_obj["mgmt_port"]}
+    fabricId = mgmt_port_data_obj["fabric_id"]
+    nodeId = mgmt_port_data_obj["node_id"]
+    response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts", params=params)
+    return response
 
 # /fabrics/{fabricId}/nodes/{nodeId}/managementPorts/{id}
 def get_management_port(mgmt_port_data_obj):
@@ -256,7 +250,14 @@ def get_management_port(mgmt_port_data_obj):
     """
     fabricId = mgmt_port_data_obj["fabric_id"]
     nodeId = mgmt_port_data_obj["node_id"]
-    id = mgmt_port_data_obj["mgmt_port"]["name"]
+    if "id" in mgmt_port_data_obj:
+      id = mgmt_port_data_obj["id"]
+    else:
+      if "name" not in mgmt_port_data_obj["mgmt_port"]:
+        id = "eth0"
+      else:
+        id = mgmt_port_data_obj["mgmt_port"]["name"]
+    print(id)
     response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts/{id}")
     return response
 
@@ -310,6 +311,8 @@ def add_management_ports(mgmt_port_data_obj):
     """
     fabricId = mgmt_port_data_obj["fabric_id"]
     nodeId = mgmt_port_data_obj["node_id"]
+    if "name" not in mgmt_port_data_obj["mgmt_port"]:
+        mgmt_port_data_obj["mgmt_port"]["name"] = "eth0"
     payload = {"ports": [mgmt_port_data_obj["mgmt_port"]]}
     response =_make_post_request(headers,
             f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts",payload=payload)
@@ -329,8 +332,28 @@ def update_management_port(mgmt_port_data_obj):
     """
     fabricId = mgmt_port_data_obj["fabric_id"]
     nodeId = mgmt_port_data_obj["node_id"]
-    id = mgmt_port_data_obj["mgmt_port"]["name"]
+    if "id" in mgmt_port_data_obj:
+      id = mgmt_port_data_obj["id"]
+    else:
+      id = mgmt_port_data_obj["mgmt_port"]["name"]
     payload = mgmt_port_data_obj["mgmt_port"]
+    response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts/{id}", payload=payload)
+    return response
+
+def delete_management_port(mgmt_port_data_obj):
+    """
+    Updates management port with default values (cannot explicitly delete a management port)
+
+    Args:
+        mgmt_port_data_obj (dict): Data object containing necessary information to make the call
+      
+    Returns:
+        dict: JSON response
+    """
+    fabricId = mgmt_port_data_obj["fabric_id"]
+    nodeId = mgmt_port_data_obj["node_id"]
+    id = mgmt_port_data_obj["mgmt_port"]["name"]
+    payload = {}
     response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts/{id}", payload=payload)
     return response
 
@@ -378,17 +401,6 @@ def update_port(port_data_obj):
     portId = port_data_obj["port"]["name"]
     payload = port_data_obj["port"]
     response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/ports/{portId}", payload=payload)
-    return response
-
-def reset_port(auth, fabricId, nodeId, portId):
-    """Resets a specific port
-
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
-        portId (str): The ID of the port.
-    """
-    response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/ports/{portId}")
     return response
 
 
@@ -471,29 +483,16 @@ def add_fabric_connections(connection_data_obj):
     response = _make_post_request(headers, f"{BASE_URL}/fabrics/{fabricId}/connections", payload=payload)
     return response
 
-def set_fabric_connections(auth, fabricId, connections):
-    """
-    Replaces all connections in a fabric with a new set of connections.
-
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        connections (list): A list of connections to set.
-
-    Returns:
-        dict: JSON response, or None on error.
-    """
-    payload = {"connections": connections}
-    response = _make_put_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections", payload=payload)
-    return response
-
-def delete_fabric_connection(auth, fabricId, connectionId):
+def delete_fabric_connection(connection_data_obj):
   """
     Delete a specific connection.
     Args:
         fabricId (str): The ID or name of the fabric.
         connectionId (str): The ID of the connection.
     """
-  response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections/{connectionId}")
+  fabricId = connection_data_obj["fabric_id"]
+  connectionId = connection_data_obj["id"]
+  response = _make_delete_request(headers, f"{BASE_URL}/fabrics/{fabricId}/connections/{connectionId}")
   return response
 
 
@@ -579,7 +578,7 @@ def update_fabric_vni(vni_data_obj):
     response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}/vnis/{vniId}", payload=payload)
     return response
 
-def delete_fabric_vni(auth, fabricId, vniId):
+def delete_fabric_vni(vni_data_obj):
    """
     Deletes a VNI given its ID
 
@@ -587,7 +586,9 @@ def delete_fabric_vni(auth, fabricId, vniId):
         fabricId (str): The ID or name of the fabric.
         vniId (str, optional): The name for the device you are listing deleting a VNI device
    """
-   response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/vnis/{vniId}")
+   fabricId = vni_data_obj["fabric_id"]
+   vniId = vni_data_obj["id"]
+   response = _make_delete_request(headers, f"{BASE_URL}/fabrics/{fabricId}/vnis/{vniId}")
    return response
 
 
@@ -676,20 +677,25 @@ def update_fabric_vrf(vrf_data_obj):
             }
             ```
     """
+    return get_fabric_vrf(vrf_data_obj) # Needs to return a response with 200 status code, and you (should) only get here if the GET was successful
+
+    # PUT FUNCTION NOT CURRENTLY SUPPORTED, but here's the code anyways :)
     fabricId = vrf_data_obj["fabric_id"]
     vrfId = vrf_data_obj["vrf"]["name"]
     payload = vrf_data_obj["vrf"]
     response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}/vrfs/{vrfId}", payload=payload)
     return response
 
-def delete_fabric_vrf(auth, fabricId, vrfId):
+def delete_fabric_vrf(vrf_data_obj):
     """
        Deletes a specific Vrf object.
        Args:
           fabricId (str): The ID or name of the fabric.
           vrfId (str): A list of user-defined labels that can be used for grouping and filtering VRFs.
     """
-    response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/vrfs/{vrfId}")
+    fabricId = vrf_data_obj["fabric_id"]
+    vrfId = vrf_data_obj["vrf"]["name"]
+    response = _make_delete_request(headers, f"{BASE_URL}/fabrics/{fabricId}/vrfs/{vrfId}")
     return response
 
 
@@ -775,7 +781,7 @@ def update_fabric_static_route(static_route_data_obj):
     response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}/vrfs/{vrfId}/staticRoutes/{routeId}", payload=payload)
     return response
 
-def delete_fabric_static_route(auth, fabricId, vrfId, routeId):
+def delete_fabric_static_route(static_route_data_obj):
    """
     Deletes a static route for a vrf ID in a fabric
 
@@ -784,7 +790,10 @@ def delete_fabric_static_route(auth, fabricId, vrfId, routeId):
          vrfId (str): A list of user-defined labels that can be used for grouping and filtering VRFs.
          routeId (str, optional): The name for the device you are listing information for. Defaults to None
    """
-   response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/vrfs/{vrfId}/staticRoutes/{routeId}")
+   fabricId = static_route_data_obj["fabric_id"]
+   vrfId = static_route_data_obj["vrf_id"]
+   routeId = static_route_data_obj["static_route"]["name"]
+   response = _make_delete_request(headers, f"{BASE_URL}/fabrics/{fabricId}/vrfs/{vrfId}/staticRoutes/{routeId}")
    return response
 
 # ------------------------------ FROM HYPERFABRIC_SDK ------------------------------
@@ -1031,26 +1040,26 @@ def unbind_device(auth, fabricId, nodeId):
     response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/devices")
     return response
 
-# /fabrics/{fabricId}/nodes/{nodeId}/managementPorts
-def get_management_ports(auth, fabricId, nodeId, candidate=None, includeMetadata=None):
-    """
-    Retrieves a list of management ports for a specific node.
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
-        candidate (str, optional): The candidate configuration name. Defaults to None.
-        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
-    Returns:
-        dict: JSON response containing the list of management ports, or None on error.
-    """
-    params = {}
-    if candidate:
-        params["candidate"] = candidate
-    if includeMetadata:
-        params["includeMetadata"] = includeMetadata
+# # /fabrics/{fabricId}/nodes/{nodeId}/managementPorts
+# def get_management_ports(auth, fabricId, nodeId, candidate=None, includeMetadata=None):
+#     """
+#     Retrieves a list of management ports for a specific node.
+#     Args:
+#         fabricId (str): The ID or name of the fabric.
+#         nodeId (str): The ID or name of the node.
+#         candidate (str, optional): The candidate configuration name. Defaults to None.
+#         includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+#     Returns:
+#         dict: JSON response containing the list of management ports, or None on error.
+#     """
+#     params = {}
+#     if candidate:
+#         params["candidate"] = candidate
+#     if includeMetadata:
+#         params["includeMetadata"] = includeMetadata
 
-    response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts", params=params)
-    return response
+#     response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts", params=params)
+#     return response
 
 # /fabrics/{fabricId}/nodes/{nodeId}/ports
 def get_ports(auth, fabricId, nodeId, candidate=None, includeMetadata=None):

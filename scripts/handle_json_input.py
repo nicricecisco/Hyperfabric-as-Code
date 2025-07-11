@@ -1,19 +1,10 @@
 from pprint import pprint
 from scripts.api_call_handler import handle_get
-from scripts.hyperfabric_api import get_fabric, create_fabric, update_fabric, \
-    get_fabric_node, add_fabric_nodes, update_fabric_node, \
-    get_management_port, add_management_ports, update_management_port, \
-    get_port, update_port, \
-    get_fabric_connections, get_fabric_connection, add_fabric_connections, set_fabric_connections, \
-    get_fabric_vni, add_fabric_vnis, update_fabric_vni, \
-    get_fabric_vrf, add_fabric_vrfs, update_fabric_vrf, \
-    get_fabric_static_route, add_fabric_static_routes, update_fabric_static_route
+from entities.registry import get_entity
+from scripts.hyperfabric_api import get_fabric_connections, get_management_ports
 
- # Pull this from an official schema?
-FABRIC_ATTRIBUTES = ["name", "address", "city", "country", "description", "location", "topology", "labels", "annotations"]
-NODE_ATTRIBUTES = ["name", "roles", "modelName", "location", "description", "serialNumber", "labels", "psuAirflows"]
-VNI_ATTRIBUTES = ["name", "description", "vni", "mtu", "labels", "enabled", "svis", "annotations"]
-VRF_ATTRIBUTES = ["name", "description", "enabled", "asn", "vni", "labels", "annotations"]
+class EntityProcessingError(Exception):
+    pass
 
 def _parse_attributes(obj, attributes):
     pure = {key: obj[key] for key in obj if key in attributes}
@@ -47,49 +38,74 @@ def _connection_exists(connections, target_connection):
 
     return None  # No match, no id
 
+def _process_entity(entity, data_object, key):
+    """
+    Submits entity to Hyperfabric Cloud Controller
+
+    Args:
+        entity (dict): An entity like a fabric, node, port, etc with its associated attributes
+        data_object (dict): The metadata and data necessary for sending it to Hyperfabric
+        entity_obj (dict): Contains the entity's associated attributes and functions
+        key (str): The name of the entity (like 'fabric' or 'node')
+
+    Returns:
+        entity_other (dict): Child attributes of entity that must be further processed or discarded
+    """
+    entity_obj = get_entity(key)
+    attributes, func_obj = entity_obj.get("attributes"), entity_obj.get("func_obj")
+    get_func, post_func, put_func, del_func = func_obj.get("get_func"), func_obj.get("post_func"), func_obj.get("put_func"), func_obj.get("del_func")
+    
+    entity_pure, entity_other = _parse_attributes(entity, attributes)
+    data_object[key] = entity_pure
+    pprint(entity_pure)
+    
+    """
+    Attempts GET → if not found, POST → if found, PUT.
+    Logs and prints final response object.
+    Takes functions for GET, POST, PUT, then function input
+    """
+    result = handle_get(get_func=get_func, post_func=post_func, put_func=put_func, delete_func=del_func, key=key, func_input=data_object)
+    print(result)
+    if (result is not None and result.status_code == 200):
+        print(f"{key} result: Success!")
+        return entity_other
+    else:
+        raise EntityProcessingError(f"Error processing a {key}. Erroneous entity: {entity}")
+
+# Try to separate parts into a generic function
 def _loop_through_attributes(fabric_other, FABRIC_ID):
     # Nodes
     if "nodes" in fabric_other:
         fabric_nodes = {"nodes": fabric_other["nodes"]}
         for node in fabric_nodes["nodes"]:
-            pprint(node)
-            node_pure, node_other = _parse_attributes(node, NODE_ATTRIBUTES)
             node_data_obj = {
-                "fabric_id": FABRIC_ID,
-                "node": node_pure
+                "fabric_id": FABRIC_ID
             }
-            result_node = handle_get(get_fabric_node, add_fabric_nodes, update_fabric_node, node_data_obj)
-            print("Node result:")
-            pprint(result_node)
+            node_other = _process_entity(node, node_data_obj, "node")
 
     # Management ports
             if "managementPorts" in node_other:
                 node_mgmt_ports = {"managementPorts": node_other["managementPorts"]}
+                mgmt_port_data_obj = {
+                    "fabric_id": FABRIC_ID,
+                    "node_id": node["name"]
+                }
+                existing_mgmt_port = handle_get(get_management_ports, None, None, None, mgmt_port_data_obj, "mgmt_port")
+                if existing_mgmt_port:
+                    mgmt_port_data_obj["id"] = existing_mgmt_port["ports"][0]["name"]
+                    print("MGMT PORT ID:", mgmt_port_data_obj["id"])
                 for mgmt_port in node_mgmt_ports["managementPorts"]:
-                    # Pure/Other is not required, but maybe it would be a good idea to include once we get the schema anyways
-                    pprint(mgmt_port)
-                    mgmt_port_data_obj = {
-                        "fabric_id": FABRIC_ID,
-                        "node_id": node_pure["name"],
-                        "mgmt_port": mgmt_port
-                    }
-                    result_mgmt_port = handle_get(get_management_port, add_management_ports, update_management_port, mgmt_port_data_obj)
-                    print("Management port result: ")
-                    pprint(result_mgmt_port)
+                    mgmt_other = _process_entity(mgmt_port, mgmt_port_data_obj, "mgmt_port")
 
     # Ports
             if "ports" in node_other:
                 node_ports = {"ports": node_other["ports"]}
                 for port in node_ports["ports"]:
-                    # Pure/Other is not required, but maybe it would be a good idea to include once we get the schema anyways
-                    pprint(port)
                     port_data_obj = {
                         "fabric_id": FABRIC_ID,
-                        "node_id": node_pure["name"],
-                        "port": port
+                        "node_id": node["name"]
                     }
-                    result_port = handle_get(get_port, None, update_port, port_data_obj)
-                    pprint(result_port)
+                    port_other = _process_entity(port, port_data_obj, "port")
     
     # Connections
     if "connections" in fabric_other:
@@ -97,62 +113,42 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
         connection_data_obj = {
             "fabric_id": FABRIC_ID,
         }
-        full_connections = handle_get(get_fabric_connections, None, None, connection_data_obj)
+        full_connections = handle_get(get_fabric_connections, None, None, None, connection_data_obj, "connection")
         current_connections = _extract_connection_info(full_connections)
         for connection in fabric_connections["connections"]:
-            # Pure/Other is not required, but maybe it would be a good idea to include once we get the schema anyways
             conn_id = _connection_exists(current_connections, connection) 
-            print(conn_id)
-            if (conn_id is None): # If connection exists, call POST
-                connection_data_obj["connection"] = connection
-                connection_data_obj["connection_id"] = conn_id
-                print(connection)
-                result_connection = handle_get(None, add_fabric_connections, None, connection_data_obj)
-                pprint(result_connection)
+            if (conn_id is None): # If connection does not exist, call POST 
+                connection_other = _process_entity(connection, connection_data_obj, "connection")
 
     # VNIs
     if "vnis" in fabric_other:
         fabric_vnis = {"vnis": fabric_other["vnis"]}
         for vni in fabric_vnis["vnis"]:
-            pprint(vni)
-            vni_pure, vni_other = _parse_attributes(vni, VNI_ATTRIBUTES)
             vni_data_obj = {
-                "fabric_id": FABRIC_ID,
-                "vni": vni_pure
+                "fabric_id": FABRIC_ID
             }
-            result_vni = handle_get(get_fabric_vni, add_fabric_vnis, update_fabric_vni, vni_data_obj)
-            print("VNI result:")
-            pprint(result_vni)
+            vni_other = _process_entity(vni, vni_data_obj, "vni")
             
             #Handle members?
     #VRFs
     if "vrfs" in fabric_other:
         fabric_vrfs = {"vrfs": fabric_other["vrfs"]}
         for vrf in fabric_vrfs["vrfs"]:
-            pprint(vrf)
-            vrf_pure, vrf_other = _parse_attributes(vrf, VRF_ATTRIBUTES)
             vrf_data_obj = {
-                "fabric_id": FABRIC_ID,
-                "vrf": vrf_pure
-            }            
-            result_vrf = handle_get(get_fabric_vrf, add_fabric_vrfs, update_fabric_vrf, vrf_data_obj)
-            print("VRF result:")
-            pprint(result_vrf)
+                "fabric_id": FABRIC_ID
+            }
+            vrf_other = _process_entity(vrf, vrf_data_obj, "vrf")
 
     # Static Routes
             if "staticRoutes" in vrf_other:
                 static_routes = {"staticRoutes": vrf_other["staticRoutes"]}
-                for route in static_routes["staticRoutes"]:
+                for static_route in static_routes["staticRoutes"]:
                     # Pure/Other is not required, but maybe it would be a good idea to include once we get the schema anyways
-                    pprint(route)
                     static_route_data_obj = {
                         "fabric_id": FABRIC_ID,
-                        "vrf_id": vrf_pure["name"],
-                        "static_route": route
+                        "vrf_id": vrf["name"],
                     }
-                    result_static_route = handle_get(get_fabric_static_route, add_fabric_static_routes, update_fabric_static_route, static_route_data_obj)
-                    print("Static route result:")
-                    pprint(result_static_route)
+                    static_route_other = _process_entity(static_route, static_route_data_obj, "static_route")
 
 def handle_json_input(json_input):
     FABRIC_ID = None
@@ -167,18 +163,22 @@ def handle_json_input(json_input):
         FABRIC_ID = json_input["fabrics"][0]["name"]
         print("FABRIC_ID: ", FABRIC_ID)
 
-    # Split fabric attributes
-    fabric_pure, fabric_other = _parse_attributes(json_input["fabrics"][0], FABRIC_ATTRIBUTES)
+    try:
+        entity_obj = get_entity("fabric")
+        fabric_attributes, func_obj = entity_obj.get("attributes"), entity_obj.get("func_obj")
+        get_fabric, create_fabric, update_fabric, delete_fabric = func_obj.get("get_func"), func_obj.get("post_func"), func_obj.get("put_func"), func_obj.get("del_func")
+        
+        fabric_pure, fabric_other = _parse_attributes(json_input["fabrics"][0], fabric_attributes)
 
-    """
-    Attempts GET → if not found, POST → if found, PUT.
-    Logs and prints final response object.
-    Takes functions for GET, POST, PUT, then function input
-    """
-    response = handle_get(get_fabric, create_fabric, update_fabric, fabric_pure)
-    pprint(response)
+        response = handle_get(get_func=get_fabric, post_func=create_fabric, put_func=update_fabric, delete_func=delete_fabric, func_input=fabric_pure, key="fabric", clear_action_stack=True)
 
-    # Handle sub-fabric attributes
-    _loop_through_attributes(fabric_other, FABRIC_ID)
-
-
+        if response.status_code == 200:
+            print("Fabric result: Success!")
+            # Handle sub-fabric attributes
+            _loop_through_attributes(fabric_other, FABRIC_ID)
+        else:
+            print("Fabric result: Failed")
+    except EntityProcessingError as e:
+        print("Execution stopped")
+        exit(1)
+    
