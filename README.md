@@ -14,6 +14,27 @@ export HYPERFABRIC_TOKEN={bearerToken}
 ## Creating a YAML File
 Create a YAML file detailing the specifications for your fabric. Checkout `user_submission_file.yaml` for a template on how to structure your YAML file. `validation_template.yaml` may also be helpful to look at the types and/or values required for specified fields.
 
+### Example
+```
+fabrics:
+  - name: example-fabric
+    description: My example fabric
+    location: CA-95134
+    address: 300 East Tasman Drive
+    city: Milpitas
+    country: US
+    labels:
+      - TAG_ONE
+      - TAG_TWO
+    topology: SPINE_LEAF
+    
+    nodes:
+      - name: Leaf01
+        description: Leaf Switch 01
+        modelName: HF6100-32D
+        roles: [LEAF]
+```
+
 ## Sending to Hyperfabric
 To upload your fabric specification to the Hyperfabric Cloud Controller, run the following command:
 
