@@ -1,9 +1,9 @@
 fabric:
   - name: ""  # required, string
-    description: ""
-    location: ""
-    address: ""
-    city: ""
+    description: "dsadsa"
+    location: "dsada"
+    address: "dsad"
+    city: "dqew"
     country: ""
     topology: "MESH"  # enum: [MESH, SPINE_LEAF], default = MESH
     labels: []  # string list, write using dash with new line for each item
@@ -19,7 +19,9 @@ fabric:
         psuAirflows:
           - airflow: "AIRFLOW_TYPE_PORT_SIDE_INTAKE"  # enum: [AIRFLOW_TYPE_PORT_SIDE_INTAKE, AIRFLOW_TYPE_PORT_SIDE_EXHAUST]
             psuModel: ""
-        labels: [] 
+        labels:
+          - "leaf"
+          - "row-1"
 
         managementPorts:
           - name: ""  # required, string 
