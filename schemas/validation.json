@@ -8,11 +8,11 @@
         "required": ["name"],
         "properties": {
           "name": { "type": "string", "minLength": 3, "maxLength": 120, "pattern": "^(?!(?:\\d+)$)[A-Za-z0-9](?:[A-Za-z0-9@/_\\- ]*[A-Za-z0-9])?$"},
-          "description": { "type": "string" },
-          "location": { "type": "string" },
-          "address": { "type": "string" },
-          "city": { "type": "string" },
-          "country": { "type": "string" },
+          "description": { "type": "string", "maxLength": 500 },
+          "location": { "type": "string", "maxLength": 100 },
+          "address": { "type": "string", "maxLength": 100 },
+          "city": { "type": "string", "maxLength": 100 },
+          "country": { "type": "string", "maxLength": 100 },
           "topology": {
             "type": "string",
             "enum": ["MESH", "SPINE_LEAF"],
@@ -20,11 +20,11 @@
           },
           "labels": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": { "type": "string", "maxLength": 120}
           },
           "annotations": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": { "type": "string", "maxLength": 120 }
           },
           "nodes": {
             "type": "array",
@@ -33,8 +33,8 @@
               "required": ["name", "modelName", "roles"],
               "properties": {
                 "name": { "type": "string", "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"},
-                "description": { "type": "string" },
-                "location": { "type": "string" },
+                "description": { "type": "string", "maxLength": 500 },
+                "location": { "type": "string", "maxLength": 100 },
                 "modelName": {
                   "type": "string",
                   "enum": ["HF6100-32D", "HF6100-60L4D"]
@@ -60,7 +60,7 @@
                         "enum": ["AIRFLOW_TYPE_PORT_SIDE_INTAKE", "AIRFLOW_TYPE_PORT_SIDE_EXHAUST"],
                         "default": "AIRFLOW_TYPE_PORT_SIDE_INTAKE"
                       },
-                      "psuModel": { "type": "string" }
+                      "psuModel": { "type": "string", "maxLength": 50 }
                     }
                   }
                 },
@@ -74,8 +74,8 @@
                         "type": "object",
                         "required": ["name"],
                         "properties": {
-                            "name": { "type": "string" },
-                            "description": { "type": "string" },
+                            "name": { "type": "string", "pattern": "^eth\\([0-8]\\)$"},
+                            "description": { "type": "string", "maxLength": 500 },
                             "configOrigin": {
                                 "type": "string",
                                 "enum": ["CONFIG_ORIGIN_CLOUD", "CONFIG_ORIGIN_DEVICE"],
@@ -106,8 +106,8 @@
                                 "items": { "type": "string", "format": "ipv4" }
                             },
                             "proxyAddress": { "type": "string", "format": "uri" },
-                            "proxyPassword": { "type": "string" },
-                            "proxyUsername": { "type": "string" },
+                            "proxyUsername": { "type": "string", "maxLength":120 },
+                            "proxyPassword": { "type": "string", "maxLength":120 },
                             "enabled": { "type": "boolean" },
                             "setProxyPassword": { "type": "boolean" },
                             "cloudUrls": {
@@ -116,7 +116,7 @@
                             },
                             "noProxy": {
                                 "type": "array",
-                                "items": { "type": "string" }
+                                "items": { "type": "string", "maxLength": 120 }
                             }
                         },
                         "allOf": [
@@ -150,7 +150,7 @@
                     "required": ["name"],
                     "properties": {
                       "name": { "type": "string", "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$"},
-                      "description": { "type": "string" },
+                      "description": { "type": "string", "maxLength": 500 },
                       "mtu": { "type": "integer", "minimum": 1500, "maximum": 9100 },
                       "fec": { "type": "string", "enum": ["rs", "none"] },
                       "pluggable": { "type": "string" },
@@ -169,7 +169,7 @@
                       "ipv6Address": { "type": "string", "format": "ipv6" },
                       "annotations": {
                         "type": "array",
-                        "items": { "type": "string" }
+                        "items": { "type": "string", "maxLength": 120 }
                       }
                     },
                     "allOf": [
@@ -213,13 +213,13 @@
             "items": {
               "type": "object",
               "properties": {
-                "description": { "type": "string" },
+                "description": { "type": "string", "maxLength": 500 },
                 "osType": {
                   "type": "string",
                   "enum": ["HYPER_FABRIC", "NEXUS", "IOS_XE", "IOS_XR", "LINUX"],
                   "default": "HYPER_FABRIC"
                 },
-                "pluggable": { "type": "string" },
+                "pluggable": { "type": "string", "maxLength": 50 },
                 "local": {
                   "type": "object",
                   "required": ["portName", "nodeName"],
@@ -246,7 +246,7 @@
               "required": ["name"],
               "properties": {
                 "name": { "type": "string", "minLength":3, "maxLength":120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" },
-                "description": { "type": "string" },
+                "description": { "type": "string", "maxLength": 500 },
                 "vni": { "type": "integer", "minimum": 2, "maximum": 6000000 },
                 "mtu": { "type": "integer", "minimum": 1500, "maximum": 9100 },
                 "svis": {
@@ -294,7 +294,7 @@
               "required": ["name"],
               "properties": {
                 "name": { "type": "string", "minLength": 3, "maxLength": 120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" },
-                "description": { "type": "string" },
+                "description": { "type": "string", "maxLength": 500 },
                 "enabled": { "type": "boolean" },
                 "asn": {
                   "type": "integer",
@@ -305,11 +305,11 @@
                 "vni": { "type": "integer", "minimum": 2, "maximum": 6000000 },
                 "labels": {
                   "type": "array",
-                  "items": { "type": "string" }
+                  "items": { "type": "string", "maxLength": 120 }
                 },
                 "annotations": {
                   "type": "array",
-                  "items": { "type": "string" }
+                  "items": { "type": "string", "maxLength": 120 }
                 },
                 "staticroute": {
                   "type": "array",
@@ -318,15 +318,15 @@
                     "required": ["name"],
                     "properties": {
                       "name": { "type": "string", "minLength": 3, "maxLength": 120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" },
-                      "description": { "type": "string" },
+                      "description": { "type": "string", "maxLength": 500 },
                       "enabled": { "type": "boolean" },
                       "labels": {
                         "type": "array",
-                        "items": { "type": "string" }
+                        "items": { "type": "string", "maxLength": 120 }
                       },
                       "annotations": {
                         "type": "array",
-                        "items": { "type": "string" }
+                        "items": { "type": "string", "maxLength": 120 }
                       },
                       "routes": {
                         "type": "array",
@@ -334,8 +334,8 @@
                           "type": "object",
                           "required": ["nodeId", "nextVrf", "discard"],
                           "properties": {
-                            "nodeId": { "type": "string" },
-                            "interface": { "type": "string" },
+                            "nodeId": { "type": "string", "minLength": 3, "maxLength": 120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" },
+                            "interface": { "type": "string", "minLength": 3, "maxLength": 120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" },
                             "preference": { "type": "integer", "minimum": 1, "maximum": 255 },
                             "prefix": { "anyOf": [
                                 { "type": "string", "format": "ipv4" },
