@@ -165,8 +165,16 @@
                       },
                       "linkDown": { "type": "boolean" },
                       "vrfId": { "type": "string", "pattern": "^(Default VRF|VRF[A-Za-z0-9]{1,100})$" },
-                      "ipv4Address": { "type": "string", "format": "ipv4" },
-                      "ipv6Address": { "type": "string", "format": "ipv6" },
+                      "ipv4Address": {
+                        "type": "array",
+                        "items": { "type": "string", "format": "ipv4" },
+                        "maxItems": 2
+                      },
+                      "ipv6Addresses": {
+                        "type": "array",
+                        "items": { "type": "string", "format": "ipv6" },
+                        "maxItems": 2
+                      },
                       "annotations": {
                         "type": "array",
                         "items": { "type": "string", "maxLength": 120 }
