@@ -9,7 +9,9 @@ fabric:
     labels:
         string[], max length 120
     annotations:
-        string[], max length 120
+      - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64"], default = "STRING"
+        name*: string, min length 3, max length 120 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+        value*: string, min length 1, max length 512
   
     nodes:
       - name*: string, min length 3, max length 120 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
@@ -25,7 +27,7 @@ fabric:
           string[], max length 120
 
         managementPorts:
-          - name: string, min 3, max 120 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+          - name: string, min length 3, max length 120 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
             description: string, max length 500
             configOrigin: enum = ["CONFIG_ORIGIN_CLOUD", "CONFIG_ORIGIN_DEVICE"] default = "CONFIG_ORIGIN_CLOUD"
             connectedState: enum = ["CONNECTED_STATE_NOT_CONNECTED", "CONNECTED_STATE_CONNECTED"] default = "CONNECTED_STATE_NOT_CONNECTED"

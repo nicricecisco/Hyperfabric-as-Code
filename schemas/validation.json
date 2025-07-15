@@ -24,7 +24,33 @@
           },
           "annotations": {
             "type": "array",
-            "items": { "type": "string", "maxLength": 120 }
+            "items": {
+              "type": "object",
+              "required": ["name", "value"],
+              "properties": {
+                "dataType": {
+                  "type": "string",
+                  "enum": [
+                    "STRING",
+                    "INT32",
+                    "UINT32",
+                    "INT64",
+                    "UINT64"
+                  ]
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 3,
+                  "maxLength": 120,
+                  "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                },
+                "value": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                }
+              }
+            }
           },
           "nodes": {
             "type": "array",
@@ -177,6 +203,36 @@
                       },
                       "annotations": {
                         "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": ["name", "value"],
+                          "properties": {
+                            "dataType": {
+                              "type": "string",
+                              "enum": [
+                                "STRING",
+                                "INT32",
+                                "UINT32",
+                                "INT64",
+                                "UINT64"
+                              ]
+                            },
+                            "name": {
+                              "type": "string",
+                              "minLength": 3,
+                              "maxLength": 120,
+                              "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                            },
+                            "value": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 512
+                            }
+                          }
+                        }
+                      },
+                      "labels": {
+                        "type": "array",
                         "items": { "type": "string", "maxLength": 120 }
                       }
                     },
@@ -317,7 +373,33 @@
                 },
                 "annotations": {
                   "type": "array",
-                  "items": { "type": "string", "maxLength": 120 }
+                  "items": {
+                    "type": "object",
+                    "required": ["name", "value"],
+                    "properties": {
+                      "dataType": {
+                        "type": "string",
+                        "enum": [
+                          "STRING",
+                          "INT32",
+                          "UINT32",
+                          "INT64",
+                          "UINT64"
+                        ]
+                      },
+                      "name": {
+                        "type": "string",
+                        "minLength": 3,
+                        "maxLength": 120,
+                        "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                      },
+                      "value": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 512
+                      }
+                    }
+                  }
                 },
                 "staticroute": {
                   "type": "array",
@@ -334,7 +416,33 @@
                       },
                       "annotations": {
                         "type": "array",
-                        "items": { "type": "string", "maxLength": 120 }
+                        "items": {
+                          "type": "object",
+                          "required": ["name", "value"],
+                          "properties": {
+                            "dataType": {
+                              "type": "string",
+                              "enum": [
+                                "STRING",
+                                "INT32",
+                                "UINT32",
+                                "INT64",
+                                "UINT64"
+                              ]
+                            },
+                            "name": {
+                              "type": "string",
+                              "minLength": 3,
+                              "maxLength": 120,
+                              "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                            },
+                            "value": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 512
+                            }
+                          }
+                        }
                       },
                       "routes": {
                         "type": "array",

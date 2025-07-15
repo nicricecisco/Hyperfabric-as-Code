@@ -7,7 +7,10 @@ fabric:
     country: ""
     topology: "MESH"  # enum: [MESH, SPINE_LEAF], default = MESH
     labels: []  # string list, write using dash with new line for each item
-    annotations: []  # string list
+    annotations:
+      - dataType: "STRING"         # enum = ["STRING", "INT32", "UNIT32", "INT64", "UINT64", "FLOAT", "DOUBLE", "BOOLEAN"], default = "STRING"
+        name: "" 
+        value: "" # string, min length 1, max length 512
 
     nodes:
       - name: ""  # required, string
