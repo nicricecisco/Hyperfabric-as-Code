@@ -1,19 +1,17 @@
 {
   "fabric": [
     {
-      "name": "",
-      "description": "dsadsa",
-      "location": "dsada",
-      "address": "dsad",
-      "city": "dqew",
-      "country": "",
+      "name": "yamltest1",
       "topology": "MESH",
-      "labels": [],
+      "labels": [
+        "label1",
+        "label2"
+      ],
       "annotations": [],
       "nodes": [
         {
-          "name": "",
-          "description": "",
+          "name": "nodeOne",
+          "description": "dasd",
           "location": "",
           "modelName": "HF6100-32D",
           "roles": [
@@ -26,123 +24,7 @@
               "psuModel": ""
             }
           ],
-          "labels": [
-            "leaf",
-            "row-1"
-          ],
-          "managementPorts": [
-            {
-              "name": "",
-              "description": "",
-              "configOrigin": "CONFIG_ORIGIN_CLOUD",
-              "connectedState": "CONNECTED_STATE_NOT_CONNECTED",
-              "ipv4ConfigType": "CONFIG_TYPE_STATIC",
-              "ipv4Address": "",
-              "ipv4Gateway": "",
-              "ipv6ConfigType": "CONFIG_TYPE_STATIC",
-              "ipv6Address": "",
-              "ipv6Gateway": "",
-              "dnsAddresses": [],
-              "proxyAddress": "",
-              "proxyPassword": "",
-              "proxyUsername": "",
-              "enabled": false,
-              "setProxyPassword": false,
-              "cloudUrls": [],
-              "noProxy": []
-            }
-          ],
-          "ports": [
-            {
-              "name": "",
-              "description": "",
-              "mtu": 9100,
-              "fec": "none",
-              "pluggable": "",
-              "speed": "1x100G4",
-              "enabled": false,
-              "roles": [
-                "UNUSED_PORT"
-              ],
-              "linkDown": false,
-              "vrfId": "",
-              "ipv4Address": "",
-              "ipv6Address": "",
-              "annotations": []
-            }
-          ]
-        }
-      ],
-      "connections": [
-        {
-          "description": "",
-          "osType": "HYPER_FABRIC",
-          "pluggable": "",
-          "local": {
-            "portName": "",
-            "nodeName": ""
-          },
-          "remote": {
-            "portName": "",
-            "nodeName": ""
-          }
-        }
-      ],
-      "vnis": [
-        {
-          "name": "",
-          "description": "",
-          "vni": 2,
-          "mtu": 9100,
-          "svis": [
-            {
-              "enabled": false,
-              "ipv4Addresses": [],
-              "ipv6Addresses": []
-            }
-          ],
-          "members": [
-            {
-              "untagged": false,
-              "vlanId": 2,
-              "port": {
-                "nodeName": "",
-                "portName": ""
-              }
-            }
-          ]
-        }
-      ],
-      "vrfs": [
-        {
-          "name": "",
-          "description": "",
-          "enabled": true,
-          "asn": 65000,
-          "vni": 2,
-          "labels": [],
-          "annotations": [],
-          "staticroute": [
-            {
-              "name": "",
-              "description": "",
-              "enabled": false,
-              "labels": [],
-              "annotations": [],
-              "routes": [
-                {
-                  "nodeId": "",
-                  "interface": "",
-                  "preference": 1,
-                  "prefix": "",
-                  "nextHop": "",
-                  "nextVrf": "",
-                  "tag": "TAG_AMBER",
-                  "discard": false
-                }
-              ]
-            }
-          ]
+          "labels": []
         }
       ]
     }
