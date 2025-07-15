@@ -1,4 +1,4 @@
-fabric:
+fabrics:
   - name: ""  # required, string
     description: ""
     location: ""
@@ -49,7 +49,8 @@ fabric:
             description: ""
             mtu: 9100  # integer, range 1500-9100
             fec: "none"  # enum: [rs, none]
-            pluggable: ""
+            forceCounter: 0  
+            pluggable: "" 
             speed: "1x100G4"  # enum: ["1x40G2", "1x100G2", "1x100G4", "1x200G2", "1x400G", ...]
             enabled: false
             roles: ["UNUSED_PORT"]  # enum: [UNUSED_PORT, FABRIC_PORT, HOST_PORT, ROUTED_PORT, LAG_PORT]
@@ -102,7 +103,7 @@ fabric:
             name: "" 
             value: ""
         staticroute:
-          - name: ""  # required
+          - name: ""  
             description: ""
             enabled: false
             labels: [] 
@@ -111,11 +112,11 @@ fabric:
                 name: "" 
                 value: ""
             routes:
-              - nodeId: ""  # required
+              - nodeId: "" 
                 interface: ""
                 preference: 1  # integer, range 1-255
                 prefix: ""  # IP string
-                nextHop: ""  # IP string
+                nextHop: ""  # IP string, required if discard is false
                 nextVrf: ""
-                tag: "TAG_AMBER"  # enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", ...], default = "TAG_AMBER"
+                tag: "TAG_AMBER"  # enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", ...], default = "TAG_AMBER" sets to "TAG_BLACK" if discard is true
                 discard: false
