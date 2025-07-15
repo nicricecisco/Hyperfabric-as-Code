@@ -35,7 +35,10 @@
                     "INT32",
                     "UINT32",
                     "INT64",
-                    "UINT64"
+                    "UINT64",
+                    "UUID",
+                    "DURATION",
+                    "TIME"
                   ]
                 },
                 "name": {
@@ -214,7 +217,10 @@
                                 "INT32",
                                 "UINT32",
                                 "INT64",
-                                "UINT64"
+                                "UINT64",
+                                "UUID",
+                                "DURATION",
+                                "TIME"
                               ]
                             },
                             "name": {
@@ -384,7 +390,10 @@
                           "INT32",
                           "UINT32",
                           "INT64",
-                          "UINT64"
+                          "UINT64",
+                          "UUID",
+                          "DURATION",
+                          "TIME"
                         ]
                       },
                       "name": {
@@ -427,7 +436,10 @@
                                 "INT32",
                                 "UINT32",
                                 "INT64",
-                                "UINT64"
+                                "UINT64",
+                                "UUID",
+                                "DURATION",
+                                "TIME"
                               ]
                             },
                             "name": {
