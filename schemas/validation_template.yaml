@@ -9,7 +9,7 @@ fabric:
     labels:
         string[], max length 120
     annotations:
-      - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64"], default = "STRING"
+      - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
         name*: string, min length 3, max length 120 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
         value*: string, min length 1, max length 512
   
@@ -67,7 +67,9 @@ fabric:
             --ipv4Address**: string, IP must exist if no ipv6
             --ipv6Address**: string, IP must exist if no ipv4"
             annotations:
-              string[], max length 120
+              - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
+                name*: string, min length 3, max length 120 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+                value*: string, min length 1, max length 512
     
     connections:
       - description: string
@@ -108,7 +110,9 @@ fabric:
         labels: 
           string[], 
         annotations:
-          string[]
+          - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
+            name*: string, min length 3, max length 120 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+            value*: string, min length 1, max length 512
         staticroute:
           - name*: string min length 3, max length 120 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
             description: string, max length 500
@@ -116,7 +120,9 @@ fabric:
             labels: 
               string[], max length 120
             annotations:
-              string[], max length 120
+              - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
+                name*: string, min length 3, max length 120 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+                value*: string, min length 1, max length 512
             routes:
               - nodeId*: string, min length 3, max length 120 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
                 interface: string, min length 3, max length 120 || Allowed characters--letters, digits, hyphens. Cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens

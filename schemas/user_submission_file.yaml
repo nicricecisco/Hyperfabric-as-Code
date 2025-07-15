@@ -57,7 +57,11 @@ fabric:
             vrfId: "" # string, required if roles is "ROUTED_PORT"
             ipv4Address: "" # ipv4 string, this or ipv6Address required if roles is "ROUTED_PORT"
             ipv6Address: "" # ipv6 string, this or ipv4Address required if roles is "ROUTED_PORT"
-            annotations: [] 
+            annotations:
+              - dataType: "STRING"         
+                name: "" 
+                value: ""
+
 
     connections:
       - description: ""
@@ -93,13 +97,19 @@ fabric:
         asn: 65000  # integer
         vni: 2  # integer range 2-6000000
         labels: [] 
-        annotations: [] 
+        annotations:
+          - dataType: "STRING"         
+            name: "" 
+            value: ""
         staticroute:
           - name: ""  # required
             description: ""
             enabled: false
             labels: [] 
-            annotations: [] 
+            annotations:
+              - dataType: "STRING"         
+                name: "" 
+                value: ""
             routes:
               - nodeId: ""  # required
                 interface: ""
