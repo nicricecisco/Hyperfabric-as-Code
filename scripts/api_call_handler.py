@@ -62,15 +62,15 @@ def _handle_put(put_func, rollback_func, func_input, rollback_input=None):
         logger.error(f"[PUT HANDLER] HTTP Error in {put_func_name}: {e}. "
                      f"Status code: {response.status_code}. Response: {error_message}")
         _rollback()
-        return None
+        return response
     except requests.exceptions.RequestException as e:
         logger.error(f"[PUT HANDLER] Request failed in {put_func_name}: {e}")
         _rollback()
-        return None
+        return response
     except BaseException as e:
         logger.exception(f"[PUT HANDLER] Unexpected error in {put_func_name}: {e}")
         _rollback()
-        return None
+        return response
 
 def _handle_post(post_func, rollback_func, func_input, key=None):
     logger.info("Handling POST...")
@@ -101,15 +101,15 @@ def _handle_post(post_func, rollback_func, func_input, key=None):
         logger.error(f"[POST HANDLER] HTTP Error in {post_func_name}: {e}. "
                      f"Status code: {response.status_code}. Response: {error_message}")
         _rollback()
-        return None
+        return response
     except requests.exceptions.RequestException as e:
         logger.error(f"[POST HANDLER] Request failed in {post_func_name}: {e}")
         _rollback()
-        return None
+        return response
     except BaseException as e:
         logger.exception(f"[POST HANDLER] Unexpected error in {post_func_name}: {e}")
         _rollback()
-        return None
+        return response
 
 def handle_get(get_func, post_func, put_func, delete_func, func_input, key, clear_action_stack=False):
     """
@@ -133,7 +133,7 @@ def handle_get(get_func, post_func, put_func, delete_func, func_input, key, clea
                 return _handle_post(post_func=post_func, rollback_func=delete_func, func_input=func_input, key=key)
             if (put_func and post_func is None):
                 return _handle_put(put_func=put_func, rollback_func=put_func, func_input=func_input)
-            return None
+            return response
         
         logger.info("Handling GET...")
         get_func_name = getattr(get_func, '__name__', str(get_func))
@@ -169,7 +169,7 @@ def handle_get(get_func, post_func, put_func, delete_func, func_input, key, clea
                 logger.warning("[GET HANDLER] 404 error with no JSON body.")
             if (post_func is None): 
                 _rollback()
-                return None
+                return response
             
             return _handle_post(post_func=post_func, rollback_func=delete_func, func_input=func_input, key=key)
         
@@ -181,7 +181,7 @@ def handle_get(get_func, post_func, put_func, delete_func, func_input, key, clea
             logger.error(f"[GET HANDLER] HTTP error in {get_func_name}: {http_err}. "
                          f"Status code: {response.status_code if response else 'N/A'}. Response: {error_message}")
             _rollback()
-            return None
+            return response
 
     except requests.exceptions.RequestException as req_err:
         try:
@@ -191,9 +191,9 @@ def handle_get(get_func, post_func, put_func, delete_func, func_input, key, clea
         logger.error(f"[GET HANDLER] RequestException in {get_func_name}: {req_err}. "
                      f"Status code: {response.status_code if response else 'N/A'}. Response: {error_message}")
         _rollback()
-        return None
+        return response
 
     except BaseException as e:
         logger.exception(f"[GET HANDLER] Unexpected error in {get_func_name}: {e}")
         _rollback()
-        return None
+        return response

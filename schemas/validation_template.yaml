@@ -1,4 +1,4 @@
-fabric:
+fabrics:
   - name*: string
     description: string
     location: string
@@ -58,13 +58,13 @@ fabric:
             pluggable: string, cable list {...}
             speed: string, set of {1x40G(N), 1x100G(N), 1x100G(N), 1x200G(N), 1x400G} where N is {2,4} cannot be set for port in breakout mode
             enabled: boolean
-            roles: enum = ["UNUSED_PORT", "FABRIC_PORT", "HOST_PORT", "ROUTED_PORT", "LAG_PORT"], default ["UNUSED PORT]
+            roles: enum = ["UNUSED_PORT", "FABRIC_PORT", "HOST_PORT", "ROUTED_PORT", "LAG_PORT"], default ["UNUSED PORT"]
             -IF roles != "FABRIC_PORT" OR "LAG_PORT":
             --linkDown: boolean
             -IF roles = "ROUTED_PORT":
             --vrfId*: string, vrf must exist in DB (inclusive of "Default VRF")
-            --ipv4Address**: string, IP must exist if no ipv6
-            --ipv6Address**: string, IP must exist if no ipv4"
+            --ipv4Addresses**: string[], IP must exist if no ipv6
+            --ipv6Addresses**: string[], IP must exist if no ipv4
             annotations:
               string[]
     
@@ -108,7 +108,7 @@ fabric:
           string[]
         annotations:
           string[]
-        staticroute:
+        staticRoutes:
           - name*: string
             description: string
             enabled: boolean

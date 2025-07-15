@@ -70,7 +70,9 @@ def _process_entity(entity, data_object, key):
         print(f"{key} result: Success!")
         return entity_other
     else:
-        raise EntityProcessingError(f"Error processing a {key}. Erroneous entity: {entity}")
+        if result is not None:
+            raise EntityProcessingError(f"Error processing a {key}. Error: {result.json()}")
+        raise EntityProcessingError(f"Error processing a {key}. Error entity: {entity}")
 
 # Try to separate parts into a generic function
 def _loop_through_attributes(fabric_other, FABRIC_ID):
@@ -159,26 +161,65 @@ def handle_json_input(json_input):
     if not isinstance(json_input["fabrics"], list):
         pprint("'fabrics' attribute must contain a list")
         return
-    if "name" in json_input["fabrics"][0]:
-        FABRIC_ID = json_input["fabrics"][0]["name"]
-        print("FABRIC_ID: ", FABRIC_ID)
-
-    try:
-        entity_obj = get_entity("fabric")
-        fabric_attributes, func_obj = entity_obj.get("attributes"), entity_obj.get("func_obj")
-        get_fabric, create_fabric, update_fabric, delete_fabric = func_obj.get("get_func"), func_obj.get("post_func"), func_obj.get("put_func"), func_obj.get("del_func")
-        
-        fabric_pure, fabric_other = _parse_attributes(json_input["fabrics"][0], fabric_attributes)
-
-        response = handle_get(get_func=get_fabric, post_func=create_fabric, put_func=update_fabric, delete_func=delete_fabric, func_input=fabric_pure, key="fabric", clear_action_stack=True)
-
-        if response.status_code == 200:
-            print("Fabric result: Success!")
-            # Handle sub-fabric attributes
-            _loop_through_attributes(fabric_other, FABRIC_ID)
-        else:
-            print("Fabric result: Failed")
-    except EntityProcessingError as e:
-        print("Execution stopped")
-        exit(1)
     
+    successes = []
+    failures = []
+
+    for fabric in json_input["fabrics"]:
+        if "name" in fabric:
+            FABRIC_ID = fabric["name"]
+            print("FABRIC_ID:", FABRIC_ID)
+        else:
+            FABRIC_ID = "UNKNOWN"
+
+        try:
+            entity_obj = get_entity("fabric")
+            fabric_attributes = entity_obj.get("attributes")
+            func_obj = entity_obj.get("func_obj")
+            get_fabric = func_obj.get("get_func")
+            create_fabric = func_obj.get("post_func")
+            update_fabric = func_obj.get("put_func")
+            delete_fabric = func_obj.get("del_func")
+
+            fabric_pure, fabric_other = _parse_attributes(fabric, fabric_attributes)
+
+            response = handle_get(
+                get_func=get_fabric,
+                post_func=create_fabric,
+                put_func=update_fabric,
+                delete_func=delete_fabric,
+                func_input=fabric_pure,
+                key="fabric",
+                clear_action_stack=True
+            )
+
+            if response.status_code == 200:
+                print("Fabric result: Success!")
+                try:
+                    _loop_through_attributes(fabric_other, FABRIC_ID)
+                    successes.append({"name": FABRIC_ID, "status": "Success"})
+                except EntityProcessingError as e:
+                    print(f"Error while processing sub-entities for fabric '{FABRIC_ID}': {e}")
+                    failures.append({"name": FABRIC_ID, "error": str(e)})
+                    continue  # move to next fabric
+            else:
+                print("Fabric result: Failed")
+                failures.append({"name": FABRIC_ID, "error": f"{response.json()}"})
+
+        except Exception as e:
+            print(f"Exception at fabric level for fabric '{FABRIC_ID}': {e}")
+            failures.append({"name": FABRIC_ID, "error": str(e)})
+            continue
+
+    status = (
+        "success" if not failures else
+        "failure" if not successes else
+        "partial_success"
+    )
+
+    return {
+        "status": status,
+        "summary": {"succeeded": len(successes), "failed": len(failures)},
+        "results": {"successes": successes, "failures": failures}
+    }
+

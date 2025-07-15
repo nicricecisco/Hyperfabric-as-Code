@@ -1,0 +1,16 @@
+{
+  "status": "failure",
+  "summary": {
+    "succeeded": 0,
+    "failed": 1
+  },
+  "results": {
+    "successes": [],
+    "failures": [
+      {
+        "name": "python-tests",
+        "error": "Error processing a port. Error: {'message': 'NetworkPort must have a value for pluggable', 'field': 'pluggable', 'status': 400, 'errCode': 'ERR_CODE_INVALID_VALUE', 'trackingId': '4d60bc3c-adb7-4a4a-8a61-de8a0f802485'}"
+      }
+    ]
+  }
+}

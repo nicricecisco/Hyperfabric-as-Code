@@ -5,7 +5,8 @@ from pprint import pprint
 from scripts.handle_json_input import handle_json_input
 
 def main(json_input):
-    handle_json_input(json_input)
+    results = handle_json_input(json_input)
+    pprint(results)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -16,5 +17,4 @@ if __name__ == "__main__":
 
     with open(yaml_file, "r") as f:
         json_input = yaml.safe_load(f)
-        # pprint(json_input)
     main(json_input)
