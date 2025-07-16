@@ -1,0 +1,32 @@
+{
+  "fabric": [
+    {
+      "name": "yamltest1",
+      "topology": "MESH",
+      "labels": [
+        "label1",
+        "label2"
+      ],
+      "annotations": [],
+      "nodes": [
+        {
+          "name": "nodeOne",
+          "description": "dasd",
+          "location": "",
+          "modelName": "HF6100-32D",
+          "roles": [
+            "LEAF"
+          ],
+          "serialNumber": "",
+          "psuAirflows": [
+            {
+              "airflow": "AIRFLOW_TYPE_PORT_SIDE_INTAKE",
+              "psuModel": ""
+            }
+          ],
+          "labels": []
+        }
+      ]
+    }
+  ]
+}

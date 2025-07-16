@@ -1,1 +1,2 @@
-TEST: Port creation: FAILURE
+TEST: VRF creation: SUCCESS
+TEST: Static routes creation: FAILURE

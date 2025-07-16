@@ -1,0 +1,8 @@
+fabrics:
+  - name: from-python
+    nodes:
+      - name: Leaf02
+        description: Leaf Switch 02
+        modelName: HF6100-32D
+        roles: 
+          - LEAF

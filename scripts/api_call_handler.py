@@ -113,18 +113,23 @@ def _handle_post(post_func, rollback_func, func_input, key=None):
 
 def handle_get(get_func, post_func, put_func, delete_func, func_input, key, clear_action_stack=False):
     """
-    Attempts GET → if not found (404), POST → if found, PUT.
+    Attempts GET → if not found (404), POST, otherwise PUT.
     Args:
         get_func (func): function call for GET request
         post_func (func): function call for POST request
         put_func (func): function call for PUT request
         func_input (dict): JSON object for function input
-    Returns: response object or None
+        key (string): identifies the type of object (an attribute)
+        clear_action_stack (bool): clears the stack of rollback actions
+    Returns: response object
     """
     # Empty stack of rollback functions when starting at the fabric level
     if clear_action_stack:
         _clear_action_stack()
     response = None
+
+    func_input["protected"] = func_input.get(key) and func_input[key].get("protected")
+    print("IS PROTECTED??", func_input["protected"])
 
     try:
         # Handle post or put directly

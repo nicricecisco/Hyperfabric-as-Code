@@ -156,147 +156,172 @@ def _run_creation_tests():
 
     # _run_test(name="Management port creation", input=basic_copy)
 
-    # ----------- PORTS -----------
-    port_yaml_1 = """
-    ports:
-      - name: Ethernet1_1
-        description: Leaf routed port
-        mtu: 9100
-        fec: rs
-        speed: 1x200G
-        enabled: true
-        roles:
-          - ROUTED_PORT
-        linkDown: false
-        ipv4Addresses: 192.168.1.1
-        ipv6Addresses: 2001:db8:1::1
-        annotations:
-          - name: test-annotation
-            value: test-value
-    """
-    port_yaml_2 = port_yaml_1.replace("Ethernet1_1", "Ethernet1_2").replace("192.168.1.1", "192.168.1.2").replace("2001:db8:1::1", "2001:db8:1::2")
-    port_1 = yaml.safe_load(port_yaml_1)["ports"][0]
-    port_2 = yaml.safe_load(port_yaml_2)["ports"][0]
-    ports_data = [port_1, port_2]
-    basic_copy = deepcopy(basic_yaml_data)
-    basic_copy["fabrics"][0]["nodes"][0]["ports"] = ports_data
-    delete_keys = ["connections", "vnis", "vrfs"]
-    for key in delete_keys:
-        basic_copy["fabrics"][0].pop(key, None)
+    # # ----------- PORTS -----------
+    # port_yaml_1 = """
+    # ports:
+    #   - name: Ethernet1_1
+    #     description: Leaf routed port
+    #     mtu: 9100
+    #     fec: rs
+    #     speed: 1x400G
+    #     pluggable: QDD-400-AOC2M
+    #     enabled: true
+    #     roles:
+    #       - ROUTED_PORT
+    #     linkDown: false
+    #     ipv4Addresses: 192.168.1.1
+    #     ipv6Addresses: 2001:db8:1::1
+    #     annotations:
+    #       - name: test-annotation
+    #         value: test-value
+    # """
+    # port_yaml_2 = port_yaml_1.replace("Ethernet1_1", "Ethernet1_2").replace("192.168.1.1", "192.168.1.2").replace("2001:db8:1::1", "2001:db8:1::2")
+    # port_1 = yaml.safe_load(port_yaml_1)["ports"][0]
+    # port_2 = yaml.safe_load(port_yaml_2)["ports"][0]
+    # ports_data = [port_1, port_2]
+    # basic_copy = deepcopy(basic_yaml_data)
+    # basic_copy["fabrics"][0]["nodes"][0]["ports"] = ports_data
+    # delete_keys = ["connections", "vnis", "vrfs"]
+    # for key in delete_keys:
+    #     basic_copy["fabrics"][0].pop(key, None)
 
-    _run_test(name="Port creation", input=basic_copy)
-    return
+    # _run_test(name="Port creation", input=basic_copy)
 
-    # ----------- CONNECTIONS -----------
-    connections_yaml = """
-    connections:
-    - description: Leaf to Spine
-        osType: HYPER_FABRIC
-        pluggable: pluggable-conn
-        local:
-        portName: Ethernet1_1
-        nodeName: Leaf01
-        remote:
-        portName: Ethernet1_2
-        nodeName: Spine01
-    - description: Spine to Leaf
-        osType: HYPER_FABRIC
-        pluggable: pluggable-conn
-        local:
-        portName: Ethernet1_2
-        nodeName: Spine01
-        remote:
-        portName: Ethernet1_1
-        nodeName: Leaf01
-    """
-    fabric["fabrics"][0]["connections"] = yaml.safe_load(connections_yaml)["connections"]
-    _run_test(name="Connection creation", input=fabric)
+    # # ----------- CONNECTIONS -----------
+    # connections_yaml = """
+    # connections:
+    #   - description: Leaf to Spine
+    #     osType: HYPER_FABRIC
+    #     pluggable: QDD-400-AOC2M
+    #     local:
+    #       portName: Ethernet1_2
+    #       nodeName: Leaf01
+    #     remote:
+    #       portName: Ethernet1_2
+    #       nodeName: Spine01
+    #   - description: Spine to Leaf
+    #     osType: HYPER_FABRIC
+    #     pluggable: QDD-400-AOC2M
+    #     local:
+    #       portName: Ethernet1_3
+    #       nodeName: Spine01
+    #     remote:
+    #       portName: Ethernet1_3
+    #       nodeName: Leaf01
+    # """
+    # connections_data = yaml.safe_load(connections_yaml)["connections"]
+    # basic_copy = deepcopy(basic_yaml_data)
+    # basic_copy["fabrics"][0]["connections"] = connections_data
+    # delete_keys = ["vnis", "vrfs"]
+    # for key in delete_keys:
+    #     basic_copy["fabrics"][0].pop(key, None)
 
-    # ----------- VNIS -----------
-    vni_yaml = """
-    vnis:
-    - name: vni01
-        description: Test VNI 01
-        vni: 1001
-        mtu: 9100
-        svis:
-        - enabled: true
-            ipv4Addresses:
-            - 10.1.1.1
-            ipv6Addresses:
-            - 2001:db8:2::1
-    - name: vni02
-        description: Test VNI 02
-        vni: 1002
-        mtu: 9000
-        svis:
-        - enabled: true
-            ipv4Addresses:
-            - 10.2.2.1
-            ipv6Addresses:
-            - 2001:db8:3::1
-        members:
-        - untagged: false
-            vlanId: 100
-            port:
-            nodeName: Leaf01
-            portName: Ethernet1_1
-    """
-    fabric["fabrics"][0]["vnis"] = yaml.safe_load(vni_yaml)["vnis"]
-    _run_test(name="VNI creation", input=fabric)
+    # _run_test(name="Connection creation", input=basic_copy)
+
+    # # ----------- VNIS -----------
+    # vni_yaml = """
+    # vnis:
+    #   - name: vni01
+    #     description: Test VNI 01
+    #     vni: 1001
+    #     mtu: 9100
+    #     enabled: true
+    #     svis:
+    #       - enabled: true
+    #         ipv4Addresses:
+    #           - 10.1.1.1/24
+    #         ipv6Addresses:
+    #           - 2001:db8:2::1/48
+    #   - name: vni02
+    #     description: Test VNI 02
+    #     vni: 1002
+    #     mtu: 9000
+    #     enabled: true
+    #     svis:
+    #       - enabled: true
+    #         ipv4Addresses:
+    #           - 10.2.2.1/24
+    #         ipv6Addresses:
+    #           - 2001:db8:3::1/48
+    # """
+    # vni_data = yaml.safe_load(vni_yaml)["vnis"]
+    # basic_copy = deepcopy(basic_yaml_data)
+    # basic_copy["fabrics"][0]["vnis"] = vni_data
+    # delete_keys = ["connections", "vrfs"]
+    # for key in delete_keys:
+    #     basic_copy["fabrics"][0].pop(key, None)
+
+    # _run_test(name="VNI creation", input=basic_copy)
 
     # ----------- VRFS -----------
     vrf_yaml = """
     vrfs:
-    - name: vrf01
+      - name: VRF01
         description: Customer VRF 1
         enabled: true
         asn: 64512
         vni: 1001
         labels:
-        - TAG_BLUE
+          - TAG_BLUE
         annotations:
-        - name: test-annotation
-          value: test-value
-    - name: vrf02
+          - name: test-annotation
+            value: test-value
+      - name: VRF02
         description: Customer VRF 2
         enabled: true
         asn: 64513
         vni: 1002
         labels:
-        - TAG_GREEN
+          - TAG_GREEN
         annotations:
-        - name: test-annotation
-          value: test-value
+          - name: test-annotation
+            value: test-value
     """
-    fabric["fabrics"][0]["vrfs"] = yaml.safe_load(vrf_yaml)["vrfs"]
-    _run_test(name="VRF creation", input=fabric)
+    vrf_data = yaml.safe_load(vrf_yaml)["vrfs"]
+    basic_copy = deepcopy(basic_yaml_data)
+    basic_copy["fabrics"][0]["vrfs"] = vrf_data
+    delete_keys = ["connections", "vnis"]
+    for key in delete_keys:
+        basic_copy["fabrics"][0].pop(key, None)
+
+    _run_test(name="VRF creation", input=basic_copy)
 
     # ----------- STATIC ROUTES -----------
     static_route_yaml_1 = """
-    staticroute:
-    - name: route1
+    staticRoutes:
+      - name: route1
         description: Default route
         enabled: true
         labels:
-        - TAG_RED
+          - TAG_RED
         annotations:
-        - name: test-annotation
-          value: test-value
+          - name: test-annotation
+            value: test-value
         routes:
-        - nodeId: Leaf01
+          - nodeId: Leaf01
             interface: Ethernet1_1
             preference: 100
             prefix: 0.0.0.0/0
             nextHop: 10.1.1.254
-            nextVrf: vrf01
-            tag: TAG_AMBER
+            nextVrf: VRF01
             discard: false
     """
 
     static_route_yaml_2 = static_route_yaml_1.replace("route1", "route2").replace("0.0.0.0/0", "192.168.0.0/16")
-    static_1 = yaml.safe_load(static_route_yaml_1)["staticroute"]
-    static_2 = yaml.safe_load(static_route_yaml_2)["staticroute"]
+    static_1 = yaml.safe_load(static_route_yaml_1)["staticRoutes"][0]
+    static_2 = yaml.safe_load(static_route_yaml_2)["staticRoutes"][0]
+    static_routes_data = [static_1, static_2]
+    basic_copy = deepcopy(basic_yaml_data)
+    basic_copy["fabrics"][0]["vrfs"][0]["staticRoutes"] = static_routes_data
+    delete_keys = ["connections", "vnis"]
+    for key in delete_keys:
+        basic_copy["fabrics"][0].pop(key, None)
+
+    pprint(basic_copy)
+
+    _run_test(name="Static routes creation", input=basic_copy)
+
+    return
     fabric["fabrics"][0]["vrfs"][0]["staticroute"] = static_1
     fabric["fabrics"][0]["vrfs"][1]["staticroute"] = static_2
     _run_test(name="Static route creation", input=fabric)

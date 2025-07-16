@@ -38,16 +38,15 @@ def _connection_exists(connections, target_connection):
 
     return None  # No match, no id
 
-def _process_entity(entity, data_object, key):
+def _process_entity(entity, data_object, key, reset_stack=False):
     """
     Submits entity to Hyperfabric Cloud Controller
 
     Args:
         entity (dict): An entity like a fabric, node, port, etc with its associated attributes
         data_object (dict): The metadata and data necessary for sending it to Hyperfabric
-        entity_obj (dict): Contains the entity's associated attributes and functions
         key (str): The name of the entity (like 'fabric' or 'node')
-
+        reset_stack (bool): If true, reset the stack of actions for rollbacks
     Returns:
         entity_other (dict): Child attributes of entity that must be further processed or discarded
     """
@@ -64,7 +63,7 @@ def _process_entity(entity, data_object, key):
     Logs and prints final response object.
     Takes functions for GET, POST, PUT, then function input
     """
-    result = handle_get(get_func=get_func, post_func=post_func, put_func=put_func, delete_func=del_func, key=key, func_input=data_object)
+    result = handle_get(get_func=get_func, post_func=post_func, put_func=put_func, delete_func=del_func, key=key, func_input=data_object, clear_action_stack=reset_stack)
     print(result)
     if (result is not None and result.status_code == 200):
         print(f"{key} result: Success!")
@@ -72,18 +71,18 @@ def _process_entity(entity, data_object, key):
     else:
         if result is not None:
             raise EntityProcessingError(f"Error processing a {key}. Error: {result.json()}")
-        raise EntityProcessingError(f"Error processing a {key}. Error entity: {entity}")
+        raise EntityProcessingError(f"Error processing a {key}. Erroneous entity: {entity}")
 
 # Try to separate parts into a generic function
 def _loop_through_attributes(fabric_other, FABRIC_ID):
     # Nodes
     if "nodes" in fabric_other:
         fabric_nodes = {"nodes": fabric_other["nodes"]}
-        for node in fabric_nodes["nodes"]:
+        for i, node in enumerate(fabric_nodes["nodes"]):
             node_data_obj = {
                 "fabric_id": FABRIC_ID
             }
-            node_other = _process_entity(node, node_data_obj, "node")
+            node_other = _process_entity(node, node_data_obj, "node", i == 0) # Reset action stack if first node
 
     # Management ports
             if "managementPorts" in node_other:
@@ -92,7 +91,7 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
                     "fabric_id": FABRIC_ID,
                     "node_id": node["name"]
                 }
-                existing_mgmt_port = handle_get(get_management_ports, None, None, None, mgmt_port_data_obj, "mgmt_port")
+                existing_mgmt_port = handle_get(get_func=get_management_ports, post_func=None, put_func=None, delete_func=None, func_input=mgmt_port_data_obj, key="mgmt_port")
                 if existing_mgmt_port:
                     mgmt_port_data_obj["id"] = existing_mgmt_port["ports"][0]["name"]
                     print("MGMT PORT ID:", mgmt_port_data_obj["id"])
@@ -115,31 +114,31 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
         connection_data_obj = {
             "fabric_id": FABRIC_ID,
         }
-        full_connections = handle_get(get_fabric_connections, None, None, None, connection_data_obj, "connection")
+        full_connections = handle_get(get_func=get_fabric_connections, post_func=None, put_func=None, delete_func=None, func_input=connection_data_obj, key="connection")
         current_connections = _extract_connection_info(full_connections)
-        for connection in fabric_connections["connections"]:
+        for i, connection in enumerate(fabric_connections["connections"]):
             conn_id = _connection_exists(current_connections, connection) 
             if (conn_id is None): # If connection does not exist, call POST 
-                connection_other = _process_entity(connection, connection_data_obj, "connection")
+                connection_other = _process_entity(connection, connection_data_obj, "connection", i == 0) # Reset action stack if first connection
 
     # VNIs
     if "vnis" in fabric_other:
         fabric_vnis = {"vnis": fabric_other["vnis"]}
-        for vni in fabric_vnis["vnis"]:
+        for i, vni in enumerate(fabric_vnis["vnis"]):
             vni_data_obj = {
                 "fabric_id": FABRIC_ID
             }
-            vni_other = _process_entity(vni, vni_data_obj, "vni")
+            vni_other = _process_entity(vni, vni_data_obj, "vni", i == 0) # Reset action stack if first VNI
             
             #Handle members?
     #VRFs
     if "vrfs" in fabric_other:
         fabric_vrfs = {"vrfs": fabric_other["vrfs"]}
-        for vrf in fabric_vrfs["vrfs"]:
+        for i, vrf in enumerate(fabric_vrfs["vrfs"]):
             vrf_data_obj = {
                 "fabric_id": FABRIC_ID
             }
-            vrf_other = _process_entity(vrf, vrf_data_obj, "vrf")
+            vrf_other = _process_entity(vrf, vrf_data_obj, "vrf", i == 0) # Reset action stack if first VRF
 
     # Static Routes
             if "staticRoutes" in vrf_other:
@@ -173,28 +172,10 @@ def handle_json_input(json_input):
             FABRIC_ID = "UNKNOWN"
 
         try:
-            entity_obj = get_entity("fabric")
-            fabric_attributes = entity_obj.get("attributes")
-            func_obj = entity_obj.get("func_obj")
-            get_fabric = func_obj.get("get_func")
-            create_fabric = func_obj.get("post_func")
-            update_fabric = func_obj.get("put_func")
-            delete_fabric = func_obj.get("del_func")
+            fabric_data_obj = {}
+            fabric_other = _process_entity(fabric, fabric_data_obj, "fabric", True)
 
-            fabric_pure, fabric_other = _parse_attributes(fabric, fabric_attributes)
-
-            response = handle_get(
-                get_func=get_fabric,
-                post_func=create_fabric,
-                put_func=update_fabric,
-                delete_func=delete_fabric,
-                func_input=fabric_pure,
-                key="fabric",
-                clear_action_stack=True
-            )
-
-            if response.status_code == 200:
-                print("Fabric result: Success!")
+            if fabric_other and len(fabric_other) > 0:
                 try:
                     _loop_through_attributes(fabric_other, FABRIC_ID)
                     successes.append({"name": FABRIC_ID, "status": "Success"})
@@ -203,8 +184,40 @@ def handle_json_input(json_input):
                     failures.append({"name": FABRIC_ID, "error": str(e)})
                     continue  # move to next fabric
             else:
-                print("Fabric result: Failed")
-                failures.append({"name": FABRIC_ID, "error": f"{response.json()}"})
+                successes.append({"name": FABRIC_ID, "status": "Success"})
+
+            # entity_obj = get_entity("fabric")
+            # fabric_attributes = entity_obj.get("attributes")
+            # func_obj = entity_obj.get("func_obj")
+            # get_fabric = func_obj.get("get_func")
+            # create_fabric = func_obj.get("post_func")
+            # update_fabric = func_obj.get("put_func")
+            # delete_fabric = func_obj.get("del_func")
+
+            # fabric_pure, fabric_other = _parse_attributes(fabric, fabric_attributes)
+
+            # response = handle_get(
+            #     get_func=get_fabric,
+            #     post_func=create_fabric,
+            #     put_func=update_fabric,
+            #     delete_func=delete_fabric,
+            #     func_input=fabric_pure,
+            #     key="fabric",
+            #     clear_action_stack=True
+            # )
+
+            # if response.status_code == 200:
+            #     print("Fabric result: Success!")
+            #     try:
+            #         _loop_through_attributes(fabric_other, FABRIC_ID)
+            #         successes.append({"name": FABRIC_ID, "status": "Success"})
+            #     except EntityProcessingError as e:
+            #         print(f"Error while processing sub-entities for fabric '{FABRIC_ID}': {e}")
+            #         failures.append({"name": FABRIC_ID, "error": str(e)})
+            #         continue  # move to next fabric
+            # else:
+            #     print("Fabric result: Failed")
+            #     failures.append({"name": FABRIC_ID, "error": f"{response.json()}"})
 
         except Exception as e:
             print(f"Exception at fabric level for fabric '{FABRIC_ID}': {e}")

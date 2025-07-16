@@ -1,16 +1,13 @@
-fabrics:
+fabric:
   - name: ""  # required, string
-    description: ""
-    location: ""
-    address: ""
-    city: ""
+    description: "dsadsa"
+    location: "dsada"
+    address: "dsad"
+    city: "dqew"
     country: ""
     topology: "MESH"  # enum: [MESH, SPINE_LEAF], default = MESH
     labels: []  # string list, write using dash with new line for each item
-    annotations:
-      - dataType: "STRING"         # enum = ["STRING", "INT32", "UNIT32", "INT64", "UINT64", "FLOAT", "DOUBLE", "BOOLEAN"], default = "STRING"
-        name: "" 
-        value: "" # string, min length 1, max length 512
+    annotations: []  # string list
 
     nodes:
       - name: ""  # required, string
@@ -22,7 +19,9 @@ fabrics:
         psuAirflows:
           - airflow: "AIRFLOW_TYPE_PORT_SIDE_INTAKE"  # enum: [AIRFLOW_TYPE_PORT_SIDE_INTAKE, AIRFLOW_TYPE_PORT_SIDE_EXHAUST]
             psuModel: ""
-        labels: [] 
+        labels:
+          - "leaf"
+          - "row-1"
 
         managementPorts:
           - name: ""  # required, string 
@@ -49,8 +48,7 @@ fabrics:
             description: ""
             mtu: 9100  # integer, range 1500-9100
             fec: "none"  # enum: [rs, none]
-            forceCounter: 0  
-            pluggable: "" 
+            pluggable: ""
             speed: "1x100G4"  # enum: ["1x40G2", "1x100G2", "1x100G4", "1x200G2", "1x400G", ...]
             enabled: false
             roles: ["UNUSED_PORT"]  # enum: [UNUSED_PORT, FABRIC_PORT, HOST_PORT, ROUTED_PORT, LAG_PORT]
@@ -58,11 +56,7 @@ fabrics:
             vrfId: "" # string, required if roles is "ROUTED_PORT"
             ipv4Address: "" # ipv4 string, this or ipv6Address required if roles is "ROUTED_PORT"
             ipv6Address: "" # ipv6 string, this or ipv4Address required if roles is "ROUTED_PORT"
-            annotations:
-              - dataType: "STRING"         
-                name: "" 
-                value: ""
-
+            annotations: [] 
 
     connections:
       - description: ""
@@ -98,25 +92,19 @@ fabrics:
         asn: 65000  # integer
         vni: 2  # integer range 2-6000000
         labels: [] 
-        annotations:
-          - dataType: "STRING"         
-            name: "" 
-            value: ""
+        annotations: [] 
         staticroute:
-          - name: ""  
+          - name: ""  # required
             description: ""
             enabled: false
             labels: [] 
-            annotations:
-              - dataType: "STRING"         
-                name: "" 
-                value: ""
+            annotations: [] 
             routes:
-              - nodeId: "" 
+              - nodeId: ""  # required
                 interface: ""
                 preference: 1  # integer, range 1-255
                 prefix: ""  # IP string
-                nextHop: ""  # IP string, required if discard is false
+                nextHop: ""  # IP string
                 nextVrf: ""
-                tag: "TAG_AMBER"  # enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", ...], default = "TAG_AMBER" sets to "TAG_BLACK" if discard is true
+                tag: "TAG_AMBER"  # enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", ...], default = "TAG_AMBER"
                 discard: false

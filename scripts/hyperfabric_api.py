@@ -28,7 +28,7 @@ def _make_delete_request(headers, url):
 
     
 # /fabrics
-def create_fabric(fabric_data):
+def create_fabric(fabric_data_obj):
     """
     Creates a new fabric.
     Args:
@@ -45,14 +45,14 @@ def create_fabric(fabric_data):
         dict: JSON response containing the created fabric information, or None on error.
     """
 
-    payload = {"fabrics": [fabric_data]}
+    payload = {"fabrics": [fabric_data_obj["fabric"]]}
     url = f"{BASE_URL}/fabrics"
     response = _make_post_request(headers, url, payload=payload)
 
     return response
 
 # /fabrics/{fabricId}
-def get_fabric(fabric_data):
+def get_fabric(fabric_data_obj):
     """
     Retrieves a specific fabric.
     Args:
@@ -62,12 +62,12 @@ def get_fabric(fabric_data):
     Returns:
         dict: JSON response containing the fabric information, or None on error.
     """
-    params = {key: fabric_data[key] for key in ["candidate", "includeMetadata"] if key in fabric_data}
-    fabricId = fabric_data["name"]
+    params = {key: fabric_data_obj["fabric"][key] for key in ["candidate", "includeMetadata"] if key in fabric_data_obj["fabric"]}
+    fabricId = fabric_data_obj["fabric"]["name"]
     response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}", params=params)
     return response
 
-def update_fabric(fabric_data):
+def update_fabric(fabric_data_obj):
     """
     Updates a specific fabric.
 
@@ -98,11 +98,11 @@ def update_fabric(fabric_data):
     Returns:
         dict: JSON response containing the updated fabric information, or None on error.
     """
-    fabricId = fabric_data["name"]
-    response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}", payload=fabric_data)
+    fabricId = fabric_data_obj["fabric"]["name"]
+    response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}", payload=fabric_data_obj["fabric"])
     return response
 
-def delete_fabric(fabric_data):
+def delete_fabric(fabric_data_obj):
     """
     Deletes a specific fabric.
     Args:
@@ -110,7 +110,7 @@ def delete_fabric(fabric_data):
     Returns:
         int: HTTP status code, or None on error.
     """
-    fabricId = fabric_data["name"]
+    fabricId = fabric_data_obj["fabric"]["name"]
     response = _make_delete_request(headers, f"{BASE_URL}/fabrics/{fabricId}")
     return response
 

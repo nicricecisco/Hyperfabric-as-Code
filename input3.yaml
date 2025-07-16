@@ -1,0 +1,11 @@
+fabrics:
+  - name: from-python
+    location: CA-95134
+    nodes:
+      - name: Leaf01
+        description: Leaf Switch 01 updated
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        labels:
+          - TAG_ONE
