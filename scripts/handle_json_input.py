@@ -3,6 +3,8 @@ from scripts.api_call_handler import handle_get
 from entities.registry import get_entity
 from scripts.hyperfabric_api import get_fabric_connections, get_management_ports
 
+LATEST_PROTECTED_KEY = None
+
 class EntityProcessingError(Exception):
     pass
 
@@ -49,14 +51,25 @@ def _process_entity(entity, data_object, key, reset_stack=False):
         reset_stack (bool): If true, reset the stack of actions for rollbacks
     Returns:
         entity_other (dict): Child attributes of entity that must be further processed or discarded
-    """
+    """        
+    global LATEST_PROTECTED_KEY
+    if key == LATEST_PROTECTED_KEY:
+        LATEST_PROTECTED_KEY = None
     entity_obj = get_entity(key)
     attributes, func_obj = entity_obj.get("attributes"), entity_obj.get("func_obj")
     get_func, post_func, put_func, del_func = func_obj.get("get_func"), func_obj.get("post_func"), func_obj.get("put_func"), func_obj.get("del_func")
     
     entity_pure, entity_other = _parse_attributes(entity, attributes)
     data_object[key] = entity_pure
+
+    if entity_pure.pop("protected", False):
+        data_object["protected"] = True
+        LATEST_PROTECTED_KEY = key
+    else:
+        data_object["protected"] = (LATEST_PROTECTED_KEY != None)
+
     pprint(entity_pure)
+    print(data_object["protected"])
     
     """
     Attempts GET → if not found, POST → if found, PUT.
@@ -75,6 +88,7 @@ def _process_entity(entity, data_object, key, reset_stack=False):
 
 # Try to separate parts into a generic function
 def _loop_through_attributes(fabric_other, FABRIC_ID):
+    global LATEST_PROTECTED_KEY
     # Nodes
     if "nodes" in fabric_other:
         fabric_nodes = {"nodes": fabric_other["nodes"]}
@@ -109,6 +123,7 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
                     port_other = _process_entity(port, port_data_obj, "port")
     
     # Connections
+    LATEST_PROTECTED_KEY = None
     if "connections" in fabric_other:
         fabric_connections = {"connections": fabric_other["connections"]}
         connection_data_obj = {
@@ -122,6 +137,7 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
                 connection_other = _process_entity(connection, connection_data_obj, "connection", i == 0) # Reset action stack if first connection
 
     # VNIs
+    LATEST_PROTECTED_KEY = None
     if "vnis" in fabric_other:
         fabric_vnis = {"vnis": fabric_other["vnis"]}
         for i, vni in enumerate(fabric_vnis["vnis"]):
@@ -132,6 +148,7 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
             
             #Handle members?
     #VRFs
+    LATEST_PROTECTED_KEY = None
     if "vrfs" in fabric_other:
         fabric_vrfs = {"vrfs": fabric_other["vrfs"]}
         for i, vrf in enumerate(fabric_vrfs["vrfs"]):

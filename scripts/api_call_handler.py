@@ -49,7 +49,7 @@ def _handle_put(put_func, rollback_func, func_input, rollback_input=None):
         response.raise_for_status()
 
         # Success -> push to stack
-        if (rollback_input is not None):
+        if (rollback_input is not None and not func_input["protected"]):
             action_stack.append((rollback_func, rollback_input))
         return response
 
@@ -89,7 +89,8 @@ def _handle_post(post_func, rollback_func, func_input, key=None):
                 logger.error(f"[POST HANDLER] Error accessing ID of connection: {e}")
 
         # Success -> push to stack
-        action_stack.append((rollback_func, func_input))
+        if not func_input["protected"]:
+            action_stack.append((rollback_func, func_input))
         return response
 
     except requests.exceptions.HTTPError as e:
@@ -127,9 +128,6 @@ def handle_get(get_func, post_func, put_func, delete_func, func_input, key, clea
     if clear_action_stack:
         _clear_action_stack()
     response = None
-
-    func_input["protected"] = func_input.get(key) and func_input[key].get("protected")
-    print("IS PROTECTED??", func_input["protected"])
 
     try:
         # Handle post or put directly
