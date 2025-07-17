@@ -13,27 +13,31 @@
             "type": "string", 
             "minLength": 3, 
             "maxLength": 120, 
-            "pattern": "^(?!(?:\\d+)$)[A-Za-z0-9](?:[A-Za-z0-9@/_\\- ]*[A-Za-z0-9])?$"
+            "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
           },
           "description": { 
             "type": "string", 
-            "maxLength": 500 
+            "maxLength": 2000 
           },
           "location": { 
-            "type": "string", 
-            "maxLength": 100 
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
           },
           "address": { 
             "type": "string", 
-            "maxLength": 100 
+            "maxLength": 200 
           },
           "city": { 
             "type": "string", 
-            "maxLength": 100 
+            "maxLength": 50,
+            "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" 
           },
           "country": { 
             "type": "string", 
-            "maxLength": 100 
+            "maxLength": 50,
+            "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
           },
           "topology": {
             "type": "string",
@@ -53,9 +57,6 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": [
-                "name", "value"
-              ],
               "properties": {
                 "dataType": {
                   "type": "string",
@@ -124,11 +125,13 @@
                 },
                 "description": { 
                   "type": "string", 
-                  "maxLength": 500 
+                  "maxLength": 2000 
                 },
                 "location": { 
-                  "type": "string", 
-                  "maxLength": 100 
+                  "type": "string",
+                  "minLength": 3,
+                  "maxLength": 50,
+                  "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
                 },
                 "modelName": {
                   "type": "string",
@@ -147,9 +150,7 @@
                 },
                 "serialNumber": { 
                   "type": "string", 
-                  "minLength": 3, 
-                  "maxLength": 30, 
-                  "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                  "maxLength": 50
                 },
                 "psuAirflows": {
                   "type": "array",
@@ -187,7 +188,7 @@
                         },
                         "description": { 
                           "type": "string", 
-                          "maxLength": 500 
+                          "maxLength": 2000 
                         },
                         "configOrigin": {
                           "type": "string",
@@ -323,7 +324,7 @@
                       },
                       "description": { 
                         "type": "string", 
-                        "maxLength": 500 
+                        "maxLength": 2000 
                       },
                       "mtu": { 
                         "type": "integer", 
@@ -338,10 +339,12 @@
                       },
                       "pluggable": { 
                         "type": "string", 
-                        "maxLength": 75 
+                        "maxLength": 150 
                       },
                       "forceCounter": { 
-                        "type": "integer"
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 40000000
                       },
                       "speed": { 
                         "type": "string", 
@@ -386,14 +389,33 @@
                         },
                         "maxItems": 2
                       },
+                      "stp": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "bpduGuard": { 
+                              "type": "boolean" 
+                            },
+                            "enabled": { 
+                              "type": "boolean" 
+                            },
+                            "portFast": { 
+                              "type": "boolean" 
+                            },
+                            "rootGuard": { 
+                              "type": "boolean" 
+                            },
+                            "uplinkFast": { 
+                              "type": "boolean" 
+                            }
+                          }
+                        }
+                      },
                       "annotations": {
                         "type": "array",
                         "items": {
                           "type": "object",
-                          "required": [
-                            "name", 
-                            "value"
-                          ],
                           "properties": {
                             "dataType": {
                               "type": "string",
@@ -420,7 +442,30 @@
                               "maxLength": 512
                             }
                           }
-                        }
+                        },
+                        "anyOf": [
+                          { 
+                            "required": [
+                              "name", "value"
+                            ] 
+                          },
+                          { 
+                            "not": { 
+                              "anyOf": [ 
+                                { 
+                                  "required": [
+                                    "name"
+                                  ] 
+                                }, 
+                                { 
+                                  "required": [
+                                    "value"
+                                  ] 
+                                } 
+                              ] 
+                            } 
+                          }
+                        ]
                       },
                       "labels": {
                         "type": "array",
@@ -458,28 +503,6 @@
                             }
                           ]
                         }
-                      },
-                      {
-                        "if": {
-                          "properties": {
-                            "roles": {
-                              "contains": {
-                                "enum": [
-                                  "UNUSED_PORT", 
-                                  "ROUTED_PORT", 
-                                  "HOST_PORT"
-                                ]
-                              }
-                            }
-                          }
-                        },
-                        "then": {
-                          "properties": {
-                            "linkDown": { 
-                              "type": "boolean" 
-                            }
-                          }
-                        }
                       }
                     ]
                   }
@@ -492,27 +515,61 @@
             "items": {
               "type": "object",
               "properties": {
-                "description": { "type": "string", "maxLength": 500 },
+                "description": { 
+                  "type": "string", 
+                  "maxLength": 2000 
+                },
                 "osType": {
                   "type": "string",
-                  "enum": ["HYPER_FABRIC", "NEXUS", "IOS_XE", "IOS_XR", "LINUX"],
+                  "enum": [
+                    "HYPER_FABRIC", 
+                    "NEXUS", 
+                    "IOS_XE", 
+                    "IOS_XR", 
+                    "LINUX"
+                  ],
                   "default": "HYPER_FABRIC"
                 },
-                "pluggable": { "type": "string", "maxLength": 75 },
+                "pluggable": { 
+                  "type": "string", 
+                  "maxLength": 150 
+                },
                 "local": {
                   "type": "object",
-                  "required": ["portName", "nodeName"],
+                  "required": [
+                    "portName", 
+                    "nodeName"
+                  ],
                   "properties": {
-                    "portName": { "type": "string", "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$"},
-                    "nodeName": { "type": "string", "minLength":3, "maxLength":120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" }
+                    "portName": { 
+                      "type": "string", 
+                      "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$"
+                    },
+                    "nodeName": { 
+                      "type": "string", 
+                      "minLength":3, 
+                      "maxLength":120, 
+                      "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" 
+                    }
                   }
                 },
                 "remote": {
                   "type": "object",
-                  "required": ["portName", "nodeName"],
+                  "required": [
+                    "portName", 
+                    "nodeName"
+                  ],
                   "properties": {
-                    "portName": { "type": "string", "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$"},
-                    "nodeName": { "type": "string", "minLength":3, "maxLength":120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" }
+                    "portName": { 
+                      "type": "string", 
+                      "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$"
+                    },
+                    "nodeName": { 
+                      "type": "string", 
+                      "minLength":3, 
+                      "maxLength":120, 
+                      "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                    }
                   }
                 }
               }
@@ -522,25 +579,53 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["name"],
+              "required": [
+                "name"
+              ],
               "properties": {
-                "name": { "type": "string", "minLength":3, "maxLength":120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" },
-                "description": { "type": "string", "maxLength": 500 },
-                "vni": { "type": "integer", "minimum": 2, "maximum": 6000000 },
-                "mtu": { "type": "integer", "minimum": 1500, "maximum": 9100 },
+                "name": { 
+                  "type": "string", 
+                  "minLength":3, 
+                  "maxLength":120, 
+                  "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                },
+                "description": { 
+                  "type": "string", 
+                  "maxLength": 2000 
+                },
+                "vni": { 
+                  "type": "integer", 
+                  "minimum": 2, 
+                  "maximum": 6000000 
+                },
+                "mtu": { 
+                  "type": "integer", 
+                  "minimum": 1500, 
+                  "maximum": 9100 
+                },
                 "svis": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
-                      "enabled": { "type": "boolean" },
+                      "enabled": { 
+                        "type": "boolean" 
+                      },
                       "ipv4Addresses": {
                         "type": "array",
-                        "items": { "type": "string", "format": "ipv4"}
+                        "items": { 
+                          "type": "string", 
+                          "format": "ipv4",
+                          "maxItems": 2
+                        }
                       },
                       "ipv6Addresses": {
                         "type": "array",
-                        "items": { "type": "string", "format": "ipv6" }
+                        "items": { 
+                          "type": "string", 
+                          "format": "ipv6",
+                          "maxItems": 1
+                        }
                       }
                     }
                   }
@@ -549,18 +634,58 @@
                   "type": "array",
                   "items": {
                     "type": "object",
+                    "required": ["port"],
                     "properties": {
-                      "untagged": { "type": "boolean" },
-                      "vlanId": { "type": "integer", "minimum": 2, "maximum": 3600 },
+                      "vlanId": {
+                        "type": "integer",
+                        "minimum": 2,
+                        "maximum": 3600
+                      },
+                      "untagged": {
+                        "type": "boolean"
+                      },
                       "port": {
                         "type": "object",
                         "required": ["nodeName", "portName"],
                         "properties": {
-                          "nodeName": { "type": "string", "minLength":3, "maxLength":120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" },
-                          "portName": { "type": "string", "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$" }
+                          "nodeName": {
+                            "type": "string",
+                            "minLength": 3,
+                            "maxLength": 120,
+                            "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                          },
+                          "portName": {
+                            "type": "string",
+                            "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$"
+                          }
                         }
                       }
-                    }
+                    },
+                    "allOf": [
+                      {
+                        "if": {
+                          "required": ["vlanId"]
+                        },
+                        "then": {
+                          "properties": {
+                            "untagged": { "const": false }
+                          }
+                        }
+                      },
+                      {
+                        "if": {
+                          "not": {
+                            "required": ["vlanId"]
+                          }
+                        },
+                        "then": {
+                          "required": ["untagged"],
+                          "properties": {
+                            "untagged": { "const": true }
+                          }
+                        }
+                      }
+                    ]
                   }
                 }
               }
@@ -570,27 +695,48 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["name"],
+              "required": [
+                "name"
+              ],
               "properties": {
-                "name": { "type": "string", "minLength": 3, "maxLength": 120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" },
-                "description": { "type": "string", "maxLength": 500 },
-                "enabled": { "type": "boolean" },
+                "name": { 
+                  "type": "string", 
+                  "minLength": 3, 
+                  "maxLength": 120, 
+                  "pattern": "^V[rR][fF]-?[A-Za-z0-9]{1,16}$"
+                },
+                "description": { 
+                  "type": "string", 
+                  "maxLength": 2000 },
+                "enabled": { 
+                  "type": "boolean" 
+                },
                 "asn": {
                   "type": "integer",
                   "minimum": 1,
                   "maximum": 4294967294,
-                  "not": { "enum": [23456, 65535] }
+                  "not": { 
+                    "enum": [
+                      23456, 65535
+                      ] 
+                    }
                 },
-                "vni": { "type": "integer", "minimum": 2, "maximum": 6000000 },
+                "vni": { 
+                  "type": "integer", 
+                  "minimum": 2, 
+                  "maximum": 6000000 
+                },
                 "labels": {
                   "type": "array",
-                  "items": { "type": "string", "maxLength": 120 }
+                  "items": { 
+                    "type": "string", 
+                    "maxLength": 120 
+                  }
                 },
                 "annotations": {
                   "type": "array",
                   "items": {
                     "type": "object",
-                    "required": ["name", "value"],
                     "properties": {
                       "dataType": {
                         "type": "string",
@@ -617,25 +763,60 @@
                         "maxLength": 512
                       }
                     }
-                  }
+                  },
+                  "anyOf": [
+                    { 
+                      "required": [
+                        "name", "value"
+                      ] 
+                    },
+                    { 
+                      "not": { 
+                        "anyOf": [ 
+                          { 
+                            "required": [
+                              "name"
+                            ] 
+                          }, 
+                          { 
+                            "required": [
+                              "value"
+                            ] 
+                          } 
+                        ] 
+                      } 
+                    }
+                  ]
                 },
                 "staticRoutes": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
-                      "name": { "type": "string", "minLength": 3, "maxLength": 120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" },
-                      "description": { "type": "string", "maxLength": 500 },
-                      "enabled": { "type": "boolean" },
+                      "name": { 
+                        "type": "string", 
+                        "minLength": 3, 
+                        "maxLength": 120, 
+                        "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                      },
+                      "description": { 
+                        "type": "string", 
+                        "maxLength": 2000 
+                      },
+                      "enabled": { 
+                        "type": "boolean" 
+                      },
                       "labels": {
                         "type": "array",
-                        "items": { "type": "string", "maxLength": 120 }
+                        "items": { 
+                          "type": "string", 
+                          "maxLength": 120 
+                        }
                       },
                       "annotations": {
                         "type": "array",
                         "items": {
                           "type": "object",
-                          "required": ["name", "value"],
                           "properties": {
                             "dataType": {
                               "type": "string",
@@ -662,56 +843,143 @@
                               "maxLength": 512
                             }
                           }
-                        }
+                        },
+                        "anyOf": [
+                          { 
+                            "required": [
+                              "name", "value"
+                            ] 
+                          },
+                          { 
+                            "not": { 
+                              "anyOf": [ 
+                                { 
+                                  "required": [
+                                    "name"
+                                  ] 
+                                }, 
+                                { 
+                                  "required": [
+                                    "value"
+                                  ] 
+                                } 
+                              ] 
+                            } 
+                          }
+                        ]
                       },
                       "routes": {
                         "type": "array",
                         "items": {
                           "type": "object",
-                          "required": ["prefix", "discard"],
+                          "required": [
+                            "prefix", "discard"
+                          ],
                           "properties": {
-                            "nodeId": { "type": "string", "minLength": 3, "maxLength": 120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" },
-                            "interface": { "type": "string", "minLength": 3, "maxLength": 120, "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" },
-                            "preference": { "type": "integer", "minimum": 1, "maximum": 255 },
-                            "prefix": { "anyOf": [
-                                { "type": "string", "format": "ipv4" },
-                                { "type": "string", "format": "ipv6" }
-                              ]},
-                            "nextHop": {
+                            "nodeId": { 
+                              "type": "string", 
+                              "minLength": 3, 
+                              "maxLength": 120, 
+                              "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                            },
+                            "interface": { 
+                              "type": "string", 
+                              "minLength": 3, 
+                              "maxLength": 120, 
+                              "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                            },
+                            "preference": { 
+                              "type": "integer", 
+                              "minimum": 1, 
+                              "maximum": 255 
+                            },
+                            "prefix": { 
                               "anyOf": [
-                                { "type": "string", "format": "ipv4" },
-                                { "type": "string", "format": "ipv6" }
+                                { 
+                                  "type": "string", 
+                                  "format": "ipv4" 
+                                },
+                                { 
+                                  "type": "string", 
+                                  "format": "ipv6" 
+                                }
                               ]
                             },
-                            "nextVrf": { "type": "string", "pattern": "^(Default VRF|VRF[A-Za-z0-9]{1,100})$" },
+                            "nextHop": {
+                              "anyOf": [
+                                { 
+                                  "type": "string", 
+                                  "format": "ipv4" 
+                                },
+                                { "type": "string", 
+                                  "format": "ipv6" 
+                                }
+                              ]
+                            },
+                            "nextVrf": { 
+                              "type": "string", 
+                              "pattern": "^(Default VRF|VRF[A-Za-z0-9]{1,100})$" 
+                            },
                             "tag": {
                               "type": "string",
-                              "enum": ["TAG_AMBER", "TAG_BLUE", "TAG_GREEN", "TAG_RED", "TAG_PURPLE", "TAG_YELLOW"]
+                              "enum": [
+                                "TAG_AMBER", 
+                                "TAG_BLUE", 
+                                "TAG_GREEN", 
+                                "TAG_RED", 
+                                "TAG_PURPLE", 
+                                "TAG_YELLOW"
+                              ]
                             },
-                            "discard": { "type": "boolean" }
+                            "discard": { 
+                              "type": "boolean" 
+                            }
                           },
                           "allOf": [
                             {
                               "if": {
-                                "properties": { "discard": { "const": true } }
+                                "properties": { 
+                                  "discard": { 
+                                    "const": true 
+                                  } 
+                                }
                               },
                               "then": {
-                                "not": { "required": ["nextHop"] },
+                                "not": { 
+                                  "required": [
+                                    "nextHop"
+                                    ] 
+                                  },
                                 "properties": {
-                                  "tag": { "const": "TAG_BLACK" }
+                                  "tag": { 
+                                    "const": "TAG_BLACK" 
+                                  }
                                 }
                               }
                             },
                             {
                               "if": {
-                                "properties": { "discard": { "const": false } }
+                                "properties": { 
+                                  "discard": { 
+                                    "const": false 
+                                    } 
+                                  }
                               },
                               "then": {
-                                "required": ["nextHop"],
+                                "required": [
+                                  "nextHop"
+                                ],
                                 "properties": {
                                   "tag": {
                                     "type": "string",
-                                    "enum": ["TAG_AMBER", "TAG_BLUE", "TAG_GREEN", "TAG_RED", "TAG_PURPLE", "TAG_YELLOW"]
+                                    "enum": [
+                                      "TAG_AMBER", 
+                                      "TAG_BLUE",
+                                      "TAG_GREEN", 
+                                      "TAG_RED", 
+                                      "TAG_PURPLE", 
+                                      "TAG_YELLOW"
+                                    ]
                                   }
                                 }
                               }
