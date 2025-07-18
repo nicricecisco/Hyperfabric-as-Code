@@ -20,7 +20,10 @@ def _rollback():
     total_length = len(action_stack)
     print(f"Size of action_stack: {total_length}")
     while action_stack:
-        func, data = action_stack.pop()
+        func, data, protected = action_stack.pop()
+        if protected and protected.active:
+            print("Protected item removed from action_stack")
+            continue
         response = None
         try:
             if (func is None or hasattr(func, '__name__') == False):
@@ -49,8 +52,8 @@ def _handle_put(put_func, rollback_func, func_input, rollback_input=None):
         response.raise_for_status()
 
         # Success -> push to stack
-        if (rollback_input is not None and not func_input["protected"]):
-            action_stack.append((rollback_func, rollback_input))
+        if (rollback_input is not None):
+            action_stack.append((rollback_func, rollback_input, func_input.get("protected")))
         return response
 
     except requests.exceptions.HTTPError as e:
@@ -83,14 +86,17 @@ def _handle_post(post_func, rollback_func, func_input, key=None):
         # ID is known after POST call for a connection and is needed in the delete function
         if key is not None and (key == "connection" or key == "vni"):
             try:
+                protected = func_input.pop("protected", None) # Pop and re-add later so it doesn't get deep copied, we want the original reference
                 func_input = copy.deepcopy(func_input)
                 func_input["id"] = response.json().get(f"{key}s")[0].get("id")
+
+                if protected is not None:
+                    func_input["protected"] = protected
             except Exception as e:
                 logger.error(f"[POST HANDLER] Error accessing ID of connection: {e}")
 
         # Success -> push to stack
-        if not func_input["protected"]:
-            action_stack.append((rollback_func, func_input))
+        action_stack.append((rollback_func, func_input, func_input.get("protected")))
         return response
 
     except requests.exceptions.HTTPError as e:

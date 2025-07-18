@@ -3,10 +3,22 @@ from scripts.api_call_handler import handle_get
 from entities.registry import get_entity
 from scripts.hyperfabric_api import get_fabric_connections, get_management_ports
 
-LATEST_PROTECTED_KEY = None
-
 class EntityProcessingError(Exception):
     pass
+
+class ProtectedKey:
+    def __init__(self, type):
+        self.active = False
+        self.type = type
+
+LATEST_PROTECTED_KEY = None
+
+def _reset_latest_protected_key():
+    global LATEST_PROTECTED_KEY
+    if LATEST_PROTECTED_KEY:
+        LATEST_PROTECTED_KEY.active = True
+        print("before none:", LATEST_PROTECTED_KEY)
+        LATEST_PROTECTED_KEY = None
 
 def _parse_attributes(obj, attributes):
     pure = {key: obj[key] for key in obj if key in attributes}
@@ -53,8 +65,7 @@ def _process_entity(entity, data_object, key, reset_stack=False):
         entity_other (dict): Child attributes of entity that must be further processed or discarded
     """        
     global LATEST_PROTECTED_KEY
-    if key == LATEST_PROTECTED_KEY:
-        LATEST_PROTECTED_KEY = None
+
     entity_obj = get_entity(key)
     attributes, func_obj = entity_obj.get("attributes"), entity_obj.get("func_obj")
     get_func, post_func, put_func, del_func = func_obj.get("get_func"), func_obj.get("post_func"), func_obj.get("put_func"), func_obj.get("del_func")
@@ -63,13 +74,15 @@ def _process_entity(entity, data_object, key, reset_stack=False):
     data_object[key] = entity_pure
 
     if entity_pure.pop("protected", False):
-        data_object["protected"] = True
-        LATEST_PROTECTED_KEY = key
-    else:
-        data_object["protected"] = (LATEST_PROTECTED_KEY != None)
+        protected_key = ProtectedKey(key)
+        data_object["protected"] = protected_key
+        LATEST_PROTECTED_KEY = protected_key
+    elif LATEST_PROTECTED_KEY:
+        data_object["protected"] = LATEST_PROTECTED_KEY
 
     pprint(entity_pure)
-    print(data_object["protected"])
+    print(data_object.get("protected"))
+    print(LATEST_PROTECTED_KEY)
     
     """
     Attempts GET → if not found, POST → if found, PUT.
@@ -88,7 +101,6 @@ def _process_entity(entity, data_object, key, reset_stack=False):
 
 # Try to separate parts into a generic function
 def _loop_through_attributes(fabric_other, FABRIC_ID):
-    global LATEST_PROTECTED_KEY
     # Nodes
     if "nodes" in fabric_other:
         fabric_nodes = {"nodes": fabric_other["nodes"]}
@@ -121,9 +133,10 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
                         "node_id": node["name"]
                     }
                     port_other = _process_entity(port, port_data_obj, "port")
+
+            _reset_latest_protected_key() # Reset at the end of processing a node
     
     # Connections
-    LATEST_PROTECTED_KEY = None
     if "connections" in fabric_other:
         fabric_connections = {"connections": fabric_other["connections"]}
         connection_data_obj = {
@@ -136,8 +149,9 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
             if (conn_id is None): # If connection does not exist, call POST 
                 connection_other = _process_entity(connection, connection_data_obj, "connection", i == 0) # Reset action stack if first connection
 
+            _reset_latest_protected_key() # Reset at the end of processing a connection
+
     # VNIs
-    LATEST_PROTECTED_KEY = None
     if "vnis" in fabric_other:
         fabric_vnis = {"vnis": fabric_other["vnis"]}
         for i, vni in enumerate(fabric_vnis["vnis"]):
@@ -147,8 +161,9 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
             vni_other = _process_entity(vni, vni_data_obj, "vni", i == 0) # Reset action stack if first VNI
             
             #Handle members?
+
+            _reset_latest_protected_key() # Reset at the end of processing a VNI
     #VRFs
-    LATEST_PROTECTED_KEY = None
     if "vrfs" in fabric_other:
         fabric_vrfs = {"vrfs": fabric_other["vrfs"]}
         for i, vrf in enumerate(fabric_vrfs["vrfs"]):
@@ -167,6 +182,8 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
                         "vrf_id": vrf["name"],
                     }
                     static_route_other = _process_entity(static_route, static_route_data_obj, "static_route")
+            
+            _reset_latest_protected_key() # Reset at the end of processing a VRF
 
 def handle_json_input(json_input):
     FABRIC_ID = None

@@ -1,8 +1,48 @@
 fabrics:
   - name: from-python
-    nodes:
-      - name: Leaf02
-        description: Leaf Switch 02
-        modelName: HF6100-32D
-        roles: 
-          - LEAF
+    vnis:
+      - name: VNI01
+        description: "My first VNI"
+        labels:
+          - MY_TAG!
+        vni: 10001
+        enabled: true
+      - name: VNI02
+        description: "My second VNI"
+        labels:
+          - MY_TAG
+          - ANOTHER_TAG
+        vni: 10002
+        enabled: true
+        svis:
+          - ipv4Addresses:
+            - 172.222.40.1/24
+            enabled: true
+        member:
+          - vlanId: 100
+    vrfs:
+      - name: VRF01
+        description: "My first VRF"
+        labels:
+          - MY_TAG
+        vni: 1000
+        enabled: true
+      - name: VRF02
+        description: "My second VRF"
+        labels:
+          - MY_TAG
+        vni: 1001
+        enabled: true
+        staticRoutes:
+          - name: SR01
+            description: My first static route
+            enabled: true
+            labels:
+              - MY_TAG
+            routes:
+              - prefix: 10.10.10.0/24
+                preference: 10
+                discard: true
+              - prefix: 11.10.10.0/24
+                preference: 10
+                discard: true

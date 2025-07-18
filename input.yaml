@@ -24,7 +24,7 @@ fabrics:
     
     nodes:
       - name: Leaf01
-        description: Leaf Switch 01 updated
+        description: Leaf Switch 01 updated again
         modelName: HF6100-32D
         roles:
           - LEAF
@@ -36,7 +36,6 @@ fabrics:
         roles: 
           - LEAF
         location: sj01-1-101-AAA02
-        protected: true
         managementPorts:
           - description: Management Ethernet Port Configuration
             ipv4Address: 10.10.10.1/24
@@ -83,7 +82,7 @@ fabrics:
           - TAG_ONE
       - name: Spine01
         description: Spine Switch 01
-        modelName: HF6100-32D222
+        modelName: HF6100-32D
         roles: 
           - SPINE
     connections:
@@ -100,52 +99,7 @@ fabrics:
         remote:
           portName: Ethernet1_23
           nodeName: Spine01
-    vnis:
-      - name: VNI01
-        description: "My first VNI"
-        labels:
-          - MY_TAG
-        vni: 10001
-        enabled: true
-      - name: VNI02
-        description: "My second VNI"
-        labels:
-          - MY_TAG
-          - ANOTHER_TAG
-        vni: 10002
-        enabled: true
-        svis:
-          - ipv4Addresses:
-            - 172.222.40.1/24
-            enabled: true
-        member:
-          - vlanId: 100
-    vrfs:
-      - name: VRF01
-        description: "My first VRF"
-        labels:
-          - MY_TAG
-        vni: 1000
-        enabled: true
-      - name: VRF02
-        description: "My second VRF"
-        labels:
-          - MY_TAG
-        vni: 1001
-        enabled: true
-        staticRoutes:
-          - name: SR01
-            description: My first static route
-            enabled: true
-            labels:
-              - MY_TAG
-            routes:
-              - prefix: 10.10.10.0/24
-                preference: 10
-                discard: true
-              - prefix: 11.10.10.0/24
-                preference: 10
-                discard: true
+    
 
   # - name: from-python2
   #   description: I am updated from python
