@@ -2,6 +2,7 @@ from pprint import pprint
 from scripts.api_call_handler import handle_get
 from entities.registry import get_entity
 from scripts.hyperfabric_api import get_fabric_connections, get_management_ports
+from scripts.autocabling import autocabling
 
 class EntityProcessingError(Exception):
     pass
@@ -17,7 +18,6 @@ def _reset_latest_protected_key():
     global LATEST_PROTECTED_KEY
     if LATEST_PROTECTED_KEY:
         LATEST_PROTECTED_KEY.active = True
-        print("before none:", LATEST_PROTECTED_KEY)
         LATEST_PROTECTED_KEY = None
 
 def _parse_attributes(obj, attributes):
@@ -82,7 +82,6 @@ def _process_entity(entity, data_object, key, reset_stack=False):
 
     pprint(entity_pure)
     print(data_object.get("protected"))
-    print(LATEST_PROTECTED_KEY)
     
     """
     Attempts GET → if not found, POST → if found, PUT.
@@ -135,9 +134,20 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
                     port_other = _process_entity(port, port_data_obj, "port")
 
             _reset_latest_protected_key() # Reset at the end of processing a node
-    
-    # Connections
-    if "connections" in fabric_other:
+
+    # Autocabling, by default, enabled is assumed to be True if other attributes exist
+    if "autocabling" in fabric_other and (fabric_other["autocabling"].get("enabled") is None or fabric_other["autocabling"].get("enabled") != False):
+        autocabling_data_obj = {
+            "fabric_id": FABRIC_ID,
+            "autocabling_obj": fabric_other["autocabling"]
+        }
+        auto_connections = autocabling(autocabling_data_obj)
+
+        for i, connection in enumerate(auto_connections):
+            _process_entity(connection, autocabling_data_obj, "connection", i == 0) # Reset action stack if first connection
+
+    # Connections, only if autocabling was not enabled
+    elif "connections" in fabric_other:
         fabric_connections = {"connections": fabric_other["connections"]}
         connection_data_obj = {
             "fabric_id": FABRIC_ID,
@@ -219,39 +229,6 @@ def handle_json_input(json_input):
                     continue  # move to next fabric
             else:
                 successes.append({"name": FABRIC_ID, "status": "Success"})
-
-            # entity_obj = get_entity("fabric")
-            # fabric_attributes = entity_obj.get("attributes")
-            # func_obj = entity_obj.get("func_obj")
-            # get_fabric = func_obj.get("get_func")
-            # create_fabric = func_obj.get("post_func")
-            # update_fabric = func_obj.get("put_func")
-            # delete_fabric = func_obj.get("del_func")
-
-            # fabric_pure, fabric_other = _parse_attributes(fabric, fabric_attributes)
-
-            # response = handle_get(
-            #     get_func=get_fabric,
-            #     post_func=create_fabric,
-            #     put_func=update_fabric,
-            #     delete_func=delete_fabric,
-            #     func_input=fabric_pure,
-            #     key="fabric",
-            #     clear_action_stack=True
-            # )
-
-            # if response.status_code == 200:
-            #     print("Fabric result: Success!")
-            #     try:
-            #         _loop_through_attributes(fabric_other, FABRIC_ID)
-            #         successes.append({"name": FABRIC_ID, "status": "Success"})
-            #     except EntityProcessingError as e:
-            #         print(f"Error while processing sub-entities for fabric '{FABRIC_ID}': {e}")
-            #         failures.append({"name": FABRIC_ID, "error": str(e)})
-            #         continue  # move to next fabric
-            # else:
-            #     print("Fabric result: Failed")
-            #     failures.append({"name": FABRIC_ID, "error": f"{response.json()}"})
 
         except Exception as e:
             print(f"Exception at fabric level for fabric '{FABRIC_ID}': {e}")

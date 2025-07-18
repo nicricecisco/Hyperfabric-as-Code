@@ -118,6 +118,25 @@ def delete_fabric(fabric_data_obj):
 # ------------------------------ NODES ------------------------------
 
 
+# /fabrics/{fabricId}/nodes
+def get_fabric_nodes(autocabling_data_obj):
+    """
+    Retrieves a list of nodes within a fabric.
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        candidate (str, optional): The candidate configuration name. Defaults to None.
+        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+
+    Returns:
+        dict: JSON response, or None on error.
+    """
+
+    params = {key: autocabling_data_obj["autocabling_obj"][key] for key in ["candidate", "includeMetadata"] if "autocabling_obj" in autocabling_data_obj and key in autocabling_data_obj["autocabling_obj"]}
+    fabricId = autocabling_data_obj["fabric_id"]
+    response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes", params=params)
+    return response
+
 # /fabrics/{fabricId}/nodes/{nodeId}
 def get_fabric_node(node_data_obj):
     """
@@ -991,26 +1010,26 @@ def delete_fabric_connections(auth, fabricId):
     response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections")
     return response
 
-# # /fabrics/{fabricId}/nodes
-def get_fabric_nodes(auth, fabricId, candidate=None, includeMetadata=None):
-    """
-    Retrieves a list of nodes within a fabric.
+# # # /fabrics/{fabricId}/nodes
+# def get_fabric_nodes(auth, fabricId, candidate=None, includeMetadata=None):
+#     """
+#     Retrieves a list of nodes within a fabric.
 
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        candidate (str, optional): The candidate configuration name. Defaults to None.
-        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+#     Args:
+#         fabricId (str): The ID or name of the fabric.
+#         candidate (str, optional): The candidate configuration name. Defaults to None.
+#         includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
 
-    Returns:
-        dict: JSON response, or None on error.
-    """
-    params = {}
-    if candidate:
-        params["candidate"] = candidate
-    if includeMetadata:
-        params["includeMetadata"] = includeMetadata
-    response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes", params=params)
-    return response
+#     Returns:
+#         dict: JSON response, or None on error.
+#     """
+#     params = {}
+#     if candidate:
+#         params["candidate"] = candidate
+#     if includeMetadata:
+#         params["includeMetadata"] = includeMetadata
+#     response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes", params=params)
+#     return response
 
 # /fabrics/{fabricId}/nodes/{nodeId}/devices/{deviceId}
 def bind_device(auth, fabricId, nodeId, deviceId):
