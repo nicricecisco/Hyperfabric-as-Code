@@ -179,7 +179,7 @@
                 {
                   "prefix": "10.10.10.0/24",
                   "preference": 10,
-                  "discard": true
+                  "discard": false
                 },
                 {
                   "prefix": "11.10.10.0/24",

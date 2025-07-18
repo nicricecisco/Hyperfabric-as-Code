@@ -1,22 +1,22 @@
 fabrics:
-  - name*: string min length 3, max length 120, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+  - name*: string min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
     description: string, max length 2000
-    location: string, min length 3, max length 50, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+    location: string, min length 3, max length 50, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
     address: string, max length 200
-    city: string, max length 50, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
-    country: string, max length 50, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+    city: string, max length 50, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+    country: string, max length 50, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
     topology: enum = ["MESH", "SPINE_LEAF"], default = "MESH"
     labels:
         string[], max length 120
     annotations:
       - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
-        name: string, min length 3, max length 120, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, required if value is passed
+        name: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, required if value is passed
         value: string, min length 1, max length 512, required if name is passed
   
     nodes:
-      - name*: string, min length 3, max length 120, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+      - name*: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
         description: string, max length 2000
-        location: string, min length 3, max length 50, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+        location: string, min length 3, max length 50, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
         modelName*: enum = ["HF6100-32D", "HF6100-60L4D"]
         roles*: enum = ["LEAF", "SPINE", "SERVER"] 
         serialNumber: string, max length 50
@@ -71,7 +71,7 @@ fabrics:
                 uplinkFast: boolean, only used when VLAN is deployed on port
             annotations:
               - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
-                name: string, min length 3, max length 120, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, required if value is passed
+                name: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, required if value is passed
                 value: string, min length 1, max length 512, required if name is passed
             labels: 
               string[], max length 120
@@ -84,17 +84,17 @@ fabrics:
         pluggable: string, max length 150
         local:
           portName*: string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64
-          nodeName*: string, min length 3, max length 120, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, must match remote node name
+          nodeName*: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, must match remote node name
         remote:
           portName*: string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64 based on node modelName 
-          nodeName*: string, min length 3, max length 120, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, must not match local node name
+          nodeName*: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, must not match local node name
         
     vnis:
-      - name*: string min length 3, max length 120, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+      - name*: string min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
         description: string, max length 2000
         vni: integer, range 2-6000000
         mtu: integer, range 1500-9100, default 9100
-        vrfId: string,  min length 3, max length 120, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+        vrfId: string,  min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
         svis:
           - enabled: boolean
             ipv4Addresses:
@@ -105,7 +105,7 @@ fabrics:
           - untagged*: boolean, required and needs to be true if no vlanId is passed
             vlanId: integer, range 2-3600, required if untagged is false or untagged is not passed
             port:
-              nodeName*: string, min length 3, max length 120, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+              nodeName*: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
               portName*: string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64
 
     vrfs:
@@ -118,27 +118,38 @@ fabrics:
           string[], max length 120
         annotations:
           - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
-            name: string, min length 3, max length 120, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, required if value is passed
+            name: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, required if value is passed
             value: string, min length 1, max length 512, required if name value is passed
         staticRoutes:
-          - name: string, min length 3, max length 120, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+          - name: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
             description: string, max length 2000
             enabled: boolean
             labels: 
               string[], max length 120
             annotations:
               - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
-                name: string, min length 3, max length 120, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, required if value is passed
+                name: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, required if value is passed
                 value: string, min length 1, max length 512, required if name is passed
             routes:
-              - nodeId: string, min length 3, max length 120, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
-                interface: string, min length 3, max length 120, allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+              - nodeId: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+                interface: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
                 preference: integer, range 1-255
                 prefix*: string, valid IPv4 or IPv6 address
                 nextHop: string, valid IPv4 or IPv6 address, required if discard is false or not passed
                 nextVrf: string, must match pattern "Default VRF" or "VRF[A-Za-z0-9]{1,100}"
                 tag: enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", "TAG_PURPLE", "TAG_YELLOW"], default = "TAG_AMBER", defaults and required to be "TAG_BLACK" if discard is true, cannot be "TAG_BLACK" if discard is false
                 discard: boolean, default = false
+  - autocabling:
+      - enabled: boolean, default = false must be true to enable autocabling, set to true if any of the following fields are passed, ignores all other fields if enabled is false
+        pluggable: string, max length 150
+        speed: string, set of {100, 200, 400} and accepts G at the end of any number, rejected if enabled is false
+        length: string, accepts three categories of sets {short, intrarack, intra-rack, intra rack, 0.5 <= N < 5}, {med, medium, interrack, inter-rack, inter rack, 5 <= N < 50}, {long, long-haul, inter-fabric, inter-fabric, inter fabric, >=50M}
+        cablePreference: enum = ["DAC", "AOC", "Transceiver"]
+        portType: enum = ["SFP", "SFP28" "QSFP28", "QSFP-DD"]
+
+    
+
+
 
 
             
