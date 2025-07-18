@@ -10,6 +10,10 @@ logger = logging.getLogger(__name__)
 DEFAULT_PLUGGABLE = "QDD-2Q200-CU3M"
 SUPPORTED_MODELS = ["HF6100-32D", "HF6100-60L4D"]
 
+# For next week:
+# Don't duplicate already existing connections. You have to update the pluggable value.
+# Figure out a way to get the next available port in this case
+
 def _get_model_name(node):
     model_name = node.get("modelName")
     if not model_name or model_name not in SUPPORTED_MODELS:
@@ -98,9 +102,6 @@ def autocabling(autocabling_data_obj):
             leaf_nodes.append(node)
         else:
             logger.warning(f"[AUTOCABLING] Unknown node type: expected type 'LEAF' or 'SPINE', but has role: {node.get('roles')}")
-
-    print(len(spine_nodes))
-    print(len(leaf_nodes))
 
     # Don't overwrite port connections, but do overwrite cable
 

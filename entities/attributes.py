@@ -82,7 +82,6 @@ VNI_ATTRIBUTES = [
      "vni",
      "mtu",
      "labels",
-     "enabled",
      "svis",
      "annotations",
      "protected"
@@ -91,7 +90,6 @@ VNI_ATTRIBUTES = [
 VRF_ATTRIBUTES = [
      "name",
      "description",
-     "enabled",
      "asn",
      "vni",
      "labels",

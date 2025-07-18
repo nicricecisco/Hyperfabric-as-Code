@@ -556,6 +556,7 @@ def add_fabric_vnis(vni_data_obj):
     """
     payload = {"vnis": [vni_data_obj["vni"]]}
     fabricId = vni_data_obj["fabric_id"]
+    vni_data_obj["vni"]["enabled"] = True  # Enabled MUST be true
     response = _make_post_request(headers, f"{BASE_URL}/fabrics/{fabricId}/vnis", payload=payload)
     return response
 
@@ -594,6 +595,7 @@ def update_fabric_vni(vni_data_obj):
     fabricId = vni_data_obj["fabric_id"]
     vniId = vni_data_obj["vni"]["name"]
     payload = vni_data_obj["vni"]
+    vni_data_obj["vni"]["enabled"] = True  # Enabled MUST be true
     response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}/vnis/{vniId}", payload=payload)
     return response
 
@@ -650,6 +652,7 @@ def add_fabric_vrfs(vrf_data_obj):
     """
     payload = {"vrfs": [vrf_data_obj["vrf"]]}
     fabricId = vrf_data_obj["fabric_id"]
+    vrf_data_obj["vrf"]["enabled"] = True  # Enabled MUST be true
     response = _make_post_request(headers,f"{BASE_URL}/fabrics/{fabricId}/vrfs", payload=payload)
     return response
 
@@ -702,6 +705,7 @@ def update_fabric_vrf(vrf_data_obj):
     fabricId = vrf_data_obj["fabric_id"]
     vrfId = vrf_data_obj["vrf"]["name"]
     payload = vrf_data_obj["vrf"]
+    vrf_data_obj["vrf"]["enabled"] = True  # Enabled MUST be true
     response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}/vrfs/{vrfId}", payload=payload)
     return response
 
