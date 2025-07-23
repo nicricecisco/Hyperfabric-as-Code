@@ -701,7 +701,7 @@ def update_fabric_vrf(vrf_data_obj):
     """
     return get_fabric_vrf(vrf_data_obj) # Needs to return a response with 200 status code, and you (should) only get here if the GET was successful
 
-    # PUT FUNCTION NOT CURRENTLY SUPPORTED, but here's the code anyways :)
+    # PUT API CALL NOT CURRENTLY SUPPORTED/WORKING, but here's the code anyways :)
     fabricId = vrf_data_obj["fabric_id"]
     vrfId = vrf_data_obj["vrf"]["name"]
     payload = vrf_data_obj["vrf"]

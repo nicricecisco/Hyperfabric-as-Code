@@ -1,4 +1,3 @@
-import json
 import yaml
 import sys
 from pprint import pprint
@@ -48,7 +47,7 @@ def main(json_input):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print(f"Usage: python {sys.argv[0]} <yaml_file>")
+        print(f"Usage: python {sys.argv[0]} <yaml_file1> [yaml_file2 ...]")
         sys.exit(1)
 
     json_input = combine_files([file for file in sys.argv[1:]])
