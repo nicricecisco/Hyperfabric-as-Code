@@ -44,31 +44,35 @@ def _get_fabric_connections(fabric_name):
     
     return connections.get("connections") # The result is given as {'connections': [...]}
 
-def _analyze_existing_connections(connections):
+def _analyze_existing_connections(connections, names_of_spine_nodes, is_spine_leaf_topo):
     if not connections:
         return set(), {}, []
     
     connection_set = set() # Set of tuples: (spine or leaf, leaf) 
     occupied_ports = defaultdict(list) # nodeName -> list of occupied portNames
-    redundant_connections = [] # List of connections with 
+    existing_connections = [] # List of existing connections that should not be deleted
+    redundant_connections = [] # List of connections that connect two already connected nodes
+    connections_to_delete = [] # List of leaf-leaf connections. Will be empty if mesh topology
     for connection in connections:
-        if (connection["remote"]["nodeName"], connection["local"]["nodeName"]) in connection_set or (connection["local"]["nodeName"], connection["remote"]["nodeName"]) in connection_set:
+        local_name = connection["local"]["nodeName"]
+        remote_name = connection["remote"]["nodeName"]
+        if is_spine_leaf_topo and local_name not in names_of_spine_nodes and remote_name not in names_of_spine_nodes: # leaf-leaf connections should be deleted in a spine-leaf topology
+            connections_to_delete.append(connection)
+        elif (remote_name, local_name) in connection_set or (local_name, remote_name) in connection_set:
             redundant_connections.append(connection)
         else:
             # Add both node names as a tuple to track existing connection
-            connection_set.add((connection["remote"]["nodeName"], connection["local"]["nodeName"]))
+            connection_set.add((remote_name, local_name))
+            existing_connections.append(connection)
 
         # Track which ports are used on each side
-        occupied_ports[connection["remote"]["nodeName"]].append(connection["remote"]["portName"])
-        occupied_ports[connection["local"]["nodeName"]].append(connection["local"]["portName"])
+        occupied_ports[remote_name].append(connection["remote"]["portName"])
+        occupied_ports[local_name].append(connection["local"]["portName"])
+    
+    if not is_spine_leaf_topo:
+        connections_to_delete = [] # Enforce that this list is empty if mesh topology
 
-    print("PRINTING REDUNDANT CONNECTIONS...")
-    pprint(redundant_connections)
-
-    print("PRINTING OCCUPIED PORTS...")
-    pprint(occupied_ports)
-
-    return connection_set, occupied_ports, redundant_connections
+    return connection_set, occupied_ports, redundant_connections, connections_to_delete, existing_connections
 
 def _get_model_name(node):
     model_name = node.get("modelName")
@@ -187,16 +191,18 @@ def autocabling(autocabling_data_obj, pull_nodes_from_yaml=False):
 
     spine_nodes = []
     leaf_nodes = []
+    names_of_spine_nodes = [] # Used to easily identify what is, or is not, a spine node
 
     for node in nodes:
         if node.get("roles")[0] == "SPINE":
             spine_nodes.append(node)
+            names_of_spine_nodes.append(node["name"])
         elif node.get("roles")[0] == "LEAF":
             leaf_nodes.append(node)
         else:
             logger.warning(f"[AUTOCABLING] Unknown node type: expected type 'LEAF' or 'SPINE', but has role: {node.get('roles')}. Node will be excluded in autocabling.")
 
-    connection_set, occupied_ports, redundant_connections = _analyze_existing_connections(connections)
+    connection_set, occupied_ports, redundant_connections, connections_to_delete, existing_connections = _analyze_existing_connections(connections, names_of_spine_nodes, len(spine_nodes) > 0)
     # Don't overwrite port connections, but do overwrite cable
 
     pluggable = autocabling_data_obj["autocabling_obj"].get("pluggable")
@@ -208,6 +214,8 @@ def autocabling(autocabling_data_obj, pull_nodes_from_yaml=False):
     else:
         connections = _autocable_mesh_topology(leaf_nodes, pluggable, connection_set, occupied_ports)
 
-    # Undo overwriting here? Maybe??
+    # Update pluggable for existing connections
+    for conn in existing_connections:
+        conn["pluggable"] = pluggable
 
-    return connections
+    return connections, redundant_connections, connections_to_delete, existing_connections

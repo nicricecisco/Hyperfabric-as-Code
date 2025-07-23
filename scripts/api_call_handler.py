@@ -33,7 +33,7 @@ def _rollback():
             pprint(data)
             response = func(data)
             response.raise_for_status()
-        except BaseException as e:
+        except Exception as e:
             logger.error(f"[ROLLBACK ERROR] Failed to rollback action {func.__name__}: {e}")
             try:
                 error_message = response.json()
@@ -70,7 +70,7 @@ def _handle_put(put_func, rollback_func, func_input, rollback_input=None):
         logger.error(f"[PUT HANDLER] Request failed in {put_func_name}: {e}")
         _rollback()
         return response
-    except BaseException as e:
+    except Exception as e:
         logger.exception(f"[PUT HANDLER] Unexpected error in {put_func_name}: {e}")
         _rollback()
         return response
@@ -113,7 +113,7 @@ def _handle_post(post_func, rollback_func, func_input, key=None):
         logger.error(f"[POST HANDLER] Request failed in {post_func_name}: {e}")
         _rollback()
         return response
-    except BaseException as e:
+    except Exception as e:
         logger.exception(f"[POST HANDLER] Unexpected error in {post_func_name}: {e}")
         _rollback()
         return response
@@ -125,6 +125,7 @@ def handle_get(get_func, post_func, put_func, delete_func, func_input, key, clea
         get_func (func): function call for GET request
         post_func (func): function call for POST request
         put_func (func): function call for PUT request
+        delete_func (func): function for DELETE request
         func_input (dict): JSON object for function input
         key (string): identifies the type of object (an attribute)
         clear_action_stack (bool): clears the stack of rollback actions
@@ -202,7 +203,33 @@ def handle_get(get_func, post_func, put_func, delete_func, func_input, key, clea
         _rollback()
         return response
 
-    except BaseException as e:
+    except Exception as e:
         logger.exception(f"[GET HANDLER] Unexpected error in {get_func_name}: {e}")
         _rollback()
         return response
+    
+def handle_delete(delete_func, data_obj):
+    """
+    Deletes an object directly, not part of the rollback function.
+
+    Args:
+        delete_func (func): function for DELETE request
+        data_obj (dict): JSON object for function input
+
+    Returns:
+        response object if successful, else None
+    """
+    try:
+        logger.info("[DELETE HANDLER] Sending DELETE request...")
+        response = delete_func(data_obj)
+        response.raise_for_status()
+
+        return response
+    except requests.exceptions.HTTPError as http_err:
+        logger.error(f"[DELETE HANDLER] HTTP error occurred while deleting: {http_err}")
+    except requests.exceptions.RequestException as req_err:
+        logger.error(f"DELETE HANDLER] Request error occurred while deleting: {req_err}")
+    except Exception as e:
+        logger.error(f"DELETE HANDLER] Unexpected error occurred while deleting: {e}", exc_info=True)
+    
+    return None

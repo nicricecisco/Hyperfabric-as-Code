@@ -502,6 +502,21 @@ def add_fabric_connections(connection_data_obj):
     response = _make_post_request(headers, f"{BASE_URL}/fabrics/{fabricId}/connections", payload=payload)
     return response
 
+def set_fabric_connections(fabricId, connections):
+    """
+    Replaces all connections in a fabric with a new set of connections.
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        connections (list): A list of connections to set.
+
+    Returns:
+        dict: JSON response, or None on error.
+    """
+    payload = {"connections": connections}
+    response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}/connections", payload=payload)
+    return response
+
 def delete_fabric_connection(connection_data_obj):
   """
     Delete a specific connection.

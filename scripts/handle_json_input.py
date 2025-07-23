@@ -1,8 +1,14 @@
+import logging
+import requests
 from pprint import pprint
-from scripts.api_call_handler import handle_get
+from scripts.api_call_handler import handle_get, handle_delete
 from entities.registry import get_entity
-from scripts.hyperfabric_api import get_fabric_connections, get_management_ports
+from scripts.hyperfabric_api import get_fabric_connections, get_management_ports, delete_fabric_connection, set_fabric_connections
 from scripts.autocabling import autocabling
+
+# Setup logger
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
+logger = logging.getLogger(__name__)
 
 class EntityProcessingError(Exception):
     pass
@@ -26,14 +32,15 @@ def _parse_attributes(obj, attributes):
 
     return pure, other
 
-def _extract_connection_info(connections_data):
+def _extract_connection_info(connections):
     return [
         {
             'id': conn['id'],
             'local': conn['local'],
-            'remote': conn['remote']
+            'remote': conn['remote'],
+            'pluggable': conn.get('pluggable')
         }
-        for conn in connections_data.get('connections', [])
+        for conn in connections
     ]
 
 def _connection_exists(connections, target_connection):
@@ -51,6 +58,20 @@ def _connection_exists(connections, target_connection):
             return conn.get('id', {})  # Match found, return id of connection
 
     return None  # No match, no id
+
+def _delete_connections(redundant_connections, leaf_connections, delete_connection_obj):
+    print(f"Number of redundant connections to delete: {len(redundant_connections)}")
+    for conn in redundant_connections:
+        print(f"Connection between {conn['local']['nodeName']} on port {conn['local']['portName']} and {conn['remote']['nodeName']} on port {conn['remote']['portName']}")
+    
+    print(f"Number of leaf-leaf connections to delete: {len(leaf_connections)}")
+    for conn in leaf_connections:
+        print(f"Connection between {conn['local']['nodeName']} on port {conn['local']['portName']} and {conn['remote']['nodeName']} on port {conn['remote']['portName']}")
+    
+    connections_to_delete = redundant_connections + leaf_connections
+    for del_conn in connections_to_delete:
+        delete_connection_obj["id"] = del_conn.get("id")
+        handle_delete(delete_fabric_connection, delete_connection_obj)
 
 def _process_entity(entity, data_object, key, reset_stack=False):
     """
@@ -141,10 +162,30 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
             "fabric_id": FABRIC_ID,
             "autocabling_obj": fabric_other["autocabling"]
         }
-        auto_connections = autocabling(autocabling_data_obj)
+        auto_connections, redundant_connections, leaf_connections, existing_connections = autocabling(autocabling_data_obj)
+        redundant_connections = _extract_connection_info(redundant_connections)
+        leaf_connections = _extract_connection_info(leaf_connections)
 
-        for i, connection in enumerate(auto_connections):
-            _process_entity(connection, autocabling_data_obj, "connection", i == 0) # Reset action stack if first connection
+        # Delete redundant connections, and any leaf-leaf connections if fabric is spine-leaf topology
+        if len(redundant_connections) > 0 or len(leaf_connections) > 0:
+            delete_connection_obj = {
+                "fabric_id": FABRIC_ID
+            }
+            _delete_connections(redundant_connections, leaf_connections, delete_connection_obj)
+        
+        # Update existing connections
+        new_connections = auto_connections + existing_connections
+        try:
+            set_fabric_connections(FABRIC_ID, new_connections) # Sets ALL connections
+        except requests.exceptions.HTTPError as http_err:
+            logger.error(f"[AUTOCABLING] HTTP error while setting connections for fabric {FABRIC_ID}: {http_err}")
+        except requests.exceptions.RequestException as req_err:
+            logger.error(f"[AUTOCABLING] Request exception while setting connections for fabric {FABRIC_ID}: {req_err}")
+        except Exception as e:
+            logger.error(f"[AUTOCABLING] Unexpected error while setting connections for fabric {FABRIC_ID}: {e}", exc_info=True)
+
+        if "connections" in fabric_other:
+            logger.warning("[CONNECTIONS] Connections listed under 'connections' will be skipped as autocable is enabled")
 
     # Connections, only if autocabling was not enabled
     elif "connections" in fabric_other:
@@ -153,7 +194,7 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
             "fabric_id": FABRIC_ID,
         }
         full_connections = handle_get(get_func=get_fabric_connections, post_func=None, put_func=None, delete_func=None, func_input=connection_data_obj, key="connection")
-        current_connections = _extract_connection_info(full_connections)
+        current_connections = _extract_connection_info(full_connections.get("connections", []))
         for i, connection in enumerate(fabric_connections["connections"]):
             conn_id = _connection_exists(current_connections, connection) 
             if (conn_id is None): # If connection does not exist, call POST 
@@ -224,16 +265,17 @@ def handle_json_input(json_input):
                     _loop_through_attributes(fabric_other, FABRIC_ID)
                     successes.append({"name": FABRIC_ID, "status": "Success"})
                 except EntityProcessingError as e:
-                    print(f"Error while processing sub-entities for fabric '{FABRIC_ID}': {e}")
+                    logger.error(f"[FABRIC PROCESSING] Error while processing sub-entities for fabric '{FABRIC_ID}': {e}")
                     failures.append({"name": FABRIC_ID, "error": str(e)})
                     continue  # move to next fabric
             else:
                 successes.append({"name": FABRIC_ID, "status": "Success"})
 
         except Exception as e:
-            print(f"Exception at fabric level for fabric '{FABRIC_ID}': {e}")
+            logger.error(f"[FABRIC PROCESSING] Exception at fabric level for fabric '{FABRIC_ID}': {e}", exc_info=True)
             failures.append({"name": FABRIC_ID, "error": str(e)})
             continue
+
 
     status = (
         "success" if not failures else
