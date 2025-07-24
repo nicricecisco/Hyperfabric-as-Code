@@ -1,9 +1,21 @@
 import requests, json, os
 from pprint import pprint
 from schemas.fabric_schema import validate_fabric
+from pathlib import Path
+from dotenv import load_dotenv
 
 BASE_URL = "https://hyperfabric.cisco.com/api/v1"
-TOKEN = os.environ['HYPERFABRIC_TOKEN']
+
+try:
+    TOKEN = os.environ['HYPERFABRIC_TOKEN']
+except KeyError:
+    # Load .env file located in the same directory as this file
+    dotenv_path = Path(__file__).parent / '.env'
+    load_dotenv(dotenv_path)
+
+    TOKEN = os.environ.get('HYPERFABRIC_TOKEN')
+    if not TOKEN:
+        raise RuntimeError("HYPERFABRIC_TOKEN not found in environment or .env file")
 
 headers = {
   "Content-Type": "application/json",
@@ -796,6 +808,24 @@ def delete_fabric_static_route(static_route_data_obj):
    response = _make_delete_request(headers, f"{BASE_URL}/fabrics/{fabricId}/vrfs/{vrfId}/staticRoutes/{routeId}")
    return response
 
+def get_fabric_configurations(fabric_data):
+    """
+    Retrieves the configuration for a specific fabric.
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        candidate (str, optional): The candidate configuration name. Defaults to None.
+        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+
+    Returns:
+        dict: JSON response containing the fabric configuration, or None on error.
+    """
+    params = {key: fabric_data[key] for key in ["candidate", "includeMetadata"] if key in fabric_data}
+    fabricId = fabric_data["name"]
+    response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/configurations", params=params)
+    print(f"DEBUG raw_data type: {type(response)}")
+    print(f"DEBUG raw_data content: {response}")
+    return response
 # ------------------------------ FROM HYPERFABRIC_SDK ------------------------------
 
 
