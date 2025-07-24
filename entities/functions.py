@@ -3,7 +3,7 @@ from scripts.hyperfabric_api import \
     get_fabric_node, add_fabric_nodes, update_fabric_node, delete_fabric_node, \
     get_management_port, add_management_ports, update_management_port, delete_management_port, \
     get_port, update_port, \
-    get_fabric_connections, get_fabric_connection, add_fabric_connections, delete_fabric_connection, \
+    get_fabric_connections, get_fabric_connection, add_fabric_connections, set_fabric_connections, delete_fabric_connection, \
     get_fabric_vni, add_fabric_vnis, update_fabric_vni, delete_fabric_vni, \
     get_fabric_vrf, add_fabric_vrfs, update_fabric_vrf, delete_fabric_vrf, \
     get_fabric_static_route, add_fabric_static_routes, update_fabric_static_route, delete_fabric_static_route

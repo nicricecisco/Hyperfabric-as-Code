@@ -63,7 +63,7 @@ if __name__ == "__main__":
     input_arg = sys.argv[1]
 
     if is_yaml_file(input_arg):
-        connections = handle_yaml_file(input_arg)
+        connections, redundant_connections, connections_to_delete, existing_connections = handle_yaml_file(input_arg)
     else:
         connections = handle_fabric_name(input_arg)
 

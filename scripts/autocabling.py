@@ -147,8 +147,8 @@ def _autocable_spine_leaf_topology(spine_nodes, leaf_nodes, pluggable, connectio
                 new_connection["pluggable"] = pluggable
                 connections.append(new_connection)
     
-    print("PRINTING NEW CONNECTIONS...")
-    pprint(connections)
+    # print("PRINTING NEW CONNECTIONS...")
+    # pprint(connections)
     return connections
 
 def _autocable_mesh_topology(nodes, pluggable, connection_set, occupied_ports):
@@ -165,8 +165,8 @@ def _autocable_mesh_topology(nodes, pluggable, connection_set, occupied_ports):
                 new_connection["pluggable"] = pluggable
                 connections.append(new_connection)
 
-    print("PRINTING NEW CONNECTIONS...")
-    pprint(connections)
+    # print("PRINTING NEW CONNECTIONS...")
+    # pprint(connections)
     return connections
 
 def autocabling(autocabling_data_obj, pull_nodes_from_yaml=False):

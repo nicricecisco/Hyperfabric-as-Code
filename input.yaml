@@ -90,20 +90,26 @@ fabrics:
     #     roles: 
     #       - SPINE
 
-    # connections:
-    #   - local:
-    #       portName: Ethernet1_19
-    #       nodeName: Leaf01
-    #     remote:
-    #       portName: Ethernet1_19
-    #       nodeName: Spine01
-    #     pluggable: QDD-400-AOC2M
-      # - local:
-      #     portName: Ethernet1_23
-      #     nodeName: Leaf01
-      #   remote:
-      #     portName: Ethernet1_23
-      #     nodeName: Spine01
+    connections:
+      - local:
+          portName: Ethernet1_16
+          nodeName: Leaf01
+        remote:
+          portName: Ethernet1_16
+          nodeName: Spine01
+        pluggable: QDD-400-AOC10M
+      - local:
+          portName: Ethernet1_20
+          nodeName: Leaf01
+        remote:
+          portName: Ethernet1_20
+          nodeName: Spine01
+      - local:
+          portName: Ethernet1_17
+          nodeName: Leaf01
+        remote:
+          portName: Ethernet1_17
+          nodeName: Spine01
     
 
   # - name: from-python2

@@ -233,3 +233,25 @@ def handle_delete(delete_func, data_obj):
         logger.error(f"DELETE HANDLER] Unexpected error occurred while deleting: {e}", exc_info=True)
     
     return None
+
+def put_connections(fabric_id, connections, put_func):
+    """
+    Calls PUT for connections. Separate handler from process_entity since this PUT method sets ALL connections, not just single connection objects.
+
+    Args:
+        fabric_id (str): Fabric name
+        connections (arr): Array of connection objects
+        put_func (func): PUT method for connections
+    Returns: response object
+    """
+    try:
+        response = put_func(fabric_id, connections) # Sets ALL connections
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as http_err:
+        logger.error(f"[SET CONNECTIONS] HTTP error while setting connections for fabric {fabric_id}: {http_err}")
+    except requests.exceptions.RequestException as req_err:
+        logger.error(f"[SET CONNECTIONS] Request exception while setting connections for fabric {fabric_id}: {req_err}")
+    except Exception as e:
+        logger.error(f"[SET CONNECTIONS] Unexpected error while setting connections for fabric {fabric_id}: {e}", exc_info=True)
+    
+    return response

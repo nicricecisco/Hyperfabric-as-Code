@@ -72,8 +72,7 @@ CONNECTION_ATTRIBUTES = [
     "osType",
     "pluggable",
     "local",
-    "remote",
-    "protected"
+    "remote"
 ]
 
 VNI_ATTRIBUTES = [
