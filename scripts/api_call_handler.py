@@ -145,7 +145,7 @@ def handle_get(get_func, post_func, put_func, delete_func, func_input, key, clea
                 return _handle_put(put_func=put_func, rollback_func=put_func, func_input=func_input)
             return response
         
-        logger.info("Handling GET...")
+        logger.info(f"Handling GET for object: {key}...")
         get_func_name = getattr(get_func, '__name__', str(get_func))
 
         response = get_func(func_input)

@@ -74,6 +74,7 @@ def _delete_connections(redundant_connections, leaf_connections, delete_connecti
         handle_delete(delete_fabric_connection, delete_connection_obj)
 
 def _put_connections(fabric_id, connections):
+    pprint(connections)
     try:
         response = put_connections(fabric_id, connections, set_fabric_connections)
         response.raise_for_status()
@@ -125,7 +126,7 @@ def _process_entity(entity, data_object, key, reset_stack=False):
 
 # Try to separate parts into a generic function
 def _loop_through_attributes(fabric_other, FABRIC_ID):
-    # Nodes
+    # -------------------- NODES --------------------
     if "nodes" in fabric_other:
         fabric_nodes = {"nodes": fabric_other["nodes"]}
         for i, node in enumerate(fabric_nodes["nodes"]):
@@ -134,7 +135,7 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
             }
             node_other = _process_entity(node, node_data_obj, "node", i == 0) # Reset action stack if first node
 
-    # Management ports
+    # -------------------- MANAGEMENT PORTS --------------------
             if "managementPorts" in node_other:
                 node_mgmt_ports = {"managementPorts": node_other["managementPorts"]}
                 mgmt_port_data_obj = {
@@ -148,7 +149,7 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
                 for mgmt_port in node_mgmt_ports["managementPorts"]:
                     mgmt_other = _process_entity(mgmt_port, mgmt_port_data_obj, "mgmt_port")
 
-    # Ports
+    # -------------------- PORTS --------------------
             if "ports" in node_other:
                 node_ports = {"ports": node_other["ports"]}
                 for port in node_ports["ports"]:
@@ -160,13 +161,20 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
 
             _reset_latest_protected_key() # Reset at the end of processing a node
 
+    # -------------------- AUTOCABLING --------------------
     # Autocabling, by default, enabled is assumed to be True if other attributes exist
     if "autocabling" in fabric_other and (fabric_other["autocabling"].get("enabled") is None or fabric_other["autocabling"].get("enabled") != False):
         autocabling_data_obj = {
             "fabric_id": FABRIC_ID,
             "autocabling_obj": fabric_other["autocabling"]
         }
-        auto_connections, redundant_connections, leaf_connections, existing_connections = autocabling(autocabling_data_obj)
+        # auto_connections, redundant_connections, leaf_connections, existing_connections = autocabling(autocabling_data_obj)
+        connections_result = autocabling(autocabling_data_obj)
+        if connections_result is None:
+            logger.error("Autocabling failed")
+            return
+        
+        auto_connections, redundant_connections, leaf_connections, existing_connections = connections_result
         redundant_connections = _extract_connection_info(redundant_connections)
         leaf_connections = _extract_connection_info(leaf_connections)
 
@@ -184,7 +192,8 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
         if "connections" in fabric_other:
             logger.warning("[CONNECTIONS] Connections listed under 'connections' will be skipped as autocable is enabled")
 
-    # Connections, only if autocabling was not enabled
+    # -------------------- CONNECTIONS --------------------
+    # only if autocabling was not enabled
     elif "connections" in fabric_other:
         fabric_connections = {"connections": fabric_other["connections"]}
         connection_data_obj = {
@@ -207,7 +216,7 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
        
         _put_connections(FABRIC_ID, current_connections) # Update existing connections
 
-    # VNIs
+    # -------------------- VNIs --------------------
     if "vnis" in fabric_other:
         fabric_vnis = {"vnis": fabric_other["vnis"]}
         for i, vni in enumerate(fabric_vnis["vnis"]):
@@ -219,7 +228,7 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
             #Handle members?
 
             _reset_latest_protected_key() # Reset at the end of processing a VNI
-    #VRFs
+    # -------------------- VRFs --------------------
     if "vrfs" in fabric_other:
         fabric_vrfs = {"vrfs": fabric_other["vrfs"]}
         for i, vrf in enumerate(fabric_vrfs["vrfs"]):
@@ -228,7 +237,7 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
             }
             vrf_other = _process_entity(vrf, vrf_data_obj, "vrf", i == 0) # Reset action stack if first VRF
 
-    # Static Routes
+    # -------------------- STATIC ROUTES --------------------
             if "staticRoutes" in vrf_other:
                 static_routes = {"staticRoutes": vrf_other["staticRoutes"]}
                 for static_route in static_routes["staticRoutes"]:

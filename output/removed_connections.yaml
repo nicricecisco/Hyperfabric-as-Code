@@ -1,0 +1,14 @@
+- local:
+    portName: Ethernet1_20
+    nodeName: Leaf01
+  remote:
+    portName: Ethernet1_20
+    nodeName: Spine01
+  pluggable: QDD-400-AOC10M
+- local:
+    portName: Ethernet1_17
+    nodeName: Leaf01
+  remote:
+    portName: Ethernet1_17
+    nodeName: Spine01
+  pluggable: QDD-400-AOC10M

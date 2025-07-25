@@ -2,7 +2,7 @@ import json
 import logging
 from pprint import pprint
 from collections import defaultdict
-from scripts.hyperfabric_api import get_fabric_nodes, get_fabric_connections
+from scripts.hyperfabric_api import get_fabric, get_fabric_nodes, get_fabric_connections
 
 # Setup logger
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -11,12 +11,22 @@ logger = logging.getLogger(__name__)
 DEFAULT_PLUGGABLE = "QDD-2Q200-CU3M"
 SUPPORTED_MODELS = ["HF6100-32D", "HF6100-60L4D"]
 
-# For next week:
-# Don't duplicate already existing connections. You have to update the pluggable value.
-# Figure out a way to get the next available port in this case
-
-# Plan:
-# Have this accessible from the main pipeline, but also allow a new pipeline to access this and output just the connections in YAML format
+def _get_fabric(fabric_name):
+    fabric_data_obj = {
+        "fabric": {
+            "name": fabric_name
+        }
+    }
+    try:
+        result = get_fabric(fabric_data_obj)
+        if not result:
+            logger.error(f"[AUTOCABLING] Fabric not found for: {fabric_name}")
+            return None
+        return result
+    except Exception as e:
+        logger.error(f"[AUTOCABLING] Error occurred while checking for fabric {fabric_name}: {e}", exc_info=True)
+    
+    return None
 
 def _get_nodes(autocabling_data_obj):
     get_nodes_result = get_fabric_nodes(autocabling_data_obj)
@@ -46,7 +56,7 @@ def _get_fabric_connections(fabric_name):
 
 def _analyze_existing_connections(connections, names_of_spine_nodes, is_spine_leaf_topo):
     if not connections:
-        return set(), {}, []
+        return set(), {}, [], [], []
     
     connection_set = set() # Set of tuples: (spine or leaf, leaf) 
     occupied_ports = defaultdict(list) # nodeName -> list of occupied portNames
@@ -147,8 +157,6 @@ def _autocable_spine_leaf_topology(spine_nodes, leaf_nodes, pluggable, connectio
                 new_connection["pluggable"] = pluggable
                 connections.append(new_connection)
     
-    # print("PRINTING NEW CONNECTIONS...")
-    # pprint(connections)
     return connections
 
 def _autocable_mesh_topology(nodes, pluggable, connection_set, occupied_ports):
@@ -165,8 +173,6 @@ def _autocable_mesh_topology(nodes, pluggable, connection_set, occupied_ports):
                 new_connection["pluggable"] = pluggable
                 connections.append(new_connection)
 
-    # print("PRINTING NEW CONNECTIONS...")
-    # pprint(connections)
     return connections
 
 def autocabling(autocabling_data_obj, pull_nodes_from_yaml=False):
@@ -178,14 +184,25 @@ def autocabling(autocabling_data_obj, pull_nodes_from_yaml=False):
         autocabling_data_obj (dict): An object containing the fabric name, an object for autocabling, and other potentially other attributes like nodes and connections
         pull_nodes_from_yaml (bool): If true, use the nodes and connections from autocabling_data_obj, otherwise pull directly from Hyperfabric
     Returns:
-        connections (dict): Contains connections for autocabling
+        connections (dict): Contains connections for autocabling, or None if an error occurs
     """     
     logger.info("[AUTOCABLING] Starting autocabling...")
+
     # Get nodes, either from provided yaml input or from the existing fabric in Hyperfabric
     if pull_nodes_from_yaml:
+        result = _get_fabric(autocabling_data_obj["fabric_id"])
+        # Inputting a yaml file to autocabling should only be done for fabrics that don't yet exist. Return if the fabric exists.
+        if result is not None:
+            logger.error(f"[AUTOCABLING] Fabric '{autocabling_data_obj['fabric_id']}' already exists. YAML file input to autocable.py is not supported for existing fabrics. Pass the fabric name instead.")
+            return None
+
         nodes = autocabling_data_obj.get("nodes", [])
         connections = autocabling_data_obj.get("connections", [])
     else:
+        result = _get_fabric(autocabling_data_obj["fabric_id"]) # Verify that fabric exists
+        if result is None:
+            logger.error(f"[AUTOCABLING] Fabric with name '{autocabling_data_obj['fabric_id']}' does not exist")
+            return None
         nodes = _get_nodes(autocabling_data_obj)
         connections = _get_fabric_connections(autocabling_data_obj["fabric_id"])
 
@@ -203,7 +220,6 @@ def autocabling(autocabling_data_obj, pull_nodes_from_yaml=False):
             logger.warning(f"[AUTOCABLING] Unknown node type: expected type 'LEAF' or 'SPINE', but has role: {node.get('roles')}. Node will be excluded in autocabling.")
 
     connection_set, occupied_ports, redundant_connections, connections_to_delete, existing_connections = _analyze_existing_connections(connections, names_of_spine_nodes, len(spine_nodes) > 0)
-    # Don't overwrite port connections, but do overwrite cable
 
     pluggable = autocabling_data_obj["autocabling_obj"].get("pluggable")
     if not pluggable:
@@ -217,5 +233,11 @@ def autocabling(autocabling_data_obj, pull_nodes_from_yaml=False):
     # Update pluggable for existing connections
     for conn in existing_connections:
         conn["pluggable"] = pluggable
-
+    
+    # Still update pluggable for connections we recommend to delete, in case the user chooses to keep them
+    for conn in redundant_connections:
+        conn["pluggable"] = pluggable
+    for conn in connections_to_delete:
+        conn["pluggable"] = pluggable
+    
     return connections, redundant_connections, connections_to_delete, existing_connections
