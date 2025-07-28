@@ -4,6 +4,7 @@ import sys
 from jsonschema import validate, ValidationError, Draft7Validator
 from jsonschema.exceptions import best_match
 
+
 REGEX_DESCRIPTIONS = {
     r"^(?!-)(?!\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$": "allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens" ,
     r"^eth\\([0-8]\\)$": "must be in the format 'eth(0)' to 'eth(8)'",

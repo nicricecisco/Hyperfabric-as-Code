@@ -703,7 +703,7 @@
                   "type": "string", 
                   "minLength": 3, 
                   "maxLength": 120, 
-                  "pattern": "^V[rR][fF]-?[A-Za-z0-9]{1,16}$"
+                  "pattern": "^Vrf-(?!(\\d{1,16})$)[a-zA-Z0-9]{1,16}$"
                 },
                 "description": { 
                   "type": "string", 

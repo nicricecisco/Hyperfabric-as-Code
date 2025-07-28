@@ -1,4 +1,5 @@
 {
+  "$schema": "C:\\Users\\nicrice\\Projects\\HFasCodeprojectfolder\\HFasCoderepo\\Hyperfabric-as-Code\\schemas\\validation.json",
   "fabrics": [
     {
       "name": "from-python@#",
@@ -23,6 +24,33 @@
           "labels": [
             "TAG_ONE"
           ]
+        },
+        {
+          "name": "Leaf02",
+          "description": "Leaf Switch 02",
+          "modelName": "HF6100-32D",
+          "roles": [
+            "LEAF"
+          ],
+          "location": "sj01-1-101-AAA02",
+          "managementPorts": [
+            {
+              "description": "Management Ethernet Port Configuration",
+              "ipv4Address": "10.10.10.11/24"
+            }
+          ]
+        },
+        {
+          "name": "Leaf01",
+          "description": "Leaf Switch 01",
+          "modelName": "HF6100-32D",
+          "roles": [
+            "LEAF"
+          ],
+          "labels": [
+            "TAG_ONE"
+          ],
+          "location": "sj01-1-101-AAA01"
         },
         {
           "name": "Leaf02",

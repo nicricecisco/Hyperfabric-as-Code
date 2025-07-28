@@ -1,5 +1,5 @@
 fabrics:
-  - name*: string min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+  - name: required, string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
     description: string, max length 2000
     location: string, min length 3, max length 50, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
     address: string, max length 200
@@ -12,13 +12,25 @@ fabrics:
       - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
         name: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, required if value is passed
         value: string, min length 1, max length 512, required if name is passed
+    delete:
+      connections: 
+        - local:
+            portName: string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64
+            nodeName: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+          remote:
+            portName: string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64 based on node modelName 
+            nodeName: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+      vnis:
+        - name: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+      vrfs:
+        - name: string, must follow format "V[rR][fF], optional hyphen, 1 to 16 alphanumeric characters"
   
     nodes:
-      - name*: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+      - name: required, string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
         description: string, max length 2000
         location: string, min length 3, max length 50, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
-        modelName*: enum = ["HF6100-32D", "HF6100-60L4D"]
-        roles*: enum = ["LEAF", "SPINE", "SERVER"] 
+        modelName: required, enum = ["HF6100-32D", "HF6100-60L4D"]
+        roles: required, enum = ["LEAF", "SPINE", "SERVER"] 
         serialNumber: string, max length 50
         psuAirflows:
           - airflow: enum = ["AIRFLOW_TYPE_PORT_SIDE_INTAKE", "AIRFLOW_TYPE_PORT_SIDE_EXHAUST"], default = "AIRFLOW_TYPE_PORT_SIDE_INTAKE"
@@ -50,7 +62,7 @@ fabrics:
               string[], max length 120
 
         ports:
-          - name*: string, must match pattern "Ethernet1_N" in which N is between 1-64
+          - name: required, string, must match pattern "Ethernet1_N" in which N is between 1-64
             description: string, max length 2000
             mtu: integer, range 1500-9100, default 9100
             fec: string, set of {rs, none}, cannot be "none" based on node modelName + port name
@@ -83,14 +95,14 @@ fabrics:
         osType: enum = ["HYPER_FABRIC", "NEXUS", "IOS_XE", "IOS_XR", "LINUX", ...], default = "HYPER_FABRIC"
         pluggable: string, max length 150
         local:
-          portName*: string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64
-          nodeName*: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, must match remote node name
+          portName: required, string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64
+          nodeName: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, must match remote node name
         remote:
-          portName*: string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64 based on node modelName 
-          nodeName*: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, must not match local node name
+          portName: required, string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64 based on node modelName 
+          nodeName: required, string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, must not match local node name
         
     vnis:
-      - name*: string min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+      - name: required, string min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
         description: string, max length 2000
         vni: integer, range 2-6000000
         mtu: integer, range 1500-9100, default 9100
@@ -102,14 +114,14 @@ fabrics:
             ipv6Addresses:
               string[], valid IPv6 addresses, max one address
       - members:
-          - untagged*: boolean, required and needs to be true if no vlanId is passed
+          - untagged: required, boolean, required and needs to be true if no vlanId is passed
             vlanId: integer, range 2-3600, required if untagged is false or untagged is not passed
             port:
-              nodeName*: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
-              portName*: string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64
+              nodeName: required, string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+              portName: required, string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64
 
     vrfs:
-      - name*: string, must follow format "V[rR][fF], optional hyphen, 1 to 16 alphanumeric characters"
+      - name: required, string, must follow format "Vrf-", 1 to 16 alphanumeric characters which cannot all be digits"
         description: string, max length 2000 
         enabled: true
         asn: integer, range 1-4294967294, not 23456 or 65535
@@ -134,7 +146,7 @@ fabrics:
               - nodeId: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
                 interface: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
                 preference: integer, range 1-255
-                prefix*: string, valid IPv4 or IPv6 address
+                prefix: required, string, valid IPv4 or IPv6 address
                 nextHop: string, valid IPv4 or IPv6 address, required if discard is false or not passed
                 nextVrf: string, must match pattern "Default VRF" or "VRF[A-Za-z0-9]{1,100}"
                 tag: enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", "TAG_PURPLE", "TAG_YELLOW"], default = "TAG_AMBER", defaults and required to be "TAG_BLACK" if discard is true, cannot be "TAG_BLACK" if discard is false

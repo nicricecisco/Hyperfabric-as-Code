@@ -5,6 +5,16 @@ from ruamel.yaml.compat import StringIO
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 from jsonschema import Draft7Validator, ValidationError
 from jsonschema.exceptions import best_match
+"""
+    from textual.app import App, ComposeResult
+    from textual.containers import Horizontal
+    from textual.widgets import Static, ScrollView
+"""
+from rich.syntax import Syntax
+from rich.text import Text
+from rich.console import Console
+from types import SimpleNamespace
+
 
 REGEX_DESCRIPTIONS = {
     r"^(?!-)(?!\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$": "allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens",
@@ -14,25 +24,26 @@ REGEX_DESCRIPTIONS = {
     r"^(Default VRF|VRF[A-Za-z0-9]{1,100})$": "must be either 'Default VRF' or 'VRF' followed by 1 to 100 alphanumeric characters"
 }
 
+console = Console()
+
+
 def load_yaml_file(file_path):
     yaml = YAML()
     with open(file_path, 'r') as f:
         data = yaml.load(f)
-        print("YAML file loaded successfully (ruamel).")
+        console.print("YAML file loaded successfully")
         return data
 
 def load_json_file(file_path):
     with open(file_path, 'r') as f:
         data = json.load(f)
-    print("JSON schema loaded successfully.")
+    print("JSON schema loaded successfully")
     return data
 
 def write_json(data, output_path):
     with open(output_path, 'w') as f:
         json.dump(data, f, indent=2)
     print(f"JSON written to {output_path}")
-
-from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
 def get_line_number(root, path):
     """
@@ -67,9 +78,6 @@ def get_line_number(root, path):
     except Exception:
         return None
 
-        return None
-
-
 def describe_error(error: ValidationError, instance: dict):
     def resolve_path(path, root):
         NAMING_KEYS = ["name", "nodeName", "portName", "vni", "vrf"]
@@ -94,81 +102,116 @@ def describe_error(error: ValidationError, instance: dict):
     field_path, error_obj = resolve_path(error.path, instance)
     user_value = error.instance
     line = get_line_number(instance, error.absolute_path)
-    location_info = f"line {line}, " if line is not None else ""
-    base_msg = f"Error at {location_info}path '{field_path}', value '{user_value}':"
 
+    # Build rich message
+    msg = Text()
+
+    # Add location info
+    if line is not None:
+        msg.append(f"Line {line}", style="bold green")
+    msg.append(", path ", style="white")
+    msg.append(f"'{field_path}'", style="yellow")
+    msg.append(", value ", style="white")
+    msg.append(repr(user_value), style="cyan")
+    msg.append(": ", style="white")
+
+    # Custom management port logic
+    if "managementPorts" in str(error.path) and error.validator == "required":
+        missing_field = error.message.split("'")[1]  # e.g. 'ipv4Gateway'
+        ip_version = "ipv4" if "ipv4" in missing_field else "ipv6"
+        config_type_field = f"{ip_version}_config_type"
+        config_type = error_obj.get(config_type_field, "static")
+
+        if config_type != "dhcp":
+            msg = Text()
+            if line is not None:
+                msg.append(f"Line {line}", style="bold green")
+            msg.append(", path ", style="white")
+            msg.append(f"'{field_path}'", style="yellow")
+            msg.append(", value ", style="white")
+            msg.append(repr(config_type), style="cyan")
+            msg.append(": ", style="white")
+            msg.append(f"'{config_type_field}' ", style="yellow")
+            msg.append("is not set to 'dhcp' (defaults to 'static') and both ", style="white")
+            msg.append(f"'{ip_version}Address' and '{ip_version}Gateway' ", style="cyan")
+            msg.append("are required", style="white")
+            return msg
+
+    # Standard explanation fallbacks
     if error.validator == "pattern":
         pattern = error.validator_value
         explanation = REGEX_DESCRIPTIONS.get(pattern, f"must match pattern {pattern}")
-        return f"{base_msg} {explanation}"
+        msg.append(explanation, style="white")
     elif error.validator == "type":
-        return f"{base_msg} expected type '{error.validator_value}'"
+        msg.append(f"expected type '{error.validator_value}'", style="white")
     elif error.validator == "enum":
-        return f"{base_msg} must be one of {error.validator_value}"
+        allowed = ", ".join(map(str, error.validator_value))
+        msg.append(f"must be one of: {allowed}", style="white")
     elif error.validator in {"minimum", "maximum"}:
-        return f"{base_msg} value must be {error.validator} {error.validator_value}"
+        msg.append(f"value must be {error.validator} {error.validator_value}", style="white")
     elif error.validator in {"minLength", "maxLength"}:
-        return f"{base_msg} string length must be {error.validator} {error.validator_value}"
+        msg.append(f"string length must be {error.validator} {error.validator_value}", style="white")
     elif error.validator == "required":
-        return f"{base_msg} {error.message}"
+        msg.append(error.message, style="white")
+    else:
+        msg.append(error.message, style="white")
 
-    return f"{base_msg} {error.message}"
+    return msg
 
 def check_for_duplicate_names(instance):
     """
-    Check for duplicate names in the YAML content:
-    - nodeName must be globally unique.
-    - Other identifiers (name, vrfName, vniName, etc.) must be unique within each fabric.
+    Returns a list of fake ValidationError-like objects for duplicate name checks.
     """
     errors = []
     global_node_names = set()
 
-    def check_duplicates_in_list(items, key, seen, path):
-        for idx, item in enumerate(items):
-            if not isinstance(item, dict):
-                continue
-            if key in item:
-                val = item[key]
-                if val in seen:
-                    errors.append(f"Duplicate '{key}' value '{val}' found at {path}[{idx}]")
-                else:
-                    seen.add(val)
+    def make_error(path, instance, msg):
+        return SimpleNamespace(
+            path=path,
+            absolute_path=path,
+            instance=instance,
+            message=msg,
+            validator="duplicate",
+            validator_value=None
+        )
 
     fabrics = instance.get("fabrics", [])
     for fabric_idx, fabric in enumerate(fabrics):
         fabric_name = fabric.get("name", f"fabrics[{fabric_idx}]")
-        fabric_path = f"fabrics[{fabric_name}]"
+        fabric_path = ["fabrics", fabric_idx]
 
-        # Check global uniqueness of node names
+        # Global nodeName uniqueness
         nodes = fabric.get("nodes", [])
         for node_idx, node in enumerate(nodes):
             node_name = node.get("nodeName")
             if node_name:
                 if node_name in global_node_names:
-                    errors.append(f"Duplicate 'nodeName' value '{node_name}' found in {fabric_path}/nodes[{node_idx}]")
+                    msg = f"Duplicate nodeName '{node_name}' found in fabric '{fabric_name}'"
+                    errors.append(make_error(fabric_path + ["nodes", node_idx, "nodeName"], node_name, msg))
                 else:
                     global_node_names.add(node_name)
 
-        # Per-fabric duplicates
-        fabric_scoped_keys = ["name", "vrfName", "vniName", "portName"]
+        # Scoped name keys
+        scoped_keys = ["name", "vrfName", "vniName", "staticRouteName"]
+        for key in scoped_keys:
+            seen = set()
 
-        for key in fabric_scoped_keys:
-            # Gather all objects where this key may appear
-            def collect_objects(obj):
+            def collect_objects(obj, path=[], parent_key=None):
                 if isinstance(obj, list):
-                    for i in obj:
-                        yield from collect_objects(i)
+                    for i, item in enumerate(obj):
+                        yield from collect_objects(item, path + [i], parent_key)
                 elif isinstance(obj, dict):
                     if key in obj:
-                        yield obj
-                    for v in obj.values():
-                        yield from collect_objects(v)
+                        if key == "portName" and parent_key == "ports":
+                            return  # skip duplicates inside ports
+                        yield (obj[key], path + [key])
+                    for k, v in obj.items():
+                        yield from collect_objects(v, path + [k], k)
 
-            seen = set()
-            for obj in collect_objects(fabric):
-                val = obj[key]
+            for val, path in collect_objects(fabric, fabric_path):
                 if val in seen:
-                    errors.append(f"Duplicate '{key}' value '{val}' found in {fabric_path}")
+                    msg = f"Duplicate {key} '{val}' found in fabric '{fabric_name}'"
+                    errors.append(make_error(path, val, msg))
                 else:
                     seen.add(val)
 
@@ -218,25 +261,32 @@ def validate_json(instance, schema):
 
     # Collect errors
     errors = list(validator.iter_errors(instance))
-
-    # Attach line numbers for sorting
-    def error_sort_key(e):
-        line = get_line_number(instance, e.absolute_path)
-        line = line if line is not None else float("inf")
-        return (line)  
-
-    errors = sorted(errors, key=lambda e: get_line_number(instance, e.absolute_path))
-
-    # Duplicate name checks
     dup_errors = check_for_duplicate_names(instance)
 
-    if not errors and not dup_errors:
+    # Apply describe_error to everything for standardized formatting
+    all_errors = (
+        [describe_error(e, instance) for e in errors] +
+        [describe_error(e, instance) for e in dup_errors]
+    )   
+
+    # Sort by line number (which is now inside the Text output as part of formatting)
+    def extract_line_number(msg):
+        try:
+            prefix = str(msg).split(",")[0]
+            if prefix.startswith("Line "):
+                return int(prefix.replace("Line ", ""))
+        except:
+            pass
+        return float('inf')
+
+    sorted_errors = sorted(all_errors, key=extract_line_number)
+
+    if not all_errors:
         print("YAML is valid according to the JSON schema.")
     else:
-        for msg in dup_errors:
-            print(f"Duplicate name error: {msg}")
-        for e in errors:
-            print(describe_error(e, instance))
+        console.print("YAML validation errors found:", style="bold red")
+        for e in sorted_errors:
+            console.print(e)
         sys.exit(1)
 
 
