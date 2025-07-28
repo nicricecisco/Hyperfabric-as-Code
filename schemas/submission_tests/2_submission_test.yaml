@@ -1,5 +1,3 @@
-$schema: C:\Users\nicrice\Projects\HFasCodeprojectfolder\HFasCoderepo\Hyperfabric-as-Code\schemas\validation.json
-
 fabrics:
   - name: from-python@#
     description: I am updated from python

@@ -1,0 +1,1157 @@
+{
+  "type": "object",
+  "description": "Root object representing the full network configuration schema.",
+  "properties": {
+    "fabrics": {
+      "type": "array",
+      "description": "A list of fabric configurations in the network.",
+      "items": {
+        "type": "object",
+        "description": "Configuration for a single fabric, containing all related resources.",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": { 
+            "type": "string",
+            "description": "The unique name of the fabric.",
+            "minLength": 3, 
+            "maxLength": 120, 
+            "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+          },
+          "description": { 
+            "type": "string",
+            "description": "A human-readable description of the fabric.",
+            "maxLength": 2000 
+          },
+          "location": { 
+            "type": "string",
+            "description": "Physical or logical location of the fabric.",
+            "minLength": 3,
+            "maxLength": 50,
+            "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+          },
+          "address": { 
+            "type": "string",
+            "description": "The address of the fabric location.",
+            "maxLength": 200 
+          },
+          "city": { 
+            "type": "string",
+            "description": "The city where the fabric is located.",
+            "maxLength": 50,
+            "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" 
+          },
+          "country": { 
+            "type": "string",
+            "description": "The country where the fabric is located.",
+            "maxLength": 50,
+            "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+          },
+          "topology": {
+            "type": "string",
+            "description": "The type of network topology used in the fabric.",
+            "enum": [
+              "MESH", "SPINE_LEAF"
+            ],
+            "default": "MESH"
+          },
+          "labels": {
+            "type": "array",
+            "description": "User-defined labels for categorizing the fabric.",
+            "items": { 
+              "type": "string",
+              "description": "A single label assigned to the fabric.",
+              "maxLength": 120
+            }
+          },
+          "annotations": {
+            "type": "array",
+            "description": "Additional metadata or information for the fabric.",
+            "items": {
+              "type": "object",
+              "description": "A single annotation associated with the fabric.",
+              "properties": {
+                "dataType": {
+                  "type": "string",
+                  "description": "The type of value for the annotation.",
+                  "enum": [
+                    "STRING",
+                    "INT32",
+                    "UINT32",
+                    "INT64",
+                    "UINT64",
+                    "UUID",
+                    "DURATION",
+                    "TIME"
+                  ],
+                  "default": "STRING"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "The name of the annotation.",
+                  "minLength": 3,
+                  "maxLength": 120,
+                  "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "The value of the annotation.",
+                  "minLength": 1,
+                  "maxLength": 512
+                }
+              },
+              "anyOf": [
+                { 
+                  "required": [
+                    "name", "value"
+                  ] 
+                },
+                { 
+                  "not": { 
+                    "anyOf": [ 
+                      { 
+                        "required": [
+                          "name"
+                        ] 
+                      }, 
+                      { 
+                        "required": [
+                          "value"
+                        ] 
+                      } 
+                    ] 
+                  } 
+                }
+              ]
+            }
+          },
+          "nodes": {
+            "type": "array",
+            "description": "A list of nodes (devices) within the fabric.",
+            "items": {
+              "type": "object",
+              "description": "Configuration for a single node in the fabric.",
+              "required": [
+                "name", "modelName", "roles"
+              ],
+              "properties": {
+                "name": { 
+                  "type": "string",
+                  "description": "The unique name of the node.",
+                  "minLength": 3, 
+                  "maxLength": 120, 
+                  "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                },
+                "description": { 
+                  "type": "string",
+                  "description": "A human-readable description of the node.",
+                  "maxLength": 2000 
+                },
+                "location": { 
+                  "type": "string",
+                  "description": "Physical or logical location of the node.",
+                  "minLength": 3,
+                  "maxLength": 50,
+                  "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                },
+                "modelName": {
+                  "type": "string",
+                  "description": "The hardware model name of the node.",
+                  "enum": [
+                    "HF6100-32D", "HF6100-60L4D"
+                  ]
+                },
+                "roles": {
+                  "type": "array",
+                  "description": "Roles assigned to the node (e.g., LEAF, SPINE, SERVER).",
+                  "items": {
+                    "type": "string",
+                    "description": "A single role assigned to the node.",
+                    "enum": [
+                      "LEAF", "SPINE", "SERVER"
+                    ]
+                  }
+                },
+                "serialNumber": { 
+                  "type": "string",
+                  "description": "The serial number of the node hardware.",
+                  "maxLength": 50
+                },
+                "psuAirflows": {
+                  "type": "array",
+                  "description": "Power supply unit airflow configurations for the node.",
+                  "items": {
+                    "type": "object",
+                    "description": "Configuration for a single PSU airflow.",
+                    "properties": {
+                      "airflow": {
+                        "type": "string",
+                        "description": "The direction/type of airflow for the PSU.",
+                        "enum": [
+                          "AIRFLOW_TYPE_PORT_SIDE_INTAKE", "AIRFLOW_TYPE_PORT_SIDE_EXHAUST"
+                        ],
+                        "default": "AIRFLOW_TYPE_PORT_SIDE_INTAKE"
+                      },
+                      "psuModel": { 
+                        "type": "string",
+                        "description": "Model name of the power supply unit.",
+                        "maxLength": 50 
+                      }
+                    }
+                  }
+                },
+                "labels": {
+                  "type": "array",
+                  "description": "User-defined labels for categorizing the node.",
+                  "items": { 
+                    "type": "string",
+                    "description": "A label assigned to the node."
+                  }
+                },
+                "managementPorts": {
+                  "type": "array",
+                  "description": "Management ports available on the node.",
+                  "items": {
+                    "type": "object",
+                    "description": "Configuration for a single management port.",
+                    "properties": {
+                        "name": { 
+                          "type": "string",
+                          "description": "Name of the management port (e.g., eth(0-8)).",
+                          "pattern": "^eth\\([0-8]\\)$"
+                        },
+                        "description": { 
+                          "type": "string",
+                          "description": "Description of the management port.",
+                          "maxLength": 2000 
+                        },
+                        "configOrigin": {
+                          "type": "string",
+                          "description": "Indicates if the port was configured from the cloud or device.",
+                          "enum": [
+                            "CONFIG_ORIGIN_CLOUD", "CONFIG_ORIGIN_DEVICE"
+                          ],
+                          "default": "CONFIG_ORIGIN_CLOUD"
+                        },
+                        "connectedState": {
+                          "type": "string",
+                          "description": "Current connection state of the management port.",
+                          "enum": [
+                            "CONNECTED_STATE_NOT_CONNECTED", 
+                            "CONNECTED_STATE_CONNECTED"
+                          ],
+                          "default": "CONNECTED_STATE_NOT_CONNECTED"
+                        },
+                        "ipv4ConfigType": {
+                          "type": "string",
+                          "description": "IP configuration type for IPv4 (static or DHCP).",
+                          "enum": [
+                            "CONFIG_TYPE_STATIC", 
+                            "CONFIG_TYPE_DHCP"
+                          ],
+                          "default": "CONFIG_TYPE_STATIC"
+                        },
+                        "ipv4Address": { 
+                          "type": "string",
+                          "description": "IPv4 address assigned to the port.",
+                          "format": "ipv4" 
+                        },
+                        "ipv4Gateway": { 
+                          "type": "string",
+                          "description": "IPv4 gateway address for the port.",
+                          "format": "ipv4" 
+                        },
+                        "ipv6ConfigType": {
+                          "type": "string",
+                          "description": "IP configuration type for IPv6 (static or DHCP).",
+                          "enum": [
+                            "CONFIG_TYPE_STATIC", 
+                            "CONFIG_TYPE_DHCP"
+                          ],
+                          "default": "CONFIG_TYPE_STATIC"
+                        },
+                        "ipv6Address": { 
+                          "type": "string",
+                          "description": "IPv6 address assigned to the port.",
+                          "format": "ipv6" 
+                        },
+                        "ipv6Gateway": {
+                          "type": "string",
+                          "description": "IPv6 gateway address for the port.",
+                          "format": "ipv6" 
+                        },
+                        "dnsAddresses": {
+                          "type": "array",
+                          "description": "List of DNS server addresses.",
+                          "items": { 
+                            "type": "string",
+                            "description": "A DNS server IP address (IPv4 or IPv6).",
+                            "anyOf": [
+                                { 
+                                  "format": "ipv4" 
+                                },
+                                { 
+                                  "format": "ipv6" 
+                                }
+                              ] 
+                            }
+                        },
+                        "proxyAddress": { 
+                          "type": "string",
+                          "description": "Proxy server address for the management port.",
+                          "format": "uri" 
+                        },
+                        "proxyUsername": { 
+                          "type": "string",
+                          "description": "Username for proxy authentication.",
+                          "maxLength":120 
+                        },
+                        "proxyPassword": { 
+                          "type": "string",
+                          "description": "Password for proxy authentication.",
+                          "maxLength":120 
+                        },
+                        "enabled": { 
+                          "type": "boolean",
+                          "description": "Indicates if the management port is enabled."
+                        },
+                        "setProxyPassword": { 
+                          "type": "boolean",
+                          "description": "Flag to indicate if the proxy password should be set."
+                        },
+                        "cloudUrls": {
+                          "type": "array",
+                          "description": "Cloud service URLs accessible from this port.",
+                          "items": { 
+                            "type": "string",
+                            "description": "A cloud service URL.",
+                            "format": "uri" 
+                          }
+                        },
+                        "noProxy": {
+                            "type": "array",
+                            "description": "List of addresses to exclude from proxy usage.",
+                            "items": { 
+                              "type": "string",
+                              "description": "An address or domain excluded from proxy.",
+                              "maxLength": 120 
+                            }
+                        }
+                    },
+                    "allOf": [
+                        {
+                            "if": {
+                                "properties": {
+                                  "ipv4ConfigType": { 
+                                    "const": "CONFIG_TYPE_STATIC" 
+                                  }
+                                }
+                            },
+                            "then": {
+                                "required": ["ipv4Address", "ipv4Gateway"]
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                "ipv6ConfigType": { "const": "CONFIG_TYPE_STATIC" }
+                                }
+                            },
+                            "then": {
+                                "required": ["ipv6Address", "ipv6Gateway"]
+                            }
+                        }
+                    ]
+                  }
+                },
+                "ports": {
+                  "type": "array",
+                  "description": "Ports available on the node.",
+                  "items": {
+                    "type": "object",
+                    "description": "Configuration for a single port.",
+                    "required": [
+                      "name"
+                    ],
+                    "properties": {
+                      "name": { 
+                        "type": "string",
+                        "description": "Name of the port (e.g., Ethernet1_1).",
+                        "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$"
+                      },
+                      "description": { 
+                        "type": "string",
+                        "description": "Description of the port.",
+                        "maxLength": 2000 
+                      },
+                      "mtu": { 
+                        "type": "integer",
+                        "description": "Maximum Transmission Unit (MTU) size for the port.",
+                        "minimum": 1500, 
+                        "maximum": 9100 
+                      },
+                      "fec": { 
+                        "type": "string",
+                        "description": "Forward Error Correction (FEC) mode for the port.",
+                        "enum": [
+                          "rs", "none"
+                        ] 
+                      },
+                      "pluggable": { 
+                        "type": "string",
+                        "description": "Pluggable module type used in the port.",
+                        "maxLength": 150 
+                      },
+                      "forceCounter": { 
+                        "type": "integer",
+                        "description": "Counter value for force operations on the port.",
+                        "minimum": 0,
+                        "maximum": 40000000
+                      },
+                      "speed": { 
+                        "type": "string",
+                        "description": "Speed configuration of the port.",
+                        "pattern": "^(1x40G\\(4\\)|1x100G\\(2\\)|1x100G\\(4\\)|1x200G\\(4\\)|1x400G|1x10G\\(1\\)|1x25G\\(1\\)|1x50G\\(1\\))$" 
+                      },
+                      "enabled": { 
+                        "type": "boolean",
+                        "description": "Whether the port is enabled or not."
+                      },
+                      "roles": {
+                        "type": "array",
+                        "description": "Roles assigned to the port.",
+                        "items": {
+                          "type": "string",
+                          "description": "A role assigned to the port.",
+                          "enum": [
+                            "UNUSED_PORT", 
+                            "FABRIC_PORT", 
+                            "HOST_PORT", 
+                            "ROUTED_PORT", 
+                            "LAG_PORT"
+                          ]
+                        }
+                      },
+                      "linkDown": { 
+                        "type": "boolean",
+                        "description": "Indicates if the port link is down."
+                      },
+                      "vrfId": { 
+                        "type": "string",
+                        "description": "VRF (Virtual Routing and Forwarding) instance identifier.",
+                        "pattern": "^(Default VRF|VRF[A-Za-z0-9]{1,100})$" 
+                      },
+                      "ipv4Address": {
+                        "type": "array",
+                        "description": "IPv4 addresses assigned to the port.",
+                        "items": { 
+                          "type": "string",
+                          "description": "An IPv4 address assigned to the port.",
+                          "format": "ipv4" 
+                        },
+                        "maxItems": 2
+                      },
+                      "ipv6Addresses": {
+                        "type": "array",
+                        "description": "IPv6 addresses assigned to the port.",
+                        "items": { 
+                          "type": "string",
+                          "description": "An IPv6 address assigned to the port.",
+                          "format": "ipv6" 
+                        },
+                        "maxItems": 2
+                      },
+                      "stp": {
+                        "type": "array",
+                        "description": "Spanning Tree Protocol (STP) configuration for the port.",
+                        "items": {
+                          "type": "object",
+                          "description": "STP settings for a port.",
+                          "properties": {
+                            "bpduGuard": { 
+                              "type": "boolean",
+                              "description": "Enable or disable BPDU guard on the port."
+                            },
+                            "enabled": { 
+                              "type": "boolean",
+                              "description": "Enable or disable STP on the port."
+                            },
+                            "portFast": { 
+                              "type": "boolean",
+                              "description": "Enable or disable PortFast on the port."
+                            },
+                            "rootGuard": { 
+                              "type": "boolean",
+                              "description": "Enable or disable Root Guard on the port."
+                            },
+                            "uplinkFast": { 
+                              "type": "boolean",
+                              "description": "Enable or disable UplinkFast on the port."
+                            }
+                          }
+                        }
+                      },
+                      "annotations": {
+                        "type": "array",
+                        "description": "Additional metadata or information for the port.",
+                        "items": {
+                          "type": "object",
+                          "description": "A single annotation associated with the port.",
+                          "properties": {
+                            "dataType": {
+                              "type": "string",
+                              "description": "The type of value for the annotation.",
+                              "enum": [
+                                "STRING",
+                                "INT32",
+                                "UINT32",
+                                "INT64",
+                                "UINT64",
+                                "UUID",
+                                "DURATION",
+                                "TIME"
+                              ]
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "The name of the annotation.",
+                              "minLength": 3,
+                              "maxLength": 120,
+                              "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                            },
+                            "value": {
+                              "type": "string",
+                              "description": "The value of the annotation.",
+                              "minLength": 1,
+                              "maxLength": 512
+                            }
+                          }
+                        },
+                        "anyOf": [
+                          { 
+                            "required": [
+                              "name", "value"
+                            ] 
+                          },
+                          { 
+                            "not": { 
+                              "anyOf": [ 
+                                { 
+                                  "required": [
+                                    "name"
+                                  ] 
+                                }, 
+                                { 
+                                  "required": [
+                                    "value"
+                                  ] 
+                                } 
+                              ] 
+                            } 
+                          }
+                        ]
+                      },
+                      "labels": {
+                        "type": "array",
+                        "description": "User-defined labels for categorizing the port.",
+                        "items": { 
+                          "type": "string",
+                          "description": "A label assigned to the port.",
+                          "maxLength": 120 
+                        }
+                      }
+                    },
+                    "allOf": [
+                      {
+                        "if": {
+                          "properties": {
+                            "roles": {
+                              "contains": { 
+                                "const": "ROUTED_PORT" 
+                              }
+                            }
+                          }
+                        },
+                        "then": {
+                          "required": [
+                            "vrfId"
+                          ],
+                          "anyOf": [
+                            { 
+                              "required": [
+                                "ipv4Address"
+                              ] 
+                            },
+                            { 
+                              "required": [
+                                "ipv6Address"
+                              ] 
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "connections": {
+            "type": "array",
+            "description": "List of connections between nodes in the fabric.",
+            "items": {
+              "type": "object",
+              "description": "Configuration for a single connection.",
+              "properties": {
+                "description": { 
+                  "type": "string",
+                  "description": "Description of the connection.",
+                  "maxLength": 2000 
+                },
+                "osType": {
+                  "type": "string",
+                  "description": "The operating system type of the connection endpoint.",
+                  "enum": [
+                    "HYPER_FABRIC", 
+                    "NEXUS", 
+                    "IOS_XE", 
+                    "IOS_XR", 
+                    "LINUX"
+                  ],
+                  "default": "HYPER_FABRIC"
+                },
+                "pluggable": { 
+                  "type": "string",
+                  "description": "Pluggable module used for the connection.",
+                  "maxLength": 150 
+                },
+                "local": {
+                  "type": "object",
+                  "description": "The local endpoint of the connection.",
+                  "required": [
+                    "portName", 
+                    "nodeName"
+                  ],
+                  "properties": {
+                    "portName": { 
+                      "type": "string",
+                      "description": "Name of the local port.",
+                      "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$"
+                    },
+                    "nodeName": { 
+                      "type": "string",
+                      "description": "Name of the local node.",
+                      "minLength":3, 
+                      "maxLength":120, 
+                      "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" 
+                    }
+                  }
+                },
+                "remote": {
+                  "type": "object",
+                  "description": "The remote endpoint of the connection.",
+                  "required": [
+                    "portName", 
+                    "nodeName"
+                  ],
+                  "properties": {
+                    "portName": { 
+                      "type": "string",
+                      "description": "Name of the remote port.",
+                      "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$"
+                    },
+                    "nodeName": { 
+                      "type": "string",
+                      "description": "Name of the remote node.",
+                      "minLength":3, 
+                      "maxLength":120, 
+                      "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "vnis": {
+            "type": "array",
+            "description": "List of Virtual Network Identifiers (VNIs) in the fabric.",
+            "items": {
+              "type": "object",
+              "description": "Configuration for a single VNI.",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": { 
+                  "type": "string",
+                  "description": "The unique name of the VNI.",
+                  "minLength":3, 
+                  "maxLength":120, 
+                  "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                },
+                "description": { 
+                  "type": "string",
+                  "description": "A human-readable description of the VNI.",
+                  "maxLength": 2000 
+                },
+                "vni": { 
+                  "type": "integer",
+                  "description": "The numeric VNI value.",
+                  "minimum": 2, 
+                  "maximum": 6000000 
+                },
+                "mtu": { 
+                  "type": "integer",
+                  "description": "MTU size for the VNI.",
+                  "minimum": 1500, 
+                  "maximum": 9100 
+                },
+                "svis": {
+                  "type": "array",
+                  "description": "List of switched virtual interfaces for the VNI.",
+                  "items": {
+                    "type": "object",
+                    "description": "A single SVI configuration.",
+                    "properties": {
+                      "enabled": { 
+                        "type": "boolean",
+                        "description": "Indicates if the SVI is enabled." 
+                      },
+                      "ipv4Addresses": {
+                        "type": "array",
+                        "description": "IPv4 addresses assigned to the SVI.",
+                        "items": { 
+                          "type": "string",
+                          "description": "An IPv4 address for the SVI.",
+                          "format": "ipv4",
+                          "maxItems": 2
+                        }
+                      },
+                      "ipv6Addresses": {
+                        "type": "array",
+                        "description": "IPv6 addresses assigned to the SVI.",
+                        "items": { 
+                          "type": "string",
+                          "description": "An IPv6 address for the SVI.",
+                          "format": "ipv6",
+                          "maxItems": 1
+                        }
+                      }
+                    }
+                  }
+                },
+                "members": {
+                  "type": "array",
+                  "description": "List of member ports for the VNI.",
+                  "items": {
+                    "type": "object",
+                    "description": "Configuration for a single VNI member.",
+                    "required": ["port"],
+                    "properties": {
+                      "vlanId": {
+                        "type": "integer",
+                        "description": "VLAN ID associated with the VNI member.",
+                        "minimum": 2,
+                        "maximum": 3600
+                      },
+                      "untagged": {
+                        "type": "boolean",
+                        "description": "Indicates if the port is untagged."
+                      },
+                      "port": {
+                        "type": "object",
+                        "description": "Port information for the VNI member.",
+                        "required": ["nodeName", "portName"],
+                        "properties": {
+                          "nodeName": {
+                            "type": "string",
+                            "description": "Name of the node to which the port belongs.",
+                            "minLength": 3,
+                            "maxLength": 120,
+                            "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                          },
+                          "portName": {
+                            "type": "string",
+                            "description": "Name of the port.",
+                            "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$"
+                          }
+                        }
+                      }
+                    },
+                    "allOf": [
+                      {
+                        "if": {
+                          "required": ["vlanId"]
+                        },
+                        "then": {
+                          "properties": {
+                            "untagged": { "const": false }
+                          }
+                        }
+                      },
+                      {
+                        "if": {
+                          "not": {
+                            "required": ["vlanId"]
+                          }
+                        },
+                        "then": {
+                          "required": ["untagged"],
+                          "properties": {
+                            "untagged": { "const": true }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "vrfs": {
+            "type": "array",
+            "description": "List of VRF (Virtual Routing and Forwarding) instances.",
+            "items": {
+              "type": "object",
+              "description": "Configuration for a single VRF.",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": { 
+                  "type": "string",
+                  "description": "The unique name of the VRF.",
+                  "minLength": 3, 
+                  "maxLength": 120, 
+                  "pattern": "^Vrf-(?!(\\d{1,16})$)[a-zA-Z0-9]{1,16}$"
+                },
+                "description": { 
+                  "type": "string",
+                  "description": "A human-readable description of the VRF.",
+                  "maxLength": 2000 
+                },
+                "enabled": { 
+                  "type": "boolean",
+                  "description": "Whether the VRF is enabled."
+                },
+                "asn": {
+                  "type": "integer",
+                  "description": "Autonomous System Number (ASN) for the VRF.",
+                  "minimum": 1,
+                  "maximum": 4294967294,
+                  "not": { 
+                    "enum": [
+                      23456, 65535
+                      ] 
+                    }
+                },
+                "vni": { 
+                  "type": "integer",
+                  "description": "VNI associated with the VRF.",
+                  "minimum": 2, 
+                  "maximum": 6000000 
+                },
+                "labels": {
+                  "type": "array",
+                  "description": "User-defined labels for categorizing the VRF.",
+                  "items": { 
+                    "type": "string",
+                    "description": "A label assigned to the VRF.",
+                    "maxLength": 120 
+                  }
+                },
+                "annotations": {
+                  "type": "array",
+                  "description": "Additional metadata or information for the VRF.",
+                  "items": {
+                    "type": "object",
+                    "description": "A single annotation associated with the VRF.",
+                    "properties": {
+                      "dataType": {
+                        "type": "string",
+                        "description": "The type of value for the annotation.",
+                        "enum": [
+                          "STRING",
+                          "INT32",
+                          "UINT32",
+                          "INT64",
+                          "UINT64",
+                          "UUID",
+                          "DURATION",
+                          "TIME"
+                        ]
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "The name of the annotation.",
+                        "minLength": 3,
+                        "maxLength": 120,
+                        "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                      },
+                      "value": {
+                        "type": "string",
+                        "description": "The value of the annotation.",
+                        "minLength": 1,
+                        "maxLength": 512
+                      }
+                    }
+                  },
+                  "anyOf": [
+                    { 
+                      "required": [
+                        "name", "value"
+                      ] 
+                    },
+                    { 
+                      "not": { 
+                        "anyOf": [ 
+                          { 
+                            "required": [
+                              "name"
+                            ] 
+                          }, 
+                          { 
+                            "required": [
+                              "value"
+                            ] 
+                          } 
+                        ] 
+                      } 
+                    }
+                  ]
+                },
+                "staticRoutes": {
+                  "type": "array",
+                  "description": "List of static routes configured for the VRF.",
+                  "items": {
+                    "type": "object",
+                    "description": "A single static route entry.",
+                    "properties": {
+                      "name": { 
+                        "type": "string",
+                        "description": "Name of the static route.",
+                        "minLength": 3, 
+                        "maxLength": 120, 
+                        "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                      },
+                      "description": { 
+                        "type": "string",
+                        "description": "Description of the static route.",
+                        "maxLength": 2000 
+                      },
+                      "enabled": { 
+                        "type": "boolean",
+                        "description": "Whether the static route is enabled."
+                      },
+                      "labels": {
+                        "type": "array",
+                        "description": "Labels assigned to the static route.",
+                        "items": { 
+                          "type": "string",
+                          "description": "A label for the static route.",
+                          "maxLength": 120 
+                        }
+                      },
+                      "annotations": {
+                        "type": "array",
+                        "description": "Additional metadata or information for the static route.",
+                        "items": {
+                          "type": "object",
+                          "description": "A single annotation associated with the static route.",
+                          "properties": {
+                            "dataType": {
+                              "type": "string",
+                              "description": "The type of value for the annotation.",
+                              "enum": [
+                                "STRING",
+                                "INT32",
+                                "UINT32",
+                                "INT64",
+                                "UINT64",
+                                "UUID",
+                                "DURATION",
+                                "TIME"
+                              ]
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "The name of the annotation.",
+                              "minLength": 3,
+                              "maxLength": 120,
+                              "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                            },
+                            "value": {
+                              "type": "string",
+                              "description": "The value of the annotation.",
+                              "minLength": 1,
+                              "maxLength": 512
+                            }
+                          }
+                        },
+                        "anyOf": [
+                          { 
+                            "required": [
+                              "name", "value"
+                            ] 
+                          },
+                          { 
+                            "not": { 
+                              "anyOf": [ 
+                                { 
+                                  "required": [
+                                    "name"
+                                  ] 
+                                }, 
+                                { 
+                                  "required": [
+                                    "value"
+                                  ] 
+                                } 
+                              ] 
+                            } 
+                          }
+                        ]
+                      },
+                      "routes": {
+                        "type": "array",
+                        "description": "List of next-hop routes for the static route.",
+                        "items": {
+                          "type": "object",
+                          "description": "A single next-hop route entry.",
+                          "required": [
+                            "prefix", "discard"
+                          ],
+                          "properties": {
+                            "nodeId": { 
+                              "type": "string",
+                              "description": "Node identifier for the route.",
+                              "minLength": 3, 
+                              "maxLength": 120, 
+                              "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                            },
+                            "interface": { 
+                              "type": "string",
+                              "description": "Interface name for the route.",
+                              "minLength": 3, 
+                              "maxLength": 120, 
+                              "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                            },
+                            "preference": { 
+                              "type": "integer",
+                              "description": "Route preference metric.",
+                              "minimum": 1, 
+                              "maximum": 255 
+                            },
+                            "prefix": { 
+                              "anyOf": [
+                                { 
+                                  "type": "string",
+                                  "description": "Prefix for the route (IPv4 or IPv6).",
+                                  "format": "ipv4" 
+                                },
+                                { 
+                                  "type": "string",
+                                  "description": "Prefix for the route (IPv4 or IPv6).",
+                                  "format": "ipv6" 
+                                }
+                              ]
+                            },
+                            "nextHop": {
+                              "anyOf": [
+                                { 
+                                  "type": "string",
+                                  "description": "Next-hop IP address for the route (IPv4 or IPv6).",
+                                  "format": "ipv4" 
+                                },
+                                { "type": "string",
+                                  "description": "Next-hop IP address for the route (IPv4 or IPv6).",
+                                  "format": "ipv6" 
+                                }
+                              ]
+                            },
+                            "nextVrf": { 
+                              "type": "string",
+                              "description": "VRF to which the route forwards traffic.",
+                              "pattern": "^(Default VRF|VRF[A-Za-z0-9]{1,100})$" 
+                            },
+                            "tag": {
+                              "type": "string",
+                              "description": "Tag associated with the route.",
+                              "enum": [
+                                "TAG_AMBER", 
+                                "TAG_BLUE", 
+                                "TAG_GREEN", 
+                                "TAG_RED", 
+                                "TAG_PURPLE", 
+                                "TAG_YELLOW"
+                              ]
+                            },
+                            "discard": { 
+                              "type": "boolean",
+                              "description": "Indicates if the route is a discard (null) route."
+                            }
+                          },
+                          "allOf": [
+                            {
+                              "if": {
+                                "properties": { 
+                                  "discard": { 
+                                    "const": true 
+                                  } 
+                                }
+                              },
+                              "then": {
+                                "not": { 
+                                  "required": [
+                                    "nextHop"
+                                    ] 
+                                  },
+                                "properties": {
+                                  "tag": { 
+                                    "const": "TAG_BLACK" 
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "if": {
+                                "properties": { 
+                                  "discard": { 
+                                    "const": false 
+                                    } 
+                                  }
+                              },
+                              "then": {
+                                "required": [
+                                  "nextHop"
+                                ],
+                                "properties": {
+                                  "tag": {
+                                    "type": "string",
+                                    "enum": [
+                                      "TAG_AMBER", 
+                                      "TAG_BLUE",
+                                      "TAG_GREEN", 
+                                      "TAG_RED", 
+                                      "TAG_PURPLE", 
+                                      "TAG_YELLOW"
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
