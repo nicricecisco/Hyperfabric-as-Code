@@ -59,6 +59,46 @@ def _connection_exists(connections, target_connection):
 
     return None  # No match, no id
 
+def _delete_entity(key, objects, fabric_id):
+    entity_obj = get_entity(key[:-1]) # key is plural, but the keys in get_entity are all singular
+    if not entity_obj: return
+    
+    delete_func = entity_obj.get("func_obj").get("del_func")
+    if not delete_func: return
+
+    for obj in objects:
+        # Call GET method to make sure object exists
+        data_obj = {
+            "fabric_id": fabric_id,
+            f"{key[:-1]}": obj
+        }
+
+        if key != "connections": # GET func in entity_obj for connections is None, so we don't want to return in that case
+            get_func = entity_obj.get("func_obj").get("get_func")
+            if not get_func: return
+            
+            result = handle_get(get_func=get_func, post_func=None, put_func=None, delete_func=None, func_input=data_obj, key=key, clear_action_stack=True)
+            if not isinstance(result, dict): # handle_get returns the object if found, otherwise a Response object 
+                print("nothing")
+                pprint(result)
+                return
+        
+        # DELETE endpoints for connections and VNIs require the object's ID, the endpoint for VRF requires a standard data_obj with "vrf" as a key and the object as its contents
+        delete_obj = {
+            "fabric_id": fabric_id,
+            "id": obj.get("id") or obj.get("name"),
+            f"{key[:-1]}": {
+                "name": obj.get("name")
+            }
+        }
+
+        # The DELETE endpoint for VNIs does not take a name (even though it should). So we must get its ID and replace the name.
+        # Once this endpoint is fixed, the following code won't be necessary
+        if key == "vnis":
+            delete_obj["id"] = result.get("id")
+            
+        handle_delete(delete_func, delete_obj)
+
 def _delete_connections(redundant_connections, leaf_connections, delete_connection_obj):
     print(f"Number of redundant connections to delete: {len(redundant_connections)}")
     for conn in redundant_connections:
@@ -69,6 +109,7 @@ def _delete_connections(redundant_connections, leaf_connections, delete_connecti
         print(f"Connection between {conn['local']['nodeName']} on port {conn['local']['portName']} and {conn['remote']['nodeName']} on port {conn['remote']['portName']}")
     
     connections_to_delete = redundant_connections + leaf_connections
+    # Call _delete_entity instead?
     for del_conn in connections_to_delete:
         delete_connection_obj["id"] = del_conn.get("id")
         handle_delete(delete_fabric_connection, delete_connection_obj)
@@ -249,6 +290,11 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
                     static_route_other = _process_entity(static_route, static_route_data_obj, "static_route")
             
             _reset_latest_protected_key() # Reset at the end of processing a VRF
+    
+    # -------------------- OBJECT DELETION --------------------
+    if "delete" in fabric_other:
+        for key in fabric_other["delete"]:
+            _delete_entity(key, fabric_other["delete"][key], FABRIC_ID)
 
 def handle_json_input(json_input):
     FABRIC_ID = None

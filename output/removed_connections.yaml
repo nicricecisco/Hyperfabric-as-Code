@@ -1,14 +1,20 @@
-- local:
-    portName: Ethernet1_20
-    nodeName: Leaf01
-  remote:
-    portName: Ethernet1_20
-    nodeName: Spine01
-  pluggable: QDD-400-AOC10M
-- local:
-    portName: Ethernet1_17
-    nodeName: Leaf01
-  remote:
-    portName: Ethernet1_17
-    nodeName: Spine01
-  pluggable: QDD-400-AOC10M
+fabrics:
+  - name: from-python
+    delete:
+      connections:
+        - id: a57e3012-453b-4956-aecf-ebbed0b62236
+          local:
+            portName: Ethernet1_17
+            nodeName: Leaf01
+          remote:
+            portName: Ethernet1_17
+            nodeName: Spine01
+          pluggable: QDD-2Q200-CU3M
+        - id: 93ae5241-8790-4245-8813-d1bd98601665
+          local:
+            portName: Ethernet1_20
+            nodeName: Leaf01
+          remote:
+            portName: Ethernet1_20
+            nodeName: Spine01
+          pluggable: QDD-2Q200-CU3M

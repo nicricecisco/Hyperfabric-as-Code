@@ -11,7 +11,7 @@
 
 
 fabrics:
-  - name: from-python2
+  - name: from-python
     description: I am updated from python
     location: CA-95134
     address: 300 East Tasman Drive
@@ -21,9 +21,9 @@ fabrics:
       - TAG_ONE
       - TAG_TWO
     topology: SPINE_LEAF
-    autocabling:
-      enabled: true
-      pluggable: QDD-400-AOC10M
+    # autocabling:
+    #   enabled: true
+    #   pluggable: QDD-400-AOC10M
     
     nodes:
       - name: Leaf01

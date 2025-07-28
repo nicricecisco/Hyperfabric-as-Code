@@ -14,9 +14,10 @@ class IndentListDumper(yaml.SafeDumper):
     def increase_indent(self, flow=False, indentless=False):
         return super().increase_indent(flow, indentless=False)
     
-def filter_connection_info(connections):
+def filter_connection_info(connections, include_id=False):
     return [
         {
+            **({'id': conn.get('id')} if include_id else {}),
             'local': {k: v for k, v in conn['local'].items() if k != 'nodeId'},
             'remote': {k: v for k, v in conn['remote'].items() if k != 'nodeId'},
             'pluggable': conn.get('pluggable')
@@ -25,11 +26,11 @@ def filter_connection_info(connections):
     ]
 
 # Outputs entire yaml file with autocabled connections and suggested connections to delete
-def output_connections(fabric, connection_result):
+def output_connections(fabric, connection_result, output_delete=False):
     connections, redundant_connections, connections_to_delete, existing_connections = connection_result
 
     wanted_connections = filter_connection_info(connections + existing_connections)
-    unwanted_connections = filter_connection_info(redundant_connections + connections_to_delete)
+    unwanted_connections = filter_connection_info(redundant_connections + connections_to_delete, output_delete)
 
     fabric["connections"] = wanted_connections
     fabric.pop("autocabling", None) # Remove autocabling attribute
@@ -54,6 +55,18 @@ def output_connections(fabric, connection_result):
         print(yaml_fabric)
 
     if len(unwanted_connections) > 0:
+        if output_delete:
+            unwanted_connections = {
+                "fabrics": [
+                    {
+                        "name": fabric.get("name"),
+                        "delete": {
+                            "connections": unwanted_connections
+                        }
+                    }
+                ]
+            }
+
         yaml_unwanted = yaml.dump(unwanted_connections, sort_keys=False, Dumper=IndentListDumper, default_flow_style=False)
 
         removed_output_path = "output/removed_connections.yaml"
@@ -70,6 +83,8 @@ def output_connections(fabric, connection_result):
             print(yaml_unwanted)
     else:
         print("No connections removed")
+    
+    # Add instructions on what to do? To send autocable_output.yaml (and possible also removed_connections.yaml) to main.py
 
 def handle_yaml_file(input_yaml, pluggable):
     # REJECT if the fabric exists
@@ -122,6 +137,8 @@ def handle_yaml_file(input_yaml, pluggable):
     output_connections(fabric, connection_result)
 
 def handle_fabric_name(fabric_name, pluggable):
+    # STILL DOESN'T WORK if you are fixing an existing fabric (does not actually delete the connections that should be deleted)
+    # I think I'll have to implement some delete functionality of those connections, because I don't see any other way
     autocabling_data_obj = {
         "fabric_id": fabric_name,
         "autocabling_obj": {}
@@ -138,7 +155,7 @@ def handle_fabric_name(fabric_name, pluggable):
     fabric = {
         "name": fabric_name
     }
-    output_connections(fabric, connection_result)
+    output_connections(fabric, connection_result, output_delete=True)
 
 def is_yaml_file(input_str):
     return input_str.endswith((".yaml", ".yml")) and os.path.isfile(input_str)

@@ -181,7 +181,7 @@ def autocabling(autocabling_data_obj, pull_nodes_from_yaml=False):
     or all leaves connected once to each other (mesh topology)
 
     Args:
-        autocabling_data_obj (dict): An object containing the fabric name, an object for autocabling, and other potentially other attributes like nodes and connections
+        autocabling_data_obj (dict): An object containing the fabric name, an object for autocabling, and other potentially important attributes like nodes and connections
         pull_nodes_from_yaml (bool): If true, use the nodes and connections from autocabling_data_obj, otherwise pull directly from Hyperfabric
     Returns:
         connections (dict): Contains connections for autocabling, or None if an error occurs

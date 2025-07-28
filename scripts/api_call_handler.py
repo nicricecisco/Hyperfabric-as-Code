@@ -83,7 +83,7 @@ def _handle_post(post_func, rollback_func, func_input, key=None):
         response = post_func(func_input)
         response.raise_for_status()
 
-        # ID is known after POST call for a connection and is needed in the delete function
+        # ID is known after POST call for a connection or VNI, and is needed in the delete function
         if key is not None and (key == "connection" or key == "vni"):
             try:
                 protected = func_input.pop("protected", None) # Pop and re-add later so it doesn't get deep copied, we want the original reference
