@@ -1,13 +1,11 @@
 {
   "type": "object",
-  "description": "Root object representing the full network configuration schema.",
   "properties": {
     "fabrics": {
       "type": "array",
       "description": "A list of fabric configurations in the network.",
       "items": {
         "type": "object",
-        "description": "Configuration for a single fabric, containing all related resources.",
         "required": [
           "name"
         ],
@@ -70,7 +68,6 @@
             "description": "Additional metadata or information for the fabric.",
             "items": {
               "type": "object",
-              "description": "A single annotation associated with the fabric.",
               "properties": {
                 "dataType": {
                   "type": "string",
@@ -131,7 +128,6 @@
             "description": "A list of nodes (devices) within the fabric.",
             "items": {
               "type": "object",
-              "description": "Configuration for a single node in the fabric.",
               "required": [
                 "name", "modelName", "roles"
               ],
@@ -157,14 +153,14 @@
                 },
                 "modelName": {
                   "type": "string",
-                  "description": "The hardware model name of the node.",
+                  "description": "The hardware model name of the node (HF6100-32D, HF6100-60L4D).",
                   "enum": [
                     "HF6100-32D", "HF6100-60L4D"
                   ]
                 },
                 "roles": {
                   "type": "array",
-                  "description": "Roles assigned to the node (e.g., LEAF, SPINE, SERVER).",
+                  "description": "Roles assigned to the node (LEAF, SPINE, SERVER).",
                   "items": {
                     "type": "string",
                     "description": "A single role assigned to the node.",
@@ -183,7 +179,6 @@
                   "description": "Power supply unit airflow configurations for the node.",
                   "items": {
                     "type": "object",
-                    "description": "Configuration for a single PSU airflow.",
                     "properties": {
                       "airflow": {
                         "type": "string",
@@ -205,8 +200,7 @@
                   "type": "array",
                   "description": "User-defined labels for categorizing the node.",
                   "items": { 
-                    "type": "string",
-                    "description": "A label assigned to the node."
+                    "type": "string"
                   }
                 },
                 "managementPorts": {
@@ -214,7 +208,6 @@
                   "description": "Management ports available on the node.",
                   "items": {
                     "type": "object",
-                    "description": "Configuration for a single management port.",
                     "properties": {
                         "name": { 
                           "type": "string",
@@ -286,7 +279,6 @@
                           "description": "List of DNS server addresses.",
                           "items": { 
                             "type": "string",
-                            "description": "A DNS server IP address (IPv4 or IPv6).",
                             "anyOf": [
                                 { 
                                   "format": "ipv4" 
@@ -325,7 +317,6 @@
                           "description": "Cloud service URLs accessible from this port.",
                           "items": { 
                             "type": "string",
-                            "description": "A cloud service URL.",
                             "format": "uri" 
                           }
                         },
@@ -334,7 +325,6 @@
                             "description": "List of addresses to exclude from proxy usage.",
                             "items": { 
                               "type": "string",
-                              "description": "An address or domain excluded from proxy.",
                               "maxLength": 120 
                             }
                         }
@@ -370,7 +360,6 @@
                   "description": "Ports available on the node.",
                   "items": {
                     "type": "object",
-                    "description": "Configuration for a single port.",
                     "required": [
                       "name"
                     ],
@@ -423,7 +412,6 @@
                         "description": "Roles assigned to the port.",
                         "items": {
                           "type": "string",
-                          "description": "A role assigned to the port.",
                           "enum": [
                             "UNUSED_PORT", 
                             "FABRIC_PORT", 
@@ -447,7 +435,6 @@
                         "description": "IPv4 addresses assigned to the port.",
                         "items": { 
                           "type": "string",
-                          "description": "An IPv4 address assigned to the port.",
                           "format": "ipv4" 
                         },
                         "maxItems": 2
@@ -457,7 +444,6 @@
                         "description": "IPv6 addresses assigned to the port.",
                         "items": { 
                           "type": "string",
-                          "description": "An IPv6 address assigned to the port.",
                           "format": "ipv6" 
                         },
                         "maxItems": 2
@@ -467,7 +453,6 @@
                         "description": "Spanning Tree Protocol (STP) configuration for the port.",
                         "items": {
                           "type": "object",
-                          "description": "STP settings for a port.",
                           "properties": {
                             "bpduGuard": { 
                               "type": "boolean",
@@ -497,7 +482,6 @@
                         "description": "Additional metadata or information for the port.",
                         "items": {
                           "type": "object",
-                          "description": "A single annotation associated with the port.",
                           "properties": {
                             "dataType": {
                               "type": "string",
@@ -557,7 +541,6 @@
                         "description": "User-defined labels for categorizing the port.",
                         "items": { 
                           "type": "string",
-                          "description": "A label assigned to the port.",
                           "maxLength": 120 
                         }
                       }
@@ -602,7 +585,6 @@
             "description": "List of connections between nodes in the fabric.",
             "items": {
               "type": "object",
-              "description": "Configuration for a single connection.",
               "properties": {
                 "description": { 
                   "type": "string",
@@ -678,7 +660,6 @@
             "description": "List of Virtual Network Identifiers (VNIs) in the fabric.",
             "items": {
               "type": "object",
-              "description": "Configuration for a single VNI.",
               "required": [
                 "name"
               ],
@@ -712,7 +693,6 @@
                   "description": "List of switched virtual interfaces for the VNI.",
                   "items": {
                     "type": "object",
-                    "description": "A single SVI configuration.",
                     "properties": {
                       "enabled": { 
                         "type": "boolean",
@@ -723,7 +703,6 @@
                         "description": "IPv4 addresses assigned to the SVI.",
                         "items": { 
                           "type": "string",
-                          "description": "An IPv4 address for the SVI.",
                           "format": "ipv4",
                           "maxItems": 2
                         }
@@ -733,7 +712,6 @@
                         "description": "IPv6 addresses assigned to the SVI.",
                         "items": { 
                           "type": "string",
-                          "description": "An IPv6 address for the SVI.",
                           "format": "ipv6",
                           "maxItems": 1
                         }
@@ -746,7 +724,6 @@
                   "description": "List of member ports for the VNI.",
                   "items": {
                     "type": "object",
-                    "description": "Configuration for a single VNI member.",
                     "required": ["port"],
                     "properties": {
                       "vlanId": {
@@ -814,7 +791,6 @@
             "description": "List of VRF (Virtual Routing and Forwarding) instances.",
             "items": {
               "type": "object",
-              "description": "Configuration for a single VRF.",
               "required": [
                 "name"
               ],
@@ -857,7 +833,6 @@
                   "description": "User-defined labels for categorizing the VRF.",
                   "items": { 
                     "type": "string",
-                    "description": "A label assigned to the VRF.",
                     "maxLength": 120 
                   }
                 },
@@ -866,7 +841,6 @@
                   "description": "Additional metadata or information for the VRF.",
                   "items": {
                     "type": "object",
-                    "description": "A single annotation associated with the VRF.",
                     "properties": {
                       "dataType": {
                         "type": "string",
@@ -926,7 +900,6 @@
                   "description": "List of static routes configured for the VRF.",
                   "items": {
                     "type": "object",
-                    "description": "A single static route entry.",
                     "properties": {
                       "name": { 
                         "type": "string",
@@ -949,7 +922,6 @@
                         "description": "Labels assigned to the static route.",
                         "items": { 
                           "type": "string",
-                          "description": "A label for the static route.",
                           "maxLength": 120 
                         }
                       },
@@ -958,7 +930,6 @@
                         "description": "Additional metadata or information for the static route.",
                         "items": {
                           "type": "object",
-                          "description": "A single annotation associated with the static route.",
                           "properties": {
                             "dataType": {
                               "type": "string",
@@ -1018,7 +989,6 @@
                         "description": "List of next-hop routes for the static route.",
                         "items": {
                           "type": "object",
-                          "description": "A single next-hop route entry.",
                           "required": [
                             "prefix", "discard"
                           ],
