@@ -143,6 +143,7 @@ fabrics:
             routes:
               - prefix: 10.10.10.0/24
                 preference: 10
+                poop: 10a
                 discard: false
               - prefix: 11.10.10.0/24
                 preference: lll
