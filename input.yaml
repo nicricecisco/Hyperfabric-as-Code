@@ -1,3 +1,15 @@
+# fabrics:
+#   - name: from-python
+#     description: I am from python
+#     nodes:
+#       - name: Spine01
+#         description: Spine Switch 01
+#         modelName: HF6100-32D
+#         roles: 
+#           - SPINE
+#         protected: true
+
+
 fabrics:
   - name: from-python
     description: I am updated from python
@@ -9,19 +21,25 @@ fabrics:
       - TAG_ONE
       - TAG_TWO
     topology: SPINE_LEAF
+    autocabling:
+      enabled: true
+      pluggable: QDD-400-AOC10M
     
     nodes:
       - name: Leaf01
-        description: Leaf Switch 01 updated
+        description: Leaf Switch 01 updated again
         modelName: HF6100-32D
-        roles: [LEAF]
+        roles:
+          - LEAF
         labels:
           - TAG_ONE
       - name: Leaf02
         description: Leaf Switch 02
         modelName: HF6100-32D
-        roles: [LEAF]
+        roles: 
+          - LEAF
         location: sj01-1-101-AAA02
+        protected: true
         managementPorts:
           - description: Management Ethernet Port Configuration
             ipv4Address: 10.10.10.1/24
@@ -59,101 +77,104 @@ fabrics:
             enabled: true
             roles: 
               - "HOST_PORT"
+      - name: Leaf03
+        description: Leaf Switch 03
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        labels:
+          - TAG_ONE
       - name: Spine01
         description: Spine Switch 01
         modelName: HF6100-32D
-        roles: [SPINE]
+        roles: 
+          - SPINE
+
     connections:
       - local:
-          portName: Ethernet1_19
+          portName: Ethernet1_16
           nodeName: Leaf01
         remote:
-          portName: Ethernet1_19
+          portName: Ethernet1_16
           nodeName: Spine01
-        # pluggable: QDD-2Q200-CU3M
+        pluggable: QDD-400-AOC10M
       - local:
-          portName: Ethernet1_23
+          portName: Ethernet1_20
           nodeName: Leaf01
         remote:
-          portName: Ethernet1_23
+          portName: Ethernet1_20
           nodeName: Spine01
-    vnis:
-      - name: VNI01
-        description: "My first VNI"
-        labels:
-          - MY_TAG
-        vni: 10001
-        enabled: true
-      - name: VNI02
-        description: "My second VNI"
-        labels:
-          - MY_TAG
-          - ANOTHER_TAG
-        vni: 10002
-        enabled: true
-        svis:
-          - ipv4Addresses:
-            - 172.222.40.1/24
-            enabled: true
-        member:
-          - vlanId: 100
-    vrfs:
-      - name: VRF01
-        description: "My first VRF"
-        labels:
-          - MY_TAG
-        vni: 1000
-        enabled: true
-      - name: VRF02
-        description: "My second VRF"
-        labels:
-          - MY_TAG
-        vni: 1001
-        enabled: true
-        staticRoutes:
-          - name: SR01
-            description: My first static route
-            enabled: true
-            labels:
-              - MY_TAG
-            routes:
-              - prefix: 10.10.10.0/24
-                preference: 10
-                discard: true
-              - prefix: 11.10.10.0/24
-                preference: 10
-                discard: true
-      - name: 1234
+    
 
-
-
-
+  # - name: from-python2
+  #   description: I am updated from python
  
 
-        # managementPorts:
-        #   - name: bad
-        #     ipv4Address: 10.1.1.250/31
-        #     ipv4Gateway: 10.1.1.251
-        #     ipv6Address: 2a02:1243:5687:0:9c09:2c7a:7c78:9ffc/64
-        #     ipv6Gateway: 2a02:1243:5687:0:8d91:ba6b:b24d:9b41
-        #     dnsAddresses:
-        #       - 8.8.8.8
-        #       - 8.8.4.4
-        #     proxyAddress: https://10.1.1.10:8080
-        #     proxyUsername: admin
-        #     proxyPassword: admin123
-        #     enabled: true
-        #     cloudUrls:
-        #       - https://a.b.com
-        #     setProxyPassword: true
-        #     noProxy:
-        #       - 10.0.0.0/8
-        #       - 68.0.0.0/8
-        #       - 72.0.0.0/8
-        #       - 172.0.0.0/8
-        #       - 172.0.0.0/8
-        #       - 173.0.0.0/8
-        #       - cisco.com
-        #       - localhost
-        #       - 127.0.0.1
-        #       - .local
+# #         # managementPorts:
+# #         #   - name: bad
+# #         #     ipv4Address: 10.1.1.250/31
+# #         #     ipv4Gateway: 10.1.1.251
+# #         #     ipv6Address: 2a02:1243:5687:0:9c09:2c7a:7c78:9ffc/64
+# #         #     ipv6Gateway: 2a02:1243:5687:0:8d91:ba6b:b24d:9b41
+# #         #     dnsAddresses:
+# #         #       - 8.8.8.8
+# #         #       - 8.8.4.4
+# #         #     proxyAddress: https://10.1.1.10:8080
+# #         #     proxyUsername: admin
+# #         #     proxyPassword: admin123
+# #         #     enabled: true
+# #         #     cloudUrls:
+# #         #       - https://a.b.com
+# #         #     setProxyPassword: true
+# #         #     noProxy:
+# #         #       - 10.0.0.0/8
+# #         #       - 68.0.0.0/8
+# #         #       - 72.0.0.0/8
+# #         #       - 172.0.0.0/8
+# #         #       - 172.0.0.0/8
+# #         #       - 173.0.0.0/8
+# #         #       - cisco.com
+# #         #       - localhost
+# #         #       - 127.0.0.1
+# #         #       - .local
+
+
+
+
+# # fabrics:
+# #   - name: python-tests
+# #     nodes:
+# #       - name: Leaf01
+# #         modelName: HF6100-32D
+# #         roles:
+# #           - LEAF
+# #         managementPorts:
+# #           - name: eth0
+# #         ports:
+# #           - name: Ethernet1_1
+# #             roles:
+# #               - "HOST_PORT"
+# #       - name: Spine01
+# #         description: Spine Switch 01
+# #         modelName: HF6100-32D
+# #         roles: 
+# #           - SPINE
+# #     connections:
+# #       - local:
+# #           portName: Ethernet1_1
+# #           nodeName: Leaf01
+# #         remote:
+# #           portName: Ethernet1_1
+# #           nodeName: Spine01
+# #     vnis:
+# #       - name: VNI01
+# #         enabled: true
+# #     vrfs:
+# #       - name: VRF01
+# #         enabled: true
+# #         staticRoutes:
+# #           - name: SR01
+# #             routes:
+# #               - prefix: 10.10.10.0/24
+# #                 preference: 10
+# #                 discard: true

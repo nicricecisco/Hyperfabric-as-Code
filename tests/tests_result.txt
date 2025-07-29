@@ -1,0 +1,2 @@
+TEST: VRF creation: SUCCESS
+TEST: Static routes creation: FAILURE

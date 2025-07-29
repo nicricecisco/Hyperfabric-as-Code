@@ -1,0 +1,32 @@
+{
+  "status": "success",
+  "summary": {
+    "succeeded": 1,
+    "failed": 0
+  },
+  "results": {
+    "successes": [
+      {
+        "name": "python-tests",
+        "status": "Success"
+      }
+    ],
+    "failures": []
+  }
+}
+{
+  "status": "failure",
+  "summary": {
+    "succeeded": 0,
+    "failed": 1
+  },
+  "results": {
+    "successes": [],
+    "failures": [
+      {
+        "name": "python-tests",
+        "error": "Error processing a static_route. Error: {'message': 'cannot find an interface that matches nextop 10.1.1.254', 'field': 'nextHop', 'value': '10.1.1.254', 'status': 400, 'errCode': 'ERR_CODE_INVALID_VALUE', 'trackingId': 'cf4d6451-478a-4d66-adb1-17200a86e97a'}"
+      }
+    ]
+  }
+}

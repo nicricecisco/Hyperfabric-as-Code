@@ -1,130 +1,141 @@
-fabric:
-  - name*: string
-    description: string
-    location: string
-    address: string
-    city: string
-    country: string 
+fabrics:
+  - name*: string min length 3, max length 120, allowed characters = letters + digits + hyphens, cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+    description: string, max length 500
+    location: string, max length 100
+    address: string, max length 100
+    city: string, max length 100
+    country: string, max length 100
     topology: enum = ["MESH", "SPINE_LEAF"], default = "MESH"
     labels:
-        string[]
+        string[], max length 120
     annotations:
-        string[]
+      - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
+        name: string, min length 3, max length 120, allowed characters = letters + digits + hyphens, cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens, required if value is passed
+        value: string, min length 1, max length 512, required if name is passed
   
     nodes:
-      - name*: string
-        description: string
-        location: string
+      - name*: string, min length 3, max length 120, allowed characters = letters + digits + hyphens, cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+        description: string, max length 500
+        location: string, max length 100
         modelName*: enum = ["HF6100-32D", "HF6100-60L4D"]
         roles*: enum = ["LEAF", "SPINE", "SERVER"] 
-        serialNumber: string
+        serialNumber: string, min length 3, max length 30, allowed characters = letters + digits + hyphens, cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
         psuAirflows:
           - airflow: enum = ["AIRFLOW_TYPE_PORT_SIDE_INTAKE", "AIRFLOW_TYPE_PORT_SIDE_EXHAUST"], default = "AIRFLOW_TYPE_PORT_SIDE_INTAKE"
-          - psuModel: string
+          - psuModel: string, max length 50
         labels: 
-          string[]
+          string[], max length 120
 
         managementPorts:
-          - name*: string
-            description: string          
+          - name: string, pattern "eth_N" where N is between 0-8
+            description: string, max length 500
             configOrigin: enum = ["CONFIG_ORIGIN_CLOUD", "CONFIG_ORIGIN_DEVICE"], default = "CONFIG_ORIGIN_CLOUD"
             connectedState: enum = ["CONNECTED_STATE_NOT_CONNECTED", "CONNECTED_STATE_CONNECTED"], default = "CONNECTED_STATE_NOT_CONNECTED"
             ipv4ConfigType: enum = ["CONFIG_TYPE_STATIC", "CONFIG_TYPE_DHCP"], default = "CONFIG_TYPE_STATIC"
-            -IF ipv4ConfigType == "CONFIG_TYPE_STATIC":
-            --ipv4Address: string, IP
-            --ipv4Gateway: string, IP
+            ipv4Address: string, valid IPv4 address, required if ipv4ConfigType is "CONFIG_TYPE_STATIC"
+            ipv4Gateway: string, valid IPv4 address, required if ipv4ConfigType is "CONFIG_TYPE_STATIC"
             ipv6ConfigType: enum = ["CONFIG_TYPE_STATIC", "CONFIG_TYPE_DHCP"], default = "CONFIG_TYPE_STATIC"
-            -IF ipv6ConfigType == "CONFIG_TYPE_STATIC":
-            --ipv6Address: string, IP
-            --ipv6Gateway: string, IP 
-            DNS addresses: 
-              string[], IP
-            proxyAddress: string, URL
-            proxyPassword: string
-            proxyPassword: string
-            proxyUsername: string
+            ipv6Address: string, valid IPv6 address, required if ipv6ConfigType is "CONFIG_TYPE_STATIC"
+            ipv6Gateway: string, valid IPv6 address, required if ipv6ConfigType is "CONFIG_TYPE_STATIC"
+            dnsAddresses: 
+              string[], valid IPv4 or IPv6 addresses
+            proxyAddress: string, URI format
+            proxyUsername: string, max length 120
+            proxyPassword: string, max length 120
             enabled: boolean
             setProxyPassword: boolean
             cloudUrls:
-              string[] URL
+              string[], URI format
             noProxy:
-              string[]
+              string[], max length 120
 
         ports:
-          - name*: string, predefined immutable Ethernet1_[N] where N is range 1-32 / 1-64
-            description: string
-            mtu: integer, range 1500-9100 default 9100
-            fec: string, set of {rs, none} must be "none" for 100G DR/FR/LR pluggable optics
-            pluggable: string, cable list {...}
-            speed: string, set of {1x40G(N), 1x100G(N), 1x100G(N), 1x200G(N), 1x400G} where N is {2,4} cannot be set for port in breakout mode
+          - name*: string, must match pattern "Ethernet1_N" in which N is between 1-64
+            description: string, max length 500
+            mtu: integer, range 1500-9100, default 9100
+            fec: string, set of {rs, none}
+            pluggable: string, max length 75
+            forceCounter: integer
+            speed: string, set of {1x40G(4), 1x100G(2), 1x100G(4), 1x200G(4), 1x400G} or set of {1x10G(1), 1x25G(1), 1x50G(1)} based on node modelName + port name
             enabled: boolean
             roles: enum = ["UNUSED_PORT", "FABRIC_PORT", "HOST_PORT", "ROUTED_PORT", "LAG_PORT"], default ["UNUSED PORT]
-            -IF roles != "FABRIC_PORT" OR "LAG_PORT":
-            --linkDown: boolean
-            -IF roles = "ROUTED_PORT":
-            --vrfId*: string, vrf must exist in DB (inclusive of "Default VRF")
-            --ipv4Address**: string, IP must exist if no ipv6
-            --ipv6Address**: string, IP must exist if no ipv4"
+            linkDown: boolean, required if roles is not "FABRIC_PORT" or "LAG_PORT"
+            vrfId: string, must match pattern "Default VRF" or "VRF[A-Za-z0-9]{1,100}", required if roles is "ROUTED_PORT"
+            ipv4Address: string[], required if roles is "ROUTED_PORT" and no ipv6Address, max two addresses
+            ipv6Address: string[], required if roles is "ROUTED_PORT" and no ipv4Address, max two addresses
+            stp:
+              - bpduGuard: boolean, only used when VLAN is deployed on port
+                enabled: boolean, only used when VLAN is deployed on port
+                portFast: boolean, only used when VLAN is deployed on port
+                rootGuard: boolean, only used when VLAN is deployed on port
+                uplinkFast: boolean, only used when VLAN is deployed on port
             annotations:
-              string[]
+              - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
+                name: string, min length 3, max length 120, allowed characters = letters + digits + hyphens, cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens, required if value is passed
+                value: string, min length 1, max length 512, required if name is passed
+            
+
     
     connections:
-      - description: string
-        osType: enum = ["HYPER_FABRIC", "NEXUS", "IOS_XE", "IOS_XR", "LINUX", ...] default = "HYPER_FABRIC"
-        pluggable: string, cable list {...}
+      - description: string, max length 500
+        osType: enum = ["HYPER_FABRIC", "NEXUS", "IOS_XE", "IOS_XR", "LINUX", ...], default = "HYPER_FABRIC"
+        pluggable: string, max length 75
         local:
-          portName*: string, predefined immutable Ethernet1_[N] where N is range 1-32 / 1-64
-          nodeName*: string, set of nodes in fabric
+          portName*: string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64
+          nodeName*: string, min length 3, max length 120, allowed characters = letters + digits + hyphens, cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens, must match remote node name
         remote:
-          portName*: string, predefined immutable Ethernet1_[N] where N is range 1-32 / 1-64  
-          nodeName*: string, set of nodes in fabric must not match local node
+          portName*: string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64 depending on node modelName 
+          nodeName*: string, min length 3, max length 120, allowed characters = letters + digits + hyphens, cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens, must not match local node name
         
     vnis:
-      - name*: string
-        description: string
+      - name*: string min length 3, max length 120, allowed characters = letters + digits + hyphens, cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+        description: string, max length 500
         vni: integer, range 2-6000000
-        mtu: integer, range 1500-9100 default 9100
+        mtu: integer, range 1500-9100, default 9100
         svis:
           - enabled: boolean
             ipv4Addresses:
-              string[], IP
+              string[], valid IPv4 addresses, max two addresses
             ipv6Addresses:
-              string[], IP
+              string[], valid IPv6 addresses, max one address
       - members:
           - untagged: boolean
-            -IF untagged == false:
-            --vlanId: integer, range 2-3600
+            vlanId: integer, range 2-3600, required if untagged is false
             port:
-              nodeName*: string, set of node names in fabric
-              portName*: string, predefined immutable Ethernet1_[N] where N is range 1-32 / 1-64
+              nodeName*: string, min length 3, max length 120, allowed characters = letters + digits + hyphens, cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+              portName*: string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64
 
     vrfs:
-      - name*: string
-        description: string
+      - name*: string, min length 3, max length 120, allowed characters = letters + digits + hyphens, cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+        description: string, max length 500 
         enabled: true
-        asn: integer
+        asn: integer, range 1-4294967294, not 23456 or 65535
         vni: integer, range 2-6000000
         labels: 
-          string[]
+          string[], max length 120
         annotations:
-          string[]
-        staticroute:
-          - name*: string
-            description: string
+          - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
+            name: string, min length 3, max length 120, allowed characters = letters + digits + hyphens, cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens, required if value is passed
+            value: string, min length 1, max length 512, required if name value is passed
+        staticRoutes:
+          - name: string, min length 3, max length 120, allowed characters = letters + digits + hyphens, cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+            description: string, max length 500
             enabled: boolean
             labels: 
-              string[]
+              string[], max length 120
             annotations:
-              string[]
+              - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
+                name: string, min length 3, max length 120, allowed characters = letters + digits + hyphens, cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens, required if value is passed
+                value: string, min length 1, max length 512, required if name is passed
             routes:
-              - nodeId*: string, node must exist in fabric
-                interface: string
+              - nodeId: string, min length 3, max length 120, allowed characters = letters + digits + hyphens, cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
+                interface: string, min length 3, max length 120, allowed characters = letters + digits + hyphens, cannot start or end with a hyphen, cannot be only digits, cannot be only hyphens
                 preference: integer, range 1-255
-                prefix: string, IP CIDR notation
-                nextHop*: string
-                nextVrf*: string
-                tag*: enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", ...] default = "TAG_AMBER"
-                discard: boolean
+                prefix*: string, valid IPv4 or IPv6 address
+                nextHop: string, valid IPv4 or IPv6 address, required if discard is false or not passed
+                nextVrf: string, must match pattern "Default VRF" or "VRF[A-Za-z0-9]{1,100}"
+                tag: enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", ...], default = "TAG_AMBER", defaults and required to be "TAG_BLACK" if discard is true
+                discard: boolean, default = false
 
 
             

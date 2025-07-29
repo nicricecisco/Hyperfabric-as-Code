@@ -26,7 +26,8 @@ NODE_ATTRIBUTES = [
     "serialNumber",
     "labels",
     "psuAirflows",
-    "enabled"
+    "enabled",
+    "protected"
 ]
 
 MGMT_PORT_ATTRIBUTES = [
@@ -71,7 +72,7 @@ CONNECTION_ATTRIBUTES = [
     "osType",
     "pluggable",
     "local",
-    "remote",
+    "remote"
 ]
 
 VNI_ATTRIBUTES = [
@@ -80,19 +81,19 @@ VNI_ATTRIBUTES = [
      "vni",
      "mtu",
      "labels",
-     "enabled",
      "svis",
-     "annotations"
+     "annotations",
+     "protected"
 ]
 
 VRF_ATTRIBUTES = [
      "name",
      "description",
-     "enabled",
      "asn",
      "vni",
      "labels",
-     "annotations"
+     "annotations",
+     "protected"
 ]
 
 STATIC_ROUTE_ATTRIBUTES = [
