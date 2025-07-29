@@ -56,6 +56,48 @@
             ],
             "default": "MESH"
           },
+          "delete": {
+            "type": "array",
+            "description": "Resources to delete from the fabric.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "vnis": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["name"],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 3,
+                        "maxLength": 120,
+                        "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$",                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "vrfs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["name"],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "pattern": "^Vrf-(?!(\\d{1,16})$)[a-zA-Z0-9]{1,16}$",
+                        "not": {
+                          "pattern": "^V[rR][fF]-\\d{1,16}$"
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          },
           "labels": {
             "type": "array",
             "description": "User-defined labels for categorizing the fabric.",
@@ -435,7 +477,7 @@
                       "vrfId": { 
                         "type": "string",
                         "description": "VRF (Virtual Routing and Forwarding) instance identifier.",
-                        "pattern": "^(Default VRF|VRF[A-Za-z0-9]{1,100})$" 
+                        "pattern": "^(Default VRF|^Vrf-(?!(\\d{1,16})$)[a-zA-Z0-9]{1,16}$"
                       },
                       "ipv4Address": {
                         "type": "array",
@@ -1064,7 +1106,7 @@
                             "nextVrf": { 
                               "type": "string",
                               "description": "VRF to which the route forwards traffic.",
-                              "pattern": "^(Default VRF|VRF[A-Za-z0-9]{1,100})$" 
+                              "pattern": "^Vrf-(?!(\\d{1,16})$)[a-zA-Z0-9]{1,16}$"
                             },
                             "tag": {
                               "type": "string",

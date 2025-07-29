@@ -13,17 +13,10 @@ fabrics:
         name: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, required if value is passed
         value: string, min length 1, max length 512, required if name is passed
     delete:
-      connections: 
-        - local:
-            portName: string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64
-            nodeName: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
-          remote:
-            portName: string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64 based on node modelName 
-            nodeName: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
       vnis:
-        - name: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+        - name: required, string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
       vrfs:
-        - name: string, must follow format "V[rR][fF], optional hyphen, 1 to 16 alphanumeric characters"
+        - name: required, string, must follow format "Vrf-", 1 to 16 alphanumeric characters which cannot all be digits"
   
     nodes:
       - name: required, string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
@@ -37,6 +30,7 @@ fabrics:
           - psuModel: string, max length 50
         labels: 
           string[], max length 120
+        protected: boolean, default = false, set to true to prevent node from being altered during rollback sequence
 
         managementPorts:
           - name: string, pattern "eth_N" where N is between 0-8
@@ -113,12 +107,13 @@ fabrics:
               string[], valid IPv4 addresses, max two addresses
             ipv6Addresses:
               string[], valid IPv6 addresses, max one address
-      - members:
+        members:
           - untagged: required, boolean, required and needs to be true if no vlanId is passed
             vlanId: integer, range 2-3600, required if untagged is false or untagged is not passed
             port:
               nodeName: required, string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
               portName: required, string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64
+        protected: boolean, default = false, set to true to prevent vni from being altered during rollback sequence
 
     vrfs:
       - name: required, string, must follow format "Vrf-", 1 to 16 alphanumeric characters which cannot all be digits"
@@ -151,7 +146,9 @@ fabrics:
                 nextVrf: string, must match pattern "Default VRF" or "VRF[A-Za-z0-9]{1,100}"
                 tag: enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", "TAG_PURPLE", "TAG_YELLOW"], default = "TAG_AMBER", defaults and required to be "TAG_BLACK" if discard is true, cannot be "TAG_BLACK" if discard is false
                 discard: boolean, default = false
-  - autocabling:
+        protected: boolean, default = false, set to true to prevent vrf from being altered during rollback sequence
+
+    autocabling:
       - enabled: boolean, default = false must be true to enable autocabling, set to true if any of the following fields are passed, ignores all other fields if enabled is false
         pluggable: string, max length 150
         speed: string, set of {100, 200, 400} and accepts G at the end of any number, rejected if enabled is false
