@@ -290,20 +290,22 @@ def validate_json(instance, schema):
         sys.exit(1)
 
 
-def main():
-    if len(sys.argv) != 4:
-        print("Usage: python validate_yaml.py input.yaml schema.json output.json")
-        sys.exit(1)
+def validate_schema(yaml_path):
+    SCHEMA_PATH = "schemas/validation/new_validation_with_desc_.json"
+    # if len(sys.argv) != 4:
+    #     print("Usage: python validate_yaml.py input.yaml schema.json output.json")
+    #     sys.exit(1)
 
-    yaml_path = sys.argv[1]
-    schema_path = sys.argv[2]
-    json_output_path = sys.argv[3]
+    # yaml_path = sys.argv[1]
+    # schema_path = sys.argv[2]
+    # json_output_path = sys.argv[3]
 
     yaml_data = load_yaml_file(yaml_path)
-    json_schema = load_json_file(schema_path)
-    write_json(yaml_data, json_output_path)
+    json_schema = load_json_file(SCHEMA_PATH)
+    # write_json(yaml_data, json_output_path)
+
     validate_json(yaml_data, json_schema)
-    print(f"Converted {yaml_path} to {json_output_path} and validated against {schema_path}.")
+    # print(f"Converted {yaml_path} to {json_output_path} and validated against {schema_path}.")
 
 if __name__ == "__main__":
-    main()
+    validate_schema()

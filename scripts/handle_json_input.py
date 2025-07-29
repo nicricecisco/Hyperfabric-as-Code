@@ -300,14 +300,7 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
 
 def handle_json_input(json_input):
     FABRIC_ID = None
-    # Validate schema first
-    if "fabrics" not in json_input:
-        pprint("Input missing 'fabrics' attribute")
-        return
-    if not isinstance(json_input["fabrics"], list):
-        pprint("'fabrics' attribute must contain a list")
-        return
-    
+
     successes = []
     failures = []
 

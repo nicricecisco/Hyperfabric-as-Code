@@ -42,7 +42,7 @@ fabrics:
         protected: true
         managementPorts:
           - description: Management Ethernet Port Configuration
-            ipv4Address: 10.10.10.1/24
+            ipv4Address: 10.10.10.1/244
             ipv4Gateway: 10.10.10.254
             ipv6Address: 2a02:1243:5687:0:9c09:2c7a:7c78:9ffc/33
             ipv6Gateway: 2a02:1243:5687:0:8d91:ba6b:b24d:9b41
@@ -80,6 +80,7 @@ fabrics:
       - name: Leaf03
         description: Leaf Switch 03
         modelName: HF6100-32D
+        poop: poo
         roles:
           - LEAF
         labels:
