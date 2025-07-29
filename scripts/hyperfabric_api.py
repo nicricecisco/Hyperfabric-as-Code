@@ -276,7 +276,6 @@ def get_management_port(mgmt_port_data_obj):
         id = "eth0"
       else:
         id = mgmt_port_data_obj["mgmt_port"]["name"]
-    print(id)
     response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts/{id}")
     return response
 

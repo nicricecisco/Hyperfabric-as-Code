@@ -22,29 +22,29 @@ def _rollback():
     while action_stack:
         func, data, protected = action_stack.pop()
         if protected and protected.active:
-            print("Protected item removed from action_stack")
+            logger.info(f"[ROLLBACK] Handling ROLLBACK ({(total_length - len(action_stack))}/{total_length})... Protected item removed from rollback sequence")
             continue
         response = None
         try:
             if (func is None or hasattr(func, '__name__') == False):
-                logger.error(f"[ROLLBACK ERROR] Error handling rollback ({(total_length - len(action_stack))}/{total_length}). Invalid rollback function.")
+                logger.error(f"[ROLLBACK] Error handling rollback ({(total_length - len(action_stack))}/{total_length}). Invalid rollback function.")
                 continue
-            logger.info(f"Handling ROLLBACK ({(total_length - len(action_stack))}/{total_length})... calling {func.__name__}")
+            logger.info(f"[ROLLBACK] Handling ROLLBACK ({(total_length - len(action_stack))}/{total_length})... calling {func.__name__}")
             pprint(data)
             response = func(data)
             response.raise_for_status()
         except Exception as e:
-            logger.error(f"[ROLLBACK ERROR] Failed to rollback action {func.__name__}: {e}")
+            logger.error(f"[ROLLBACK] Failed to rollback action {func.__name__}: {e}")
             try:
                 error_message = response.json()
             except (json.JSONDecodeError, ValueError):
                 error_message = response.text
 
-            logger.error(f"[ROLLBACK HANDLER] HTTP Error in {func.__name__}: {e}. "
+            logger.error(f"[ROLLBACK] HTTP Error in {func.__name__}: {e}. "
                         f"Status code: {response.status_code}. Response: {error_message}")
 
-def _handle_put(put_func, rollback_func, func_input, rollback_input=None):
-    logger.info("Handling PUT...")
+def _handle_put(put_func, rollback_func, func_input, key=None, rollback_input=None):
+    logger.info(f"[{key.upper()}] [PUT] Making API request for object: {key}...")
     response = None
     put_func_name = getattr(put_func, '__name__', str(put_func))
     try:
@@ -62,21 +62,21 @@ def _handle_put(put_func, rollback_func, func_input, rollback_input=None):
         except (json.JSONDecodeError, ValueError):
             error_message = response.text
 
-        logger.error(f"[PUT HANDLER] HTTP Error in {put_func_name}: {e}. "
+        logger.error(f"[{key.upper()}] [PUT HANDLER] HTTP Error in {put_func_name}: {e}. "
                      f"Status code: {response.status_code}. Response: {error_message}")
         _rollback()
         return response
     except requests.exceptions.RequestException as e:
-        logger.error(f"[PUT HANDLER] Request failed in {put_func_name}: {e}")
+        logger.error(f"[{key.upper()}] [PUT HANDLER] Request failed in {put_func_name}: {e}")
         _rollback()
         return response
     except Exception as e:
-        logger.exception(f"[PUT HANDLER] Unexpected error in {put_func_name}: {e}")
+        logger.exception(f"[{key.upper()}] [PUT HANDLER] Unexpected error in {put_func_name}: {e}")
         _rollback()
         return response
 
 def _handle_post(post_func, rollback_func, func_input, key=None):
-    logger.info("Handling POST...")
+    logger.info(f"[{key.upper()}] [POST] Making API request for object: {key}...")
     response = None
     post_func_name = getattr(post_func, '__name__', str(post_func))
     try:
@@ -93,7 +93,7 @@ def _handle_post(post_func, rollback_func, func_input, key=None):
                 if protected is not None:
                     func_input["protected"] = protected
             except Exception as e:
-                logger.error(f"[POST HANDLER] Error accessing ID of connection: {e}")
+                logger.error(f"[{key.upper()}] [POST HANDLER] Error accessing ID of connection: {e}")
 
         # Success -> push to stack
         action_stack.append((rollback_func, func_input, func_input.get("protected")))
@@ -105,16 +105,16 @@ def _handle_post(post_func, rollback_func, func_input, key=None):
         except (json.JSONDecodeError, ValueError):
             error_message = response.text
 
-        logger.error(f"[POST HANDLER] HTTP Error in {post_func_name}: {e}. "
+        logger.error(f"[{key.upper()}] [POST HANDLER] HTTP Error in {post_func_name}: {e}. "
                      f"Status code: {response.status_code}. Response: {error_message}")
         _rollback()
         return response
     except requests.exceptions.RequestException as e:
-        logger.error(f"[POST HANDLER] Request failed in {post_func_name}: {e}")
+        logger.error(f"[{key.upper()}] [POST HANDLER] Request failed in {post_func_name}: {e}")
         _rollback()
         return response
     except Exception as e:
-        logger.exception(f"[POST HANDLER] Unexpected error in {post_func_name}: {e}")
+        logger.exception(f"[{key.upper()}] [POST HANDLER] Unexpected error in {post_func_name}: {e}")
         _rollback()
         return response
 
@@ -142,10 +142,10 @@ def handle_get(get_func, post_func, put_func, delete_func, func_input, key, clea
             if (post_func and put_func is None):
                 return _handle_post(post_func=post_func, rollback_func=delete_func, func_input=func_input, key=key)
             if (put_func and post_func is None):
-                return _handle_put(put_func=put_func, rollback_func=put_func, func_input=func_input)
+                return _handle_put(put_func=put_func, rollback_func=put_func, func_input=func_input, key=key)
             return response
         
-        logger.info(f"Handling GET for object: {key}...")
+        logger.info(f"[{key.upper()}] [GET] Making API request for object: {key}...")
         get_func_name = getattr(get_func, '__name__', str(get_func))
 
         response = get_func(func_input)
@@ -168,15 +168,15 @@ def handle_get(get_func, post_func, put_func, delete_func, func_input, key, clea
             obj_pure, _ = parse_attributes(payload, key)
             rollback_input[key] = obj_pure
 
-        return _handle_put(put_func=put_func, rollback_func=put_func, func_input=func_input, rollback_input=rollback_input)
+        return _handle_put(put_func=put_func, rollback_func=put_func, func_input=func_input, key=key, rollback_input=rollback_input)
         
     except requests.exceptions.HTTPError as http_err:
         if response is not None and response.status_code == 404:
             try:
                 err_json = response.json()
-                logger.warning(f"[GET HANDLER] Not Found: {err_json.get('message')}")
+                logger.warning(f"[{key.upper()}] [GET HANDLER] Not Found: {err_json.get('message')}")
             except (json.JSONDecodeError, ValueError):
-                logger.warning("[GET HANDLER] 404 error with no JSON body.")
+                logger.warning(f"[{key.upper()}] [GET HANDLER] 404 error with no JSON body.")
             if (post_func is None): 
                 _rollback()
                 return response
@@ -188,7 +188,7 @@ def handle_get(get_func, post_func, put_func, delete_func, func_input, key, clea
                 error_message = response.json()
             except (json.JSONDecodeError, ValueError):
                 error_message = response.text if response else "No response object"
-            logger.error(f"[GET HANDLER] HTTP error in {get_func_name}: {http_err}. "
+            logger.error(f"[{key.upper()}] [GET HANDLER] HTTP error in {get_func_name}: {http_err}. "
                          f"Status code: {response.status_code if response else 'N/A'}. Response: {error_message}")
             _rollback()
             return response
@@ -198,17 +198,17 @@ def handle_get(get_func, post_func, put_func, delete_func, func_input, key, clea
             error_message = response.json()
         except (json.JSONDecodeError, ValueError):
             error_message = response.text if response else "No response object"
-        logger.error(f"[GET HANDLER] RequestException in {get_func_name}: {req_err}. "
+        logger.error(f"[{key.upper()}] [GET HANDLER] RequestException in {get_func_name}: {req_err}. "
                      f"Status code: {response.status_code if response else 'N/A'}. Response: {error_message}")
         _rollback()
         return response
 
     except Exception as e:
-        logger.exception(f"[GET HANDLER] Unexpected error in {get_func_name}: {e}")
+        logger.exception(f"[{key.upper()}] [GET HANDLER] Unexpected error in {get_func_name}: {e}")
         _rollback()
         return response
     
-def handle_delete(delete_func, data_obj):
+def handle_delete(delete_func, data_obj, key):
     """
     Deletes an object directly, not part of the rollback function.
 
@@ -220,17 +220,17 @@ def handle_delete(delete_func, data_obj):
         response object if successful, else None
     """
     try:
-        logger.info("[DELETE HANDLER] Sending DELETE request...")
+        logger.info(f"[{key.upper()}] [DELETE] Making API request for object: {key}")
         response = delete_func(data_obj)
         response.raise_for_status()
 
         return response
     except requests.exceptions.HTTPError as http_err:
-        logger.error(f"[DELETE HANDLER] HTTP error occurred while deleting: {http_err}")
+        logger.error(f"[{key.upper()}] [DELETE HANDLER] HTTP error occurred while deleting: {http_err}")
     except requests.exceptions.RequestException as req_err:
-        logger.error(f"DELETE HANDLER] Request error occurred while deleting: {req_err}")
+        logger.error(f"[{key.upper()}] DELETE HANDLER] Request error occurred while deleting: {req_err}")
     except Exception as e:
-        logger.error(f"DELETE HANDLER] Unexpected error occurred while deleting: {e}", exc_info=True)
+        logger.error(f"[{key.upper()}] DELETE HANDLER] Unexpected error occurred while deleting: {e}", exc_info=True)
     
     return None
 
@@ -248,10 +248,10 @@ def put_connections(fabric_id, connections, put_func):
         response = put_func(fabric_id, connections) # Sets ALL connections
         response.raise_for_status()
     except requests.exceptions.HTTPError as http_err:
-        logger.error(f"[SET CONNECTIONS] HTTP error while setting connections for fabric {fabric_id}: {http_err}")
+        logger.error(f"[CONNECTIONS] [SET HANDLER] HTTP error while setting connections for fabric {fabric_id}: {http_err}")
     except requests.exceptions.RequestException as req_err:
-        logger.error(f"[SET CONNECTIONS] Request exception while setting connections for fabric {fabric_id}: {req_err}")
+        logger.error(f"[CONNECTIONS] [SET HANDLER] Request exception while setting connections for fabric {fabric_id}: {req_err}")
     except Exception as e:
-        logger.error(f"[SET CONNECTIONS] Unexpected error while setting connections for fabric {fabric_id}: {e}", exc_info=True)
+        logger.error(f"[CONNECTIONS] [SET HANDLER] Unexpected error while setting connections for fabric {fabric_id}: {e}", exc_info=True)
     
     return response

@@ -67,7 +67,6 @@ def _delete_entity(key, objects, fabric_id):
     if not delete_func: return
 
     for obj in objects:
-        # Call GET method to make sure object exists
         data_obj = {
             "fabric_id": fabric_id,
             f"{key[:-1]}": obj
@@ -77,11 +76,14 @@ def _delete_entity(key, objects, fabric_id):
             get_func = entity_obj.get("func_obj").get("get_func")
             if not get_func: return
             
+            # Call GET method to make sure object exists
             result = handle_get(get_func=get_func, post_func=None, put_func=None, delete_func=None, func_input=data_obj, key=key, clear_action_stack=True)
             if not isinstance(result, dict): # handle_get returns the object if found, otherwise a Response object 
-                print("nothing")
-                pprint(result)
-                return
+                continue
+        else:
+            if "id" not in obj:
+                logger.warning(f"[CONNECTIONS] [DELETE] Deleting connections is not supported without the connection ID")
+                continue
         
         # DELETE endpoints for connections and VNIs require the object's ID, the endpoint for VRF requires a standard data_obj with "vrf" as a key and the object as its contents
         delete_obj = {
@@ -97,7 +99,7 @@ def _delete_entity(key, objects, fabric_id):
         if key == "vnis":
             delete_obj["id"] = result.get("id")
             
-        handle_delete(delete_func, delete_obj)
+        handle_delete(delete_func, delete_obj, key[:-1])
 
 def _delete_connections(redundant_connections, leaf_connections, delete_connection_obj):
     print(f"Number of redundant connections to delete: {len(redundant_connections)}")
@@ -112,11 +114,11 @@ def _delete_connections(redundant_connections, leaf_connections, delete_connecti
     # Call _delete_entity instead?
     for del_conn in connections_to_delete:
         delete_connection_obj["id"] = del_conn.get("id")
-        handle_delete(delete_fabric_connection, delete_connection_obj)
+        handle_delete(delete_fabric_connection, delete_connection_obj, "connection")
 
 def _put_connections(fabric_id, connections):
-    pprint(connections)
     try:
+        logger.info(f"[CONNECTION] [PUT] Making API request for all connections...")
         response = put_connections(fabric_id, connections, set_fabric_connections)
         response.raise_for_status()
     except Exception as e:
@@ -156,11 +158,12 @@ def _process_entity(entity, data_object, key, reset_stack=False):
     Takes functions for GET, POST, PUT, then function input
     """
     result = handle_get(get_func=get_func, post_func=post_func, put_func=put_func, delete_func=del_func, key=key, func_input=data_object, clear_action_stack=reset_stack)
-    print(result)
     if (result is not None and result.status_code == 200):
-        print(f"{key} result: Success!")
+        logger.info(f"[{key.upper()}] [SUCCESS] created/updated successfully")
+        print("=============================================================")
         return entity_other
     else:
+        print("=============================================================")
         if result is not None:
             raise EntityProcessingError(f"Error processing a {key}. Error: {result.json()}")
         raise EntityProcessingError(f"Error processing a {key}. Erroneous entity: {entity}")
@@ -186,7 +189,6 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
                 existing_mgmt_port = handle_get(get_func=get_management_ports, post_func=None, put_func=None, delete_func=None, func_input=mgmt_port_data_obj, key="mgmt_port")
                 if existing_mgmt_port:
                     mgmt_port_data_obj["id"] = existing_mgmt_port["ports"][0]["name"]
-                    print("MGMT PORT ID:", mgmt_port_data_obj["id"])
                 for mgmt_port in node_mgmt_ports["managementPorts"]:
                     mgmt_other = _process_entity(mgmt_port, mgmt_port_data_obj, "mgmt_port")
 
@@ -312,7 +314,6 @@ def handle_json_input(json_input):
     for fabric in json_input["fabrics"]:
         if "name" in fabric:
             FABRIC_ID = fabric["name"]
-            print("FABRIC_ID:", FABRIC_ID)
         else:
             FABRIC_ID = "UNKNOWN"
 

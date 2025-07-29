@@ -51,6 +51,5 @@ if __name__ == "__main__":
         sys.exit(1)
 
     json_input = combine_files([file for file in sys.argv[1:]])
-    pprint(json_input)
 
     main(json_input)
