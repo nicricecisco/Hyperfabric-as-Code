@@ -13,12 +13,12 @@ fabrics:
         name: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, required if value is passed
         value: string, min length 1, max length 512, required if name is passed
     autocabling:
-      - enabled: boolean, default = false, must be true to enable autocabling, ignores all other fields if enabled is false
-        pluggable: string, max length 150
-        speed: string, set of {100, 200, 400} and accepts G at the end of any number, rejected if enabled is false
-        length: enum = [short, medium, long]
-        cablePreference: enum = ["DAC", "AOC", "Transceiver"]
-        portType: enum = ["SFP", "SFP28" "QSFP28", "QSFP-DD"]
+      enabled: boolean, default = false, must be true to enable autocabling, ignores all other fields if enabled is false
+      pluggable: string, max length 150
+      speed: string, set of {100, 200, 400} and accepts G at the end of any number, rejected if enabled is false
+      length: enum = [short, medium, long]
+      cablePreference: enum = ["DAC", "AOC", "Transceiver"]
+      portType: enum = ["SFP", "SFP28" "QSFP28", "QSFP-DD"]
     
     nodes:
       - name: required, string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens

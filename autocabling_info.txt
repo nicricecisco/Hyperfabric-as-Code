@@ -1,0 +1,47 @@
+SWITCHES:
+---------
+HF6100‑32D
+32× QSFP‑DD ports, each supporting 40/100/200/400 GbE speeds and multiple breakout modes 
+No native SFP28 or SFP56 ports
+
+HF6100‑60L4D
+4× QSFP‑DD ports (used for fabric links, 100 GbE or 400 GbE) -- these are ports 31-34 that are almost always used in fabric connections
+60× SFP56 ports supporting 1/10/25/50 GbE speeds 
+
+
+CABLES:
+-------
+| Cable Type     | Description                                                                 | Best Use Case                  |
+|----------------|-----------------------------------------------------------------------------|--------------------------------|
+| **DAC**        | Direct Attach Copper. Passive or active. Very cost-effective, low latency. | Short, intra-rack (≤5m)        |
+| **AOC**        | Active Optical Cable. Pre-terminated and plug-and-play.                    | Medium distances (≤30m)        |
+| **Transceivers**| Optical modules + fiber (MMF/SMF). Scalable and long-distance capable.     | Long haul (30m–10km and beyond)|
+
+    Factor	Passive DAC	AOC	Transceivers (SMF/MMF)
+    Length	≤ 5m	5–30m	≥ 30m (esp. 50m+)
+    Power consumption	Very low	Low	Moderate to high
+    Cost	Lowest	Mid	Highest
+    Port compatibility	QSFP+/QSFP28 etc.	QSFP+/QSFP28/QSFP-DD	Requires optical ports
+    Cable thickness/flex	Thick, stiff	Flexible	Thin (fiber)
+    Latency	Lowest	Low	Slightly higher
+    Hot-swappable ends	No	No	Yes (with transceivers)
+    Distance reliability	Drops after 5m	Stable to ~30m	Excellent for 100m–10km+
+
+
+
+LENGTH LOGIC:
+-------------
+IF length ≤ 5m AND both ports support DAC:
+    Use DAC
+ELSE IF length ≤ 30m AND AOC is available:
+    Use AOC
+ELSE:
+    Use transceivers + fiber (SMF/MMF)
+
+
+
+≤3	Mesh	100G DAC or 400G DAC
+4–20	Spine-Leaf	100G DAC/AOC depending on rack
+21–50	Spine-Leaf	400G DAC/AOC for future-proofing
+>50	Spine-Leaf	400G AOC or transceivers (scale)
+
