@@ -150,7 +150,7 @@ fabrics:
                 discard: boolean, default = false
 
     autocabling:
-      - enabled: boolean, default = false must be true to enable autocabling, set to true if any of the following fields are passed, ignores all other fields if enabled is false
+      - enabled: boolean, default = false, must be true to enable autocabling, ignores all other fields if enabled is false
         pluggable: string, max length 150
         speed: string, set of {100, 200, 400} and accepts G at the end of any number, rejected if enabled is false
         length: enum = [short, medium, long]
