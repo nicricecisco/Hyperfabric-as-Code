@@ -66,7 +66,7 @@ fabrics:
             enabled: boolean
             roles: enum = ["UNUSED_PORT", "FABRIC_PORT", "HOST_PORT", "ROUTED_PORT", "LAG_PORT"], default ["UNUSED PORT]
             linkDown: boolean
-            vrfId: string, must match pattern "Default VRF" or "VRF[A-Za-z0-9]{1,100}", required if roles is "ROUTED_PORT"
+            vrfId: string, must match pattern "Default VRF" or "Vrf", optionally followed by a hyphen and 1–15 alphanumeric characters with a limit of 7 digits if no letters, required if roles is "ROUTED_PORT"
             ipv4Address: string[], required if roles is "ROUTED_PORT" and no ipv6Address, max two addresses
             ipv6Address: string[], required if roles is "ROUTED_PORT" and no ipv4Address, max two addresses
             stp:
@@ -100,29 +100,31 @@ fabrics:
         description: string, max length 2000
         vni: integer, range 2-6000000
         mtu: integer, range 1500-9100, default 9100
-        vrfId: string,  min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+        vrfId: string, must follow format "Vrf", optionally followed by a hyphen and 1–15 alphanumeric characters with a limit of 7 digits if no letters
         svis:
           - enabled: boolean
             ipv4Addresses:
               string[], valid IPv4 addresses, max two addresses
             ipv6Addresses:
               string[], valid IPv6 addresses, max one address
+        protected: boolean, default = false, set to true to prevent vni from being altered during rollback sequence
         members:
           - untagged: required, boolean, required and needs to be true if no vlanId is passed
             vlanId: integer, range 2-3600, required if untagged is false or untagged is not passed
             port:
               nodeName: required, string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
               portName: required, string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64
-        protected: boolean, default = false, set to true to prevent vni from being altered during rollback sequence
 
     vrfs:
-      - name: required, string, must follow format "Vrf-", 1 to 16 alphanumeric characters which cannot all be digits"
+      - name: required, string, must follow format "Vrf", optionally followed by a hyphen and 1–15 alphanumeric characters with a limit of 7 digits if no letters
         description: string, max length 2000 
         enabled: true
         asn: integer, range 1-4294967294, not 23456 or 65535
         vni: integer, range 2-6000000
         labels: 
           string[], max length 120
+        protected: boolean, default = false, set to true to prevent vrf from being altered during rollback sequence
+
         annotations:
           - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
             name: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, required if value is passed
@@ -143,10 +145,9 @@ fabrics:
                 preference: integer, range 1-255
                 prefix: required, string, valid IPv4 or IPv6 address
                 nextHop: string, valid IPv4 or IPv6 address, required if discard is false or not passed
-                nextVrf: string, must match pattern "Default VRF" or "VRF[A-Za-z0-9]{1,100}"
+                nextVrf: string, must match pattern "Default VRF" or follow format "Vrf", optionally followed by a hyphen and 1–15 alphanumeric characters with a limit of 7 digits if no letters, required if discard is false or not passed
                 tag: enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", "TAG_PURPLE", "TAG_YELLOW"], default = "TAG_AMBER", defaults and required to be "TAG_BLACK" if discard is true, cannot be "TAG_BLACK" if discard is false
                 discard: boolean, default = false
-        protected: boolean, default = false, set to true to prevent vrf from being altered during rollback sequence
 
     autocabling:
       - enabled: boolean, default = false must be true to enable autocabling, set to true if any of the following fields are passed, ignores all other fields if enabled is false
@@ -155,6 +156,7 @@ fabrics:
         length: string, accepts three categories of sets {short, intrarack, intra-rack, intra rack, 0.5 <= N < 5}, {med, medium, interrack, inter-rack, inter rack, 5 <= N < 50}, {long, long-haul, inter-fabric, inter-fabric, inter fabric, >=50M}
         cablePreference: enum = ["DAC", "AOC", "Transceiver"]
         portType: enum = ["SFP", "SFP28" "QSFP28", "QSFP-DD"]
+
 
     
 

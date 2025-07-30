@@ -72,7 +72,8 @@
                         "type": "string",
                         "minLength": 3,
                         "maxLength": 120,
-                        "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$",                      }
+                        "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                      }
                     },
                     "additionalProperties": false
                   }
@@ -85,17 +86,13 @@
                     "properties": {
                       "name": {
                         "type": "string",
-                        "pattern": "^Vrf-(?!(\\d{1,16})$)[a-zA-Z0-9]{1,16}$",
-                        "not": {
-                          "pattern": "^V[rR][fF]-\\d{1,16}$"
-                        }
+                        "pattern": "^Vrf-?(?=.{1,15}$)(?!(?:\\d{8,})$)[A-Za-z0-9]+$"
                       }
                     },
                     "additionalProperties": false
                   }
                 }
-              },
-              "additionalProperties": false
+              }
             }
           },
           "labels": {
@@ -212,7 +209,7 @@
                     "description": "A single role assigned to the node.",
                     "enum": [
                       "LEAF", "SPINE", "SERVER"
-                    ],
+                    ]
                   }
                 },
                 "serialNumber": { 
@@ -249,6 +246,11 @@
                   "items": { 
                     "type": "string"
                   }
+                },
+                "protected": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Set to true to prevent VNI from being altered during rollback sequence."
                 },
                 "managementPorts": {
                   "type": "array",
@@ -477,7 +479,7 @@
                       "vrfId": { 
                         "type": "string",
                         "description": "VRF (Virtual Routing and Forwarding) instance identifier.",
-                        "pattern": "^(Default VRF|^Vrf-(?!(\\d{1,16})$)[a-zA-Z0-9]{1,16}$"
+                        "pattern": "^(Default VRF|^Vrf-?(?=.{1,15}$)(?!(?:\\d{8,})$)[A-Za-z0-9]+$"
                       },
                       "ipv4Address": {
                         "type": "array",
@@ -743,6 +745,11 @@
                   "minimum": 1500, 
                   "maximum": 9100 
                 },
+                "vrfId": { 
+                  "type": "string",
+                  "description": "VRF (Virtual Routing and Forwarding) instance identifier for the VNI.",
+                  "pattern": "^(Default VRF|^Vrf-?(?=.{1,15}$)(?!(?:\\d{8,})$)[A-Za-z0-9]+$"
+                },
                 "svis": {
                   "type": "array",
                   "description": "List of switched virtual interfaces for the VNI.",
@@ -774,6 +781,11 @@
                       }
                     }
                   }
+                },
+                "protected": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Set to true to prevent VNI from being altered during rollback sequence."
                 },
                 "members": {
                   "type": "array",
@@ -859,7 +871,7 @@
                   "description": "The unique name of the VRF.",
                   "minLength": 3, 
                   "maxLength": 120, 
-                  "pattern": "^Vrf-(?!(\\d{1,16})$)[a-zA-Z0-9]{1,16}$"
+                  "pattern": "^Vrf-?(?=.{1,15}$)(?!(?:\\d{8,})$)[A-Za-z0-9]+$"
                 },
                 "description": { 
                   "type": "string",
@@ -894,6 +906,11 @@
                     "type": "string",
                     "maxLength": 120 
                   }
+                },
+                "protected": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Set to true to prevent VNI from being altered during rollback sequence."
                 },
                 "annotations": {
                   "type": "array",
@@ -1106,7 +1123,7 @@
                             "nextVrf": { 
                               "type": "string",
                               "description": "VRF to which the route forwards traffic.",
-                              "pattern": "^Vrf-(?!(\\d{1,16})$)[a-zA-Z0-9]{1,16}$"
+                              "pattern": "^Vrf-?(?=.{1,15}$)(?!(?:\\d{8,})$)[A-Za-z0-9]+$"
                             },
                             "tag": {
                               "type": "string",
