@@ -90,7 +90,6 @@ fabrics:
     
     connections:
       - description: string, max length 2000
-        osType: enum = ["HYPER_FABRIC", "NEXUS", "IOS_XE", "IOS_XR", "LINUX", ...], default = "HYPER_FABRIC"
         pluggable: string, max length 150
         local:
           portName: required, string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64

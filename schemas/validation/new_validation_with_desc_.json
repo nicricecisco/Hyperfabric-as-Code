@@ -732,18 +732,6 @@
                   "description": "Description of the connection.",
                   "maxLength": 2000 
                 },
-                "osType": {
-                  "type": "string",
-                  "description": "The operating system type of the connection endpoint.",
-                  "enum": [
-                    "HYPER_FABRIC", 
-                    "NEXUS", 
-                    "IOS_XE", 
-                    "IOS_XR", 
-                    "LINUX"
-                  ],
-                  "default": "HYPER_FABRIC"
-                },
                 "pluggable": { 
                   "type": "string",
                   "description": "Pluggable module used for the connection.",
