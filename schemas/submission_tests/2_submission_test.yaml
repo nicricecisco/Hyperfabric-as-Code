@@ -9,6 +9,7 @@ fabrics:
       - TAG_ONE
       - TAG_TWO
     topology: SPINE_LEAF
+    poop: poo
     
     nodes:
       - name: Leaf01
@@ -106,19 +107,17 @@ fabrics:
         labels:
           - MY_TAG
         vni: 10001
-        enabled: true
       - name: VNI02
         description: blah blah
         labels:
           - MY_TAG
           - ANOTHER_TAG
         vni: 10002
-        enabled: true
         svis:
           - ipv4Addresses:
-            - 172.222.40.1/24
+            - 172.222.40.1
             enabled: true
-        member:
+        members:
           - vlanId: 100
 
     vrfs:

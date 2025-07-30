@@ -21,9 +21,9 @@ REGEX_DESCRIPTIONS = {
     r"^eth\\([0-8]\\)$": "must be in the format 'eth(0)' to 'eth(8)'",
     r"^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$": "must be in the format 'Ethernet1_1' to 'Ethernet1_64'",
     r"^(1x40G\\(4\\)|1x100G\\(2\\)|1x100G\\(4\\)|1x200G\\(4\\)|1x400G|1x10G\\(1\\)|1x25G\\(1\\)|1x50G\\(1\\))$": "must be one of the specified port types",
-    r"^(Default VRF|VRF[A-Za-z0-9]{1,100})$": "must be either 'Default VRF' or 'VRF' followed by 1 to 100 alphanumeric characters"
+    r"^Vrf-?(?=.{1,15}$)(?!(?:\d{8,})$)[A-Za-z0-9]+$": "must be 'Vrf' optionally followed by a hyphen and 1–15 alphanumeric characters with a limit of 7 digits if no letters",
+    r"^(Default VRF|^Vrf-?(?=.{1,15}$)(?!(?:\d{8,})$)[A-Za-z0-9]+$": "must be either 'Default VRF' or 'Vrf' optionally followed by a hyphen and 1–15 alphanumeric characters with a limit of 7 digits if no letters"
 }
-
 console = Console()
 
 
@@ -111,6 +111,32 @@ def describe_error(error: ValidationError, instance: dict):
         msg.append(f"Line {line}", style="bold green")
     msg.append(", path ", style="white")
     msg.append(f"'{field_path}'", style="yellow")
+
+    if error.validator == "additionalProperties":
+        extra = error.message.split("('")[1].split("'")[0]
+        offending_line = None
+
+        if hasattr(error_obj, 'lc') and hasattr(error_obj.lc, 'data') and extra in error_obj.lc.data:
+            # Try key line number first
+            key_line_info = error_obj.lc.key(extra)
+            if key_line_info is not None:
+                offending_line = key_line_info[0] + 1
+            else:
+                val_line_info = error_obj.lc.value(extra)
+                if val_line_info is not None:
+                    offending_line = val_line_info[0] + 1
+
+        line_number_to_report = offending_line if offending_line is not None else line
+
+        msg = Text()
+        if line_number_to_report is not None:
+            msg.append(f"Line {line_number_to_report}", style="bold green")
+        msg.append(", path ", style="white")
+        msg.append(f"'{field_path}'", style="yellow")
+        msg.append(f": extra property '{extra}' is not allowed", style="white")
+        return msg
+
+    # Otherwise show value
     msg.append(", value ", style="white")
     msg.append(repr(user_value), style="cyan")
     msg.append(": ", style="white")

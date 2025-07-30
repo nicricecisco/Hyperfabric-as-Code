@@ -32,6 +32,10 @@ fabrics:
           - psuModel: string, max length 50
         labels: 
           string[], max length 120
+        annotations:
+          - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
+            name: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, required if value is passed
+            value: string, min length 1, max length 512, required if name is passed
         protected: boolean, default = false, set to true to prevent node from being altered during rollback sequence
 
         managementPorts:
@@ -77,14 +81,12 @@ fabrics:
                 portFast: boolean, only used when VLAN is deployed on port
                 rootGuard: boolean, only used when VLAN is deployed on port
                 uplinkFast: boolean, only used when VLAN is deployed on port
+            labels: 
+              string[], max length 120
             annotations:
               - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
                 name: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, required if value is passed
                 value: string, min length 1, max length 512, required if name is passed
-            labels: 
-              string[], max length 120
-            
-
     
     connections:
       - description: string, max length 2000
@@ -109,6 +111,12 @@ fabrics:
               string[], valid IPv4 addresses, max two addresses
             ipv6Addresses:
               string[], valid IPv6 addresses, max one address
+        labels: 
+          string[], max length 120
+        annotations:
+          - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
+            name: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, required if value is passed
+            value: string, min length 1, max length 512, required if name is passed
         protected: boolean, default = false, set to true to prevent vni from being altered during rollback sequence
         members:
           - untagged: required, boolean, required and needs to be true if no vlanId is passed
@@ -125,12 +133,11 @@ fabrics:
         vni: integer, range 2-6000000
         labels: 
           string[], max length 120
-        protected: boolean, default = false, set to true to prevent vrf from being altered during rollback sequence
-
         annotations:
           - dataType: enum = ["STRING", "INT32", "UINT32", "INT64", "UINT64", "DURATION", "TIME", "UUID"], default = "STRING"
             name: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, required if value is passed
             value: string, min length 1, max length 512, required if name value is passed
+        protected: boolean, default = false, set to true to prevent vrf from being altered during rollback sequence
         staticRoutes:
           - name: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
             description: string, max length 2000
