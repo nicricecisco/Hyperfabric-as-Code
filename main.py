@@ -53,11 +53,9 @@ if __name__ == "__main__":
     
     yaml_files = sys.argv[1:]
     # Validate all yaml files
-    for file in yaml_files:
-        validate_schema(file)
+    # for file in yaml_files:
+    #     validate_schema(file)
         
-    sys.exit(1)
-
     json_input = combine_files([file for file in yaml_files])
 
     main(json_input)

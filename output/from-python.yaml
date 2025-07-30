@@ -1,0 +1,229 @@
+fabrics:
+  - name: from-python
+    description: I am updated from python
+    location: CA-95134
+    address: 300 East Tasman Drive
+    city: Milpitas
+    country: US
+    topology: SPINE_LEAF
+    labels:
+      - TAG_ONE
+      - TAG_TWO
+    nodes:
+      - name: Leaf01
+        description: Leaf Switch 01 updated again
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        labels:
+          - TAG_ONE
+        ports:
+          - name: Ethernet1_1
+            mtu: 9216
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Leaf02
+        description: Leaf Switch 02
+        location: sj01-1-101-AAA02
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        managementPorts:
+          - name: eth0
+            description: Management Ethernet Port Configuration
+            configOrigin: CONFIG_ORIGIN_CLOUD
+            ipv4ConfigType: CONFIG_TYPE_STATIC
+            ipv4Address: 10.10.10.1/24
+            ipv4Gateway: 10.10.10.254
+            ipv6ConfigType: CONFIG_TYPE_DHCP
+            ipv6Address: 2a02:1243:5687:0:9c09:2c7a:7c78:9ffc/33
+            ipv6Gateway: 2a02:1243:5687:0:8d91:ba6b:b24d:9b41
+            dnsAddresses:
+              - 9.9.9.9
+              - 8.8.8.8
+            proxyAddress: https://10.10.1.10:8080
+            enabled: true
+            cloudUrls:
+              - https://a.example.com
+              - https://b.example.com
+            noProxy:
+              - 10.0.0.5
+              - 2001:db8:3333:4444:5555:6666:7777:8888/8
+              - 68.0.0.0/8
+              - 72.0.0.0/8
+              - 172.0.0.1/8
+              - .cisco.com
+              - .local
+        ports:
+          - name: Ethernet1_1
+            mtu: 9216
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_5
+            mtu: 9100
+            enabled: true
+            roles:
+              - HOST_PORT
+          - name: Ethernet1_6
+            mtu: 9100
+            enabled: true
+            roles:
+              - HOST_PORT
+      - name: Leaf03
+        description: Leaf Switch 03
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        labels:
+          - TAG_ONE
+        ports:
+          - name: Ethernet1_1
+            mtu: 9216
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Leaf04
+        description: Leaf Switch 04
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        labels:
+          - TAG_ONE
+        ports:
+          - name: Ethernet1_1
+            mtu: 9216
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Spine01
+        description: Spine Switch 01
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+        ports:
+          - name: Ethernet1_1
+            mtu: 9216
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_2
+            mtu: 9216
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_3
+            mtu: 9216
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_4
+            mtu: 9216
+            enabled: true
+            roles:
+              - FABRIC_PORT
+    connections:
+      - osType: HYPER_FABRIC
+        pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_1
+          nodeName: Leaf01
+        remote:
+          portName: Ethernet1_1
+          nodeName: Spine01
+      - osType: HYPER_FABRIC
+        pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_1
+          nodeName: Leaf02
+        remote:
+          portName: Ethernet1_2
+          nodeName: Spine01
+      - osType: HYPER_FABRIC
+        pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_1
+          nodeName: Leaf03
+        remote:
+          portName: Ethernet1_3
+          nodeName: Spine01
+      - osType: HYPER_FABRIC
+        pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_1
+          nodeName: Leaf04
+        remote:
+          portName: Ethernet1_4
+          nodeName: Spine01
+    vnis:
+      - name: VNI01
+        description: My first VNI
+        vni: 10001
+      - name: VNI02
+        description: My second VNI
+        vni: 10002
+        svis:
+          - ipv4Addresses:
+              - 172.222.40.1/24
+            enabled: true
+    vrfs:
+      - name: Vrf-02
+        description: My second VRF
+        enabled: true
+        vni: 1001
+        labels:
+          - MY_TAG
+        staticRoutes:
+          - name: SR01
+            description: My first static route
+            enabled: true
+            labels:
+              - MY_TAG
+            routes:
+              - prefix: 10.10.10.0/24
+                preference: 10
+                discard: true
+                tag: TAG_BLACK
+              - prefix: 11.10.10.0/24
+                preference: 10
+                discard: true
+                tag: TAG_BLACK
+          - name: SR02
+            description: My first static route
+            enabled: true
+            labels:
+              - MY_TAG
+            routes:
+              - prefix: 12.10.10.0/24
+                preference: 10
+                discard: true
+                tag: TAG_BLACK
+              - prefix: 13.10.10.0/24
+                preference: 10
+                discard: true
+                tag: TAG_BLACK
+      - name: Vrf-test
+        description: My first VRF
+        enabled: true
+        vni: 1000
+        labels:
+          - MY_TAG
+        staticRoutes:
+          - name: SR001
+            description: My first static route
+            enabled: true
+            labels:
+              - MY_TAG
+            routes:
+              - prefix: 14.10.10.0/24
+                preference: 10
+                discard: true
+                tag: TAG_BLACK
+              - prefix: 15.10.10.0/24
+                preference: 10
+                discard: true
+                tag: TAG_BLACK
+      - name: Default VRF
+        enabled: true
+        vni: 12000000

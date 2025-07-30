@@ -170,7 +170,7 @@
                     "description": "A single role assigned to the node.",
                     "enum": [
                       "LEAF", "SPINE", "SERVER"
-                    ],
+                    ]
                   }
                 },
                 "serialNumber": { 
