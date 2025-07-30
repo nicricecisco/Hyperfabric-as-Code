@@ -56,45 +56,6 @@
             ],
             "default": "MESH"
           },
-          "delete": {
-            "type": "array",
-            "description": "Resources to delete from the fabric.",
-            "items": {
-              "type": "object",
-              "properties": {
-                "vnis": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": ["name"],
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "minLength": 3,
-                        "maxLength": 120,
-                        "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
-                      }
-                    },
-                    "additionalProperties": false
-                  }
-                },
-                "vrfs": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": ["name"],
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "pattern": "^Vrf-?(?=.{1,15}$)(?!(?:\\d{8,})$)[A-Za-z0-9]+$"
-                      }
-                    },
-                    "additionalProperties": false
-                  }
-                }
-              }
-            }
-          },
           "labels": {
             "type": "array",
             "description": "User-defined labels for categorizing the fabric.",
@@ -163,6 +124,75 @@
                   } 
                 }
               ]
+            }
+          },
+          "autocabling": {
+            "type": "array",
+            "description": "Autocabling configuration list.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Must be true to enable autocabling. If false, all other fields are ignored."
+                },
+                "pluggable": {
+                  "type": "string",
+                  "maxLength": 150,
+                  "description": "Pluggable module type. Ignored if enabled is false."
+                },
+                "speed": {
+                  "type": "string",
+                  "pattern": "^(100|200|400)G?$",
+                  "description": "Cable speed. Must be 100, 200, or 400 with optional 'G' suffix, rejected if enabled is false."
+                },
+                "length": {
+                  "type": "string",
+                  "enum": ["short", "medium", "long"],
+                  "description": "Cable length category, enum values {short, medium, long}, ignored if enabled is false."
+                },
+                "cablePreference": {
+                  "type": "string",
+                  "enum": ["DAC", "AOC", "Transceiver"],
+                  "description": "Preferred cable type, enum values {DAC, AOC, Transceiver}, ignored if enabled is false."
+                },
+                "portType": {
+                  "type": "string",
+                  "enum": ["SFP", "SFP28", "QSFP28", "QSFP-DD"],
+                  "description": "Port type compatibility, enum values {SFP, SFP28, QSFP28, QSFP-DD}, ignored if enabled is false."
+                }
+              },
+              "additionalProperties": false,
+              "if": {
+                "anyOf": [
+                  { "required": ["pluggable"] },
+                  { "required": ["speed"] },
+                  { "required": ["length"] },
+                  { "required": ["cablePreference"] },
+                  { "required": ["portType"] }
+                ]
+              },
+              "then": {
+                "required": ["enabled"],
+                "properties": {
+                  "enabled": { "const": true }
+                }
+              },
+              "else": {
+                "properties": {
+                  "enabled": { "enum": [false, null] }
+                },
+                "not": {
+                  "anyOf": [
+                    { "required": ["pluggable"] },
+                    { "required": ["speed"] },
+                    { "required": ["length"] },
+                    { "required": ["cablePreference"] },
+                    { "required": ["portType"] }
+                  ]
+                }
+              }
             }
           },
           "nodes": {
@@ -1199,72 +1229,41 @@
                 }
               }
             }
-          },
-          "autocabling": {
+          },"delete": {
             "type": "array",
-            "description": "Autocabling configuration list.",
+            "description": "Resources to delete from the fabric.",
             "items": {
               "type": "object",
               "properties": {
-                "enabled": {
-                  "type": "boolean",
-                  "default": false,
-                  "description": "Must be true to enable autocabling. If false, all other fields are ignored."
+                "vnis": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["name"],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 3,
+                        "maxLength": 120,
+                        "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
                 },
-                "pluggable": {
-                  "type": "string",
-                  "maxLength": 150,
-                  "description": "Pluggable module type. Ignored if enabled is false."
-                },
-                "speed": {
-                  "type": "string",
-                  "pattern": "^(100|200|400)G?$",
-                  "description": "Cable speed. Must be 100, 200, or 400 with optional 'G' suffix, rejected if enabled is false."
-                },
-                "length": {
-                  "type": "string",
-                  "enum": ["short", "medium", "long"],
-                  "description": "Cable length category, enum values {short, medium, long}, ignored if enabled is false."
-                },
-                "cablePreference": {
-                  "type": "string",
-                  "enum": ["DAC", "AOC", "Transceiver"],
-                  "description": "Preferred cable type, enum values {DAC, AOC, Transceiver}, ignored if enabled is false."
-                },
-                "portType": {
-                  "type": "string",
-                  "enum": ["SFP", "SFP28", "QSFP28", "QSFP-DD"],
-                  "description": "Port type compatibility, enum values {SFP, SFP28, QSFP28, QSFP-DD}, ignored if enabled is false."
-                }
-              },
-              "additionalProperties": false,
-              "if": {
-                "anyOf": [
-                  { "required": ["pluggable"] },
-                  { "required": ["speed"] },
-                  { "required": ["length"] },
-                  { "required": ["cablePreference"] },
-                  { "required": ["portType"] }
-                ]
-              },
-              "then": {
-                "required": ["enabled"],
-                "properties": {
-                  "enabled": { "const": true }
-                }
-              },
-              "else": {
-                "properties": {
-                  "enabled": { "enum": [false, null] }
-                },
-                "not": {
-                  "anyOf": [
-                    { "required": ["pluggable"] },
-                    { "required": ["speed"] },
-                    { "required": ["length"] },
-                    { "required": ["cablePreference"] },
-                    { "required": ["portType"] }
-                  ]
+                "vrfs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["name"],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "pattern": "^Vrf-?(?=.{1,15}$)(?!(?:\\d{8,})$)[A-Za-z0-9]+$"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
                 }
               }
             }

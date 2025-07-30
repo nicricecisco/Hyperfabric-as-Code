@@ -1,0 +1,151 @@
+fabrics:
+  - name:
+    description:
+    location:
+    address:
+    city:
+    country:
+    topology:
+    labels:
+    annotations:
+      - name:
+        value:
+    autocabling:
+      - enabled:
+        pluggable:
+        speed:
+        length: 
+        cablePreference:
+        portType: 
+        
+    nodes:
+      - name:
+        description:
+        location:
+        modelName:
+        roles:
+        serialNumber:
+        psuAirflows:
+          - airflow:
+          - psuModel:
+        labels:
+        protected:
+
+        managementPorts:
+          - name:
+            description:
+            configOrigin:
+            connectedState:
+            ipv4ConfigType:
+            ipv4Address:
+            ipv4Gateway:
+            ipv6ConfigType:
+            ipv6Address:
+            ipv6Gateway:
+            dnsAddresses:
+            proxyAddress:
+            proxyUsername:
+            proxyPassword:
+            enabled:
+            setProxyPassword:
+            cloudUrls:
+            noProxy:
+
+        ports:
+          - name:
+            description:
+            mtu:
+            fec:
+            pluggable:
+            forceCounter:
+            speed:
+            enabled:
+            roles:
+            linkDown:
+            vrfId:
+            ipv4Address:
+            ipv6Address:
+            stp:
+              - bpduGuard:
+                enabled:
+                portFast:
+                rootGuard:
+                uplinkFast:
+            annotations:
+              - name:
+                value:
+            labels:
+
+    connections:
+      - description:
+        pluggable:
+        local:
+          portName:
+          nodeName:
+        remote:
+          portName:
+          nodeName:
+
+    vnis:
+      - name:
+        description:
+        vni:
+        mtu:
+        vrfId:
+        svis:
+          - enabled:
+            ipv4Addresses:
+            ipv6Addresses:
+        protected:
+        members:
+          - untagged:
+            vlanId:
+            port:
+              nodeName:
+              portName:
+
+    vrfs:
+      - name:
+        description:
+        enabled:
+        asn:
+        vni:
+        labels:
+          string[]:
+        protected:
+        annotations:
+          - name:
+            value:
+
+        staticRoutes:
+          - name:
+            description:
+            enabled:
+            labels:
+              string[]:
+            annotations:
+              - name:
+                value:
+            routes:
+              - nodeId:
+                interface:
+                preference:
+                prefix:
+                nextHop:
+                nextVrf:
+                tag: 
+                discard:
+
+    delete:
+      vnis:
+        - name:
+      vrfs:
+        - name:
+
+    
+
+
+
+
+            
+              
