@@ -80,6 +80,14 @@ fabrics:
       - name: Leaf03
         description: Leaf Switch 03
         modelName: HF6100-32D
+        poop: poo
+        roles:
+          - LEAF
+        labels:
+          - TAG_ONE
+      - name: Leaf04
+        description: Leaf Switch 04
+        modelName: HF6100-32D
         roles:
           - LEAF
         labels:

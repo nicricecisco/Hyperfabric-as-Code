@@ -3,6 +3,7 @@ import sys
 from pprint import pprint
 from copy import deepcopy
 from scripts.handle_json_input import handle_json_input
+from scripts.submission_validator_nick import validate_schema
 
 def merge_fabric_dicts(f1, f2):
     merged = deepcopy(f1)
@@ -49,7 +50,12 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         print(f"Usage: python {sys.argv[0]} <yaml_file1> [yaml_file2 ...]")
         sys.exit(1)
-
-    json_input = combine_files([file for file in sys.argv[1:]])
+    
+    yaml_files = sys.argv[1:]
+    # Validate all yaml files
+    # for file in yaml_files:
+    #     validate_schema(file)
+        
+    json_input = combine_files([file for file in yaml_files])
 
     main(json_input)

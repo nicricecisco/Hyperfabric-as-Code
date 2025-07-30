@@ -271,6 +271,7 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
             #Handle members?
 
             _reset_latest_protected_key() # Reset at the end of processing a VNI
+
     # -------------------- VRFs --------------------
     if "vrfs" in fabric_other:
         fabric_vrfs = {"vrfs": fabric_other["vrfs"]}
@@ -300,14 +301,7 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
 
 def handle_json_input(json_input):
     FABRIC_ID = None
-    # Validate schema first
-    if "fabrics" not in json_input:
-        pprint("Input missing 'fabrics' attribute")
-        return
-    if not isinstance(json_input["fabrics"], list):
-        pprint("'fabrics' attribute must contain a list")
-        return
-    
+
     successes = []
     failures = []
 
@@ -336,7 +330,6 @@ def handle_json_input(json_input):
             logger.error(f"[FABRIC PROCESSING] Exception at fabric level for fabric '{FABRIC_ID}': {e}", exc_info=True)
             failures.append({"name": FABRIC_ID, "error": str(e)})
             continue
-
 
     status = (
         "success" if not failures else

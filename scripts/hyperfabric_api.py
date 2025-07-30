@@ -224,6 +224,7 @@ def update_fabric_node(node_data_obj):
     fabricId = node_data_obj["fabric_id"]
     nodeId = node_data_obj["node"]["name"]
     node_data_obj["node"]["enabled"] = True # Enabled must be an attribute and it must be set to true
+    # node_data_obj["node"]["osType"] = "HYPER_FABRIC"
     payload = node_data_obj["node"]
     response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}", payload=payload)
     return response
@@ -845,6 +846,10 @@ def delete_fabric_static_route(static_route_data_obj):
    response = _make_delete_request(headers, f"{BASE_URL}/fabrics/{fabricId}/vrfs/{vrfId}/staticRoutes/{routeId}")
    return response
 
+
+# ------------------------------ GET FABRIC CONFIG ------------------------------
+
+
 def get_fabric_configurations(fabric_data):
     """
     Retrieves the configuration for a specific fabric.
@@ -860,9 +865,9 @@ def get_fabric_configurations(fabric_data):
     params = {key: fabric_data[key] for key in ["candidate", "includeMetadata"] if key in fabric_data}
     fabricId = fabric_data["name"]
     response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/configurations", params=params)
-    print(f"DEBUG raw_data type: {type(response)}")
-    print(f"DEBUG raw_data content: {response}")
     return response
+
+
 # ------------------------------ FROM HYPERFABRIC_SDK ------------------------------
 
 
