@@ -153,7 +153,7 @@ fabrics:
       - enabled: boolean, default = false must be true to enable autocabling, set to true if any of the following fields are passed, ignores all other fields if enabled is false
         pluggable: string, max length 150
         speed: string, set of {100, 200, 400} and accepts G at the end of any number, rejected if enabled is false
-        length: string, accepts three categories of sets {short, intrarack, intra-rack, intra rack, 0.5 <= N < 5}, {med, medium, interrack, inter-rack, inter rack, 5 <= N < 50}, {long, long-haul, inter-fabric, inter-fabric, inter fabric, >=50M}
+        length: enum = [short, medium, long]
         cablePreference: enum = ["DAC", "AOC", "Transceiver"]
         portType: enum = ["SFP", "SFP28" "QSFP28", "QSFP-DD"]
 
