@@ -9,9 +9,9 @@ logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(m
 logger = logging.getLogger(__name__)
 
 DEFAULT_PLUGGABLE = "QDD-2Q200-CU3M"
-PLUGGABLE_LIST = [
-    "QDD-2Q200-CU3M",
-    
+#PLUGGABLE_LIST = [
+  #  "QDD-2Q200-CU3M",
+
 SUPPORTED_MODELS = ["HF6100-32D", "HF6100-60L4D"]
 
 def _get_fabric(fabric_name):
