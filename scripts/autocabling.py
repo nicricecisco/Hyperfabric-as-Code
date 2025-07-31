@@ -8,9 +8,9 @@ from scripts.hyperfabric_api import get_fabric, get_fabric_nodes, get_fabric_con
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
-DEFAULT_PLUGGABLE = "QDD-2Q200-CU3M"
-PLUGGABLE_LIST = [
-    "QDD-2Q200-CU3M",
+DEFAULT_PLUGGABLE = "QDD-400-CU3M"
+# PLUGGABLE_LIST = [
+#     "QDD-2Q200-CU3M",
     
 SUPPORTED_MODELS = ["HF6100-32D", "HF6100-60L4D"]
 

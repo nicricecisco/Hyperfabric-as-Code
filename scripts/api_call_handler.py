@@ -42,6 +42,11 @@ def _rollback():
 
             logger.error(f"[ROLLBACK] HTTP Error in {func.__name__}: {e}. "
                         f"Status code: {response.status_code}. Response: {error_message}")
+            
+def _append_to_put_object(curr_obj, put_obj, key):
+    for attr in curr_obj:
+        if attr not in put_obj[key]:
+            put_obj[key][attr] = curr_obj[attr]
 
 def _handle_put(put_func, rollback_func, func_input, key=None, rollback_input=None):
     logger.info(f"[{key.upper()}] [PUT] Making API request for object: {key}...")
@@ -167,6 +172,8 @@ def handle_get(get_func, post_func, put_func, delete_func, func_input, key, clea
             rollback_input = copy.deepcopy(func_input)
             obj_pure, _ = parse_attributes(payload, key)
             rollback_input[key] = obj_pure
+
+        _append_to_put_object(rollback_input[key] if key in rollback_input else rollback_input, func_input, key)
 
         return _handle_put(put_func=put_func, rollback_func=put_func, func_input=func_input, key=key, rollback_input=rollback_input)
         

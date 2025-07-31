@@ -10,7 +10,7 @@ def parse_attributes(obj, input_key):
 with open("schemas/validation/new_validation_with_desc_.json") as f:
     schema = json.load(f)
 
-EXCLUDE_ATTR = ["fabrics", "nodes", "managementPorts", "ports", "connections", "vnis", "vrfs", "staticRoutes"]
+EXCLUDE_ATTR = ["fabrics", "nodes", "managementPorts", "ports", "connections", "vnis", "vrfs", "staticRoutes", "autocabling", "delete"]
 
 def _get_attribute_keys(*args):
     result = schema.get("properties", {})
