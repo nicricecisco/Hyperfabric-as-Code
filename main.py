@@ -52,9 +52,9 @@ if __name__ == "__main__":
         sys.exit(1)
     
     yaml_files = sys.argv[1:]
-    # Validate all yaml files
-    # for file in yaml_files:
-    #     validate_schema(file)
+    #Validate all yaml files
+    for file in yaml_files:
+        validate_schema(file)
 
     # sys.exit(1) # Remove this
         

@@ -317,7 +317,7 @@ def validate_json(instance, schema):
 
 
 def validate_schema(yaml_path):
-    SCHEMA_PATH = "schemas/validation/new_validation_with_desc_.json"
+    SCHEMA_PATH = "schemas/validation/new_validation_with_desc.json"
     # if len(sys.argv) != 4:
     #     print("Usage: python validate_yaml.py input.yaml schema.json output.json")
     #     sys.exit(1)
