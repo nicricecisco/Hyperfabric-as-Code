@@ -132,65 +132,52 @@
             "properties": {
               "enabled": {
                 "type": "boolean",
-                "default": false,
-                "description": "Must be true to enable autocabling. If false, all other fields are ignored."
+                "default": true,
+                "description": "If false, all other fields are not validated."
               },
               "pluggable": {
                 "type": "string",
-                "maxLength": 150,
-                "description": "Pluggable module type. Ignored if enabled is false."
+                "maxLength": 150
               },
               "speed": {
                 "type": "string",
-                "pattern": "^(100|200|400)G?$",
-                "description": "Cable speed. Must be 100, 200, or 400 with optional 'G' suffix, rejected if enabled is false."
+                "pattern": "^(100|200|400)G?$"
               },
               "length": {
-                "type": "string",
-                "enum": ["short", "medium", "long"],
-                "description": "Cable length category, enum values {short, medium, long}, ignored if enabled is false."
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 10000000000
               },
               "cablePreference": {
                 "type": "string",
-                "enum": ["DAC", "AOC", "Transceiver"],
-                "description": "Preferred cable type, enum values {DAC, AOC, Transceiver}, ignored if enabled is false."
+                "enum": ["DAC", "AOC", "Transceiver"]
               },
               "portType": {
                 "type": "string",
-                "enum": ["SFP", "SFP28", "QSFP28", "QSFP-DD"],
-                "description": "Port type compatibility, enum values {SFP, SFP28, QSFP28, QSFP-DD}, ignored if enabled is false."
+                "enum": ["SFP", "SFP28", "QSFP28", "QSFP-DD"]
               }
             },
-            "additionalProperties": false,
-            "if": {
-              "anyOf": [
-                { "required": ["pluggable"] },
-                { "required": ["speed"] },
-                { "required": ["length"] },
-                { "required": ["cablePreference"] },
-                { "required": ["portType"] }
-              ]
-            },
-            "then": {
-              "required": ["enabled"],
-              "properties": {
-                "enabled": { "const": true }
+            "minProperties": 1,
+            "allOf": [
+              {
+                "if": {
+                  "properties": { "enabled": { "const": false } },
+                  "required": ["enabled"]
+                },
+                "then": {
+                  "not": {
+                    "anyOf": [
+                      { "required": ["pluggable"] },
+                      { "required": ["speed"] },
+                      { "required": ["length"] },
+                      { "required": ["cablePreference"] },
+                      { "required": ["portType"] }
+                    ]
+                  }
+                }
               }
-            },
-            "else": {
-              "properties": {
-                "enabled": { "enum": [false, null] }
-              },
-              "not": {
-                "anyOf": [
-                  { "required": ["pluggable"] },
-                  { "required": ["speed"] },
-                  { "required": ["length"] },
-                  { "required": ["cablePreference"] },
-                  { "required": ["portType"] }
-                ]
-              }
-            }
+            ],
+            "additionalProperties": false
           },
           "nodes": {
             "type": "array",
@@ -466,29 +453,67 @@
                             }
                         }
                     },
-                    "allOf": [
-                        {
-                            "if": {
-                                "properties": {
-                                  "ipv4ConfigType": { 
-                                    "const": "CONFIG_TYPE_STATIC" 
-                                  }
-                                }
-                            },
-                            "then": {
-                                "required": ["ipv4Address", "ipv4Gateway"]
+                     "allOf": [
+                      {
+                        "description": "IPv4 conditional validation: if CONFIG_TYPE_STATIC, require address and gateway; if DHCP, disallow them.",
+                        "if": {
+                          "properties": {
+                            "ipv4ConfigType": {
+                              "const": "CONFIG_TYPE_STATIC",
+                              "description": "Triggers STATIC IPv4 mode logic if value is CONFIG_TYPE_STATIC."
                             }
+                          }
                         },
-                        {
-                            "if": {
-                                "properties": {
-                                "ipv6ConfigType": { "const": "CONFIG_TYPE_STATIC" }
-                                }
-                            },
-                            "then": {
-                                "required": ["ipv6Address", "ipv6Gateway"]
-                            }
+                        "then": {
+                          "required": ["ipv4Address", "ipv4Gateway"],
+                          "description": "In STATIC mode, ipv4Address and ipv4Gateway must be provided."
+                        },
+                        "else": {
+                          "not": {
+                            "anyOf": [
+                              {
+                                "required": ["ipv4Address"],
+                                "description": "Disallow ipv4Address if not in STATIC mode (e.g., DHCP)."
+                              },
+                              {
+                                "required": ["ipv4Gateway"],
+                                "description": "Disallow ipv4Gateway if not in STATIC mode (e.g., DHCP)."
+                              }
+                            ]
+                          },
+                          "description": "In DHCP mode, ipv4Address and ipv4Gateway must not be specified."
                         }
+                      },
+                      {
+                        "description": "IPv6 conditional validation: if CONFIG_TYPE_STATIC, require address and gateway; if DHCP, disallow them.",
+                        "if": {
+                          "properties": {
+                            "ipv6ConfigType": {
+                              "const": "CONFIG_TYPE_STATIC",
+                              "description": "Triggers STATIC IPv6 mode logic if value is CONFIG_TYPE_STATIC."
+                            }
+                          }
+                        },
+                        "then": {
+                          "required": ["ipv6Address", "ipv6Gateway"],
+                          "description": "In STATIC mode, ipv6Address and ipv6Gateway must be provided."
+                        },
+                        "else": {
+                          "not": {
+                            "anyOf": [
+                              {
+                                "required": ["ipv6Address"],
+                                "description": "Disallow ipv6Address if not in STATIC mode (e.g., DHCP)."
+                              },
+                              {
+                                "required": ["ipv6Gateway"],
+                                "description": "Disallow ipv6Gateway if not in STATIC mode (e.g., DHCP)."
+                              }
+                            ]
+                          },
+                          "description": "In DHCP mode, ipv6Address and ipv6Gateway must not be specified."
+                        }
+                      }
                     ]
                   }
                 },
@@ -732,18 +757,6 @@
                   "type": "string",
                   "description": "Description of the connection.",
                   "maxLength": 2000 
-                },
-                "osType": {
-                  "type": "string",
-                  "description": "The operating system type of the connection endpoint.",
-                  "enum": [
-                    "HYPER_FABRIC", 
-                    "NEXUS", 
-                    "IOS_XE", 
-                    "IOS_XR", 
-                    "LINUX"
-                  ],
-                  "default": "HYPER_FABRIC"
                 },
                 "pluggable": { 
                   "type": "string",
