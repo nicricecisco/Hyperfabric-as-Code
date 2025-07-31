@@ -55,6 +55,8 @@ if __name__ == "__main__":
     # Validate all yaml files
     # for file in yaml_files:
     #     validate_schema(file)
+
+    # sys.exit(1) # Remove this
         
     json_input = combine_files([file for file in yaml_files])
 

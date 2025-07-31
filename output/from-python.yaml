@@ -1,25 +1,25 @@
 fabrics:
   - name: from-python
-    description: I am updated from python
-    location: CA-95134
-    address: 300 East Tasman Drive
-    city: Milpitas
-    country: US
     topology: SPINE_LEAF
-    labels:
-      - TAG_ONE
-      - TAG_TWO
     nodes:
       - name: Leaf01
-        description: Leaf Switch 01 updated again
+        description: Leaf Switch 01
         modelName: HF6100-32D
         roles:
           - LEAF
         labels:
           - TAG_ONE
+        annotations:
+          - name: position
+            value: LF001
         ports:
-          - name: Ethernet1_1
-            mtu: 9216
+          - name: Ethernet1_16
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_20
+            mtu: 9100
             enabled: true
             roles:
               - FABRIC_PORT
@@ -29,6 +29,9 @@ fabrics:
         modelName: HF6100-32D
         roles:
           - LEAF
+        annotations:
+          - name: position
+            value: LF002
         managementPorts:
           - name: eth0
             description: Management Ethernet Port Configuration
@@ -57,7 +60,7 @@ fabrics:
               - .local
         ports:
           - name: Ethernet1_1
-            mtu: 9216
+            mtu: 9100
             enabled: true
             roles:
               - FABRIC_PORT
@@ -78,22 +81,28 @@ fabrics:
           - LEAF
         labels:
           - TAG_ONE
+        annotations:
+          - name: position
+            value: LF003
         ports:
           - name: Ethernet1_1
-            mtu: 9216
+            mtu: 9100
             enabled: true
             roles:
               - FABRIC_PORT
       - name: Leaf04
         description: Leaf Switch 04
-        modelName: HF6100-32D
+        modelName: HF6100-60L4D
         roles:
           - LEAF
         labels:
           - TAG_ONE
+        annotations:
+          - name: position
+            value: LF004
         ports:
-          - name: Ethernet1_1
-            mtu: 9216
+          - name: Ethernet1_31
+            mtu: 9100
             enabled: true
             roles:
               - FABRIC_PORT
@@ -102,71 +111,81 @@ fabrics:
         modelName: HF6100-32D
         roles:
           - SPINE
+        annotations:
+          - name: position
+            value: SP001
         ports:
           - name: Ethernet1_1
-            mtu: 9216
+            mtu: 9100
             enabled: true
             roles:
               - FABRIC_PORT
           - name: Ethernet1_2
-            mtu: 9216
+            mtu: 9100
             enabled: true
             roles:
               - FABRIC_PORT
           - name: Ethernet1_3
-            mtu: 9216
+            mtu: 9100
             enabled: true
             roles:
               - FABRIC_PORT
-          - name: Ethernet1_4
-            mtu: 9216
+          - name: Ethernet1_16
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_20
+            mtu: 9100
             enabled: true
             roles:
               - FABRIC_PORT
     connections:
-      - osType: HYPER_FABRIC
-        pluggable: QDD-400-AOC10M
+      - pluggable: QDD-400-CU3M
         local:
-          portName: Ethernet1_1
+          portName: Ethernet1_16
           nodeName: Leaf01
         remote:
-          portName: Ethernet1_1
+          portName: Ethernet1_16
           nodeName: Spine01
-      - osType: HYPER_FABRIC
-        pluggable: QDD-400-AOC10M
+      - pluggable: QDD-400-CU3M
         local:
           portName: Ethernet1_1
           nodeName: Leaf02
         remote:
-          portName: Ethernet1_2
+          portName: Ethernet1_1
           nodeName: Spine01
-      - osType: HYPER_FABRIC
-        pluggable: QDD-400-AOC10M
+      - pluggable: QDD-400-CU3M
         local:
           portName: Ethernet1_1
           nodeName: Leaf03
         remote:
-          portName: Ethernet1_3
+          portName: Ethernet1_2
           nodeName: Spine01
-      - osType: HYPER_FABRIC
-        pluggable: QDD-400-AOC10M
+      - pluggable: QDD-400-CU3M
         local:
-          portName: Ethernet1_1
+          portName: Ethernet1_31
           nodeName: Leaf04
         remote:
-          portName: Ethernet1_4
+          portName: Ethernet1_3
           nodeName: Spine01
     vnis:
       - name: VNI01
         description: My first VNI
         vni: 10001
+        labels:
+          - MY_TAG!
       - name: VNI02
         description: My second VNI
         vni: 10002
+        vrfId: Default VRF
         svis:
           - ipv4Addresses:
               - 172.222.40.1/24
             enabled: true
+        labels:
+          - MY_TAG
+          - ANOTHER_TAG
     vrfs:
       - name: Vrf-02
         description: My second VRF

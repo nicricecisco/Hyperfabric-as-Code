@@ -3,22 +3,29 @@ fabrics:
     connections:
       - local:
           portName: Ethernet1_1
-          nodeName: Leaf01
-        remote:
-          portName: Ethernet1_3
-          nodeName: Spine01
-        pluggable: QDD-2Q200-CU3M
-      - local:
-          portName: Ethernet1_1
           nodeName: Leaf02
         remote:
           portName: Ethernet1_1
           nodeName: Spine01
-        pluggable: QDD-2Q200-CU3M
+        pluggable: QDD-400-CU3M
       - local:
           portName: Ethernet1_1
           nodeName: Leaf03
         remote:
           portName: Ethernet1_2
           nodeName: Spine01
-        pluggable: QDD-2Q200-CU3M
+        pluggable: QDD-400-CU3M
+      - local:
+          portName: Ethernet1_31
+          nodeName: Leaf04
+        remote:
+          portName: Ethernet1_3
+          nodeName: Spine01
+        pluggable: QDD-400-CU3M
+      - local:
+          portName: Ethernet1_16
+          nodeName: Leaf01
+        remote:
+          portName: Ethernet1_16
+          nodeName: Spine01
+        pluggable: QDD-400-CU3M

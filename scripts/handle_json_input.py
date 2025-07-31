@@ -1,5 +1,4 @@
 import logging
-import requests
 from pprint import pprint
 from scripts.api_call_handler import handle_get, handle_delete, put_connections
 from entities.registry import get_entity
@@ -55,6 +54,16 @@ def _connection_exists(connections, target_connection):
             local.get('portName') == target_local.get('portName') and
             remote.get('nodeName') == target_remote.get('nodeName') and
             remote.get('portName') == target_remote.get('portName')):
+
+            # Add attributes from existing conn to yaml conn if the attribute does not exist
+            for attr in conn:
+                if attr not in target_connection:
+                    target_connection[attr] = conn[attr]
+
+            # Remove existing conn from list to call PUT with, but add the current yaml conn
+            connections.remove(conn)
+            connections.append(target_connection)
+            
             return conn.get('id', {})  # Match found, return id of connection
 
     return None  # No match, no id
@@ -244,19 +253,14 @@ def _loop_through_attributes(fabric_other, FABRIC_ID):
         }
         full_connections = handle_get(get_func=get_fabric_connections, post_func=None, put_func=None, delete_func=None, func_input=connection_data_obj, key="connection")
         current_connections = full_connections.get("connections", [])
-        found_connections = set() # Set of connection IDs, referencing connections to be removed from current_connections
 
         # Loops through connections in YAML file.
-        # If the connection exists in the fabric, append the id to found_connections so it can later be removed from current_connections
         # current_connections will contain the list of connections to be PUT, including old connections (not modified by new ones) and the new connections
         for connection in fabric_connections["connections"]:
-            conn_id = _connection_exists(current_connections, connection) 
-            if conn_id:
-                found_connections.add(conn_id)
-            current_connections.append(connection)
-        
-        current_connections = [conn for conn in current_connections if "id" not in conn or conn["id"] not in found_connections] # Remove duplicate connections
-       
+            conn_id = _connection_exists(current_connections, connection) # Adds current connection to list of connections to PUT, if found
+            if not conn_id:
+                current_connections.append(connection) # Add new connection to list of connections to PUT
+               
         _put_connections(FABRIC_ID, current_connections) # Update existing connections
 
     # -------------------- VNIs --------------------

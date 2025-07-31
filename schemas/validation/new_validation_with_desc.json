@@ -1369,40 +1369,37 @@
               }
             }
           },"delete": {
-            "type": "array",
+            "type": "object",
             "description": "Resources to delete from the fabric.",
-            "items": {
-              "type": "object",
-              "properties": {
-                "vnis": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": ["name"],
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "minLength": 3,
-                        "maxLength": 120,
-                        "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
-                      }
-                    },
-                    "additionalProperties": false
-                  }
-                },
-                "vrfs": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "required": ["name"],
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "pattern": "^Vrf-?(?=.{1,15}$)(?!(?:\\d{8,})$)[A-Za-z0-9]+$"
-                      }
-                    },
-                    "additionalProperties": false
-                  }
+            "properties": {
+              "vnis": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["name"],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "minLength": 3,
+                      "maxLength": 120,
+                      "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "vrfs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["name"],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "pattern": "^Vrf-?(?=.{1,15}$)(?!(?:\\d{8,})$)[A-Za-z0-9]+$"
+                    }
+                  },
+                  "additionalProperties": false
                 }
               }
             }
