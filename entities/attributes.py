@@ -1,4 +1,5 @@
 import json
+from utils.schema_loader import get_schema_path
 
 def parse_attributes(obj, input_key):
     attributes = ATTRIBUTES[f"{input_key.upper()}"]
@@ -7,7 +8,8 @@ def parse_attributes(obj, input_key):
 
     return pure, other
 
-with open("schemas/validation/new_validation_with_desc_.json") as f:
+schema_path = get_schema_path()
+with open(schema_path) as f:
     schema = json.load(f)
 
 EXCLUDE_ATTR = ["fabrics", "nodes", "managementPorts", "ports", "connections", "vnis", "vrfs", "staticRoutes", "autocabling", "delete"]
