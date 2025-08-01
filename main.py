@@ -2,6 +2,7 @@ import yaml
 import sys
 from pprint import pprint
 from copy import deepcopy
+from validate_yaml import validate_files
 from scripts.handle_json_input import handle_json_input
 from scripts.submission_validator_nick import validate_schema
 
@@ -52,11 +53,10 @@ if __name__ == "__main__":
         sys.exit(1)
     
     yaml_files = sys.argv[1:]
-    # Validate all yaml files
-    # for file in yaml_files:
-    #     validate_schema(file)
 
-    # sys.exit(1) # Remove this
+    all_valid_files = validate_files(yaml_files)
+    if not all_valid_files:
+        sys.exit(1)
         
     json_input = combine_files([file for file in yaml_files])
 
