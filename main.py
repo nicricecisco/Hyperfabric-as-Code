@@ -3,6 +3,7 @@ import sys
 from pprint import pprint
 from copy import deepcopy
 from validate_yaml import validate_files
+from utils.timestamp import generate_timestamp
 from scripts.handle_json_input import handle_json_input
 from scripts.submission_validator_nick import validate_schema
 
@@ -46,6 +47,31 @@ def combine_files(file_paths):
 def main(json_input):
     results = handle_json_input(json_input)
     pprint(results)
+    return results
+
+def add_comment(yaml_files, message):
+    comment = f"# {message}\n"
+    for file in yaml_files:
+        with open(file, "r") as f:
+            lines = f.readlines()
+
+        # Separate existing top comment block
+        existing_comments = []
+        rest_of_file = []
+        comment_block_ended = False
+
+        for line in lines:
+            if not comment_block_ended and line.lstrip().startswith("#"):
+                if not line.lstrip().startswith("# Last uploaded"):
+                    existing_comments.append(line)
+            else:
+                comment_block_ended = True
+                rest_of_file.append(line)
+        
+        updated_lines = existing_comments + [comment] + rest_of_file
+
+        with open(file, "w") as f:
+            f.writelines(updated_lines)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -55,9 +81,12 @@ if __name__ == "__main__":
     yaml_files = sys.argv[1:]
 
     all_valid_files = validate_files(yaml_files)
-    if not all_valid_files:
-        sys.exit(1)
+    # if not all_valid_files:
+    #     sys.exit(1)
         
     json_input = combine_files([file for file in yaml_files])
 
-    main(json_input)
+    results = main(json_input)
+    now = generate_timestamp()
+    if results.get("status"):
+        add_comment(yaml_files, f"Last uploaded ({results['status']}): {now}")

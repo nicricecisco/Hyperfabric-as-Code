@@ -2,14 +2,17 @@ import sys
 import json
 import logging
 import requests
+from pprint import pprint
 from ruamel.yaml import YAML
+from utils.timestamp import generate_timestamp
+from utils.schema_loader import get_schema_path
 from scripts.hyperfabric_api import get_fabric_configurations
 
 # Setup logger
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
-with open("schemas/validation/new_validation_with_desc_.json") as f:
+with open(get_schema_path()) as f:
     schema = json.load(f)
 
 def get_attribute_keys(*path):
@@ -46,14 +49,33 @@ def attach_static_routes(data):
         if matching_routes:
             vrf["staticRoutes"] = matching_routes
 
+def restructure_annotations(obj):
+    def restructure(annotations):
+        new_obj = {}
+        for annotation in annotations:
+            new_obj[f"{annotation['name']}"] = annotation['value']
+        return new_obj
+
+    if isinstance(obj, dict):
+        for key in list(obj.keys()):
+            value = obj[key]
+            if key == "annotations" and isinstance(value, list):
+                obj[key] = restructure(value)
+            elif isinstance(value, dict):
+                restructure_annotations(value)
+            elif isinstance(value, list):
+                for item in value:
+                    restructure_annotations(item)
+
 def restructure_yaml(data):
     fabric_section = data.pop("fabric")
 
     overlap = set(data) & set(fabric_section)
     if overlap:
-        print(f"Warning: overlapping keys: {overlap}")
+        logger.warning(f"Warning: overlapping keys: {overlap}")
 
-    attach_static_routes(data)
+    if "staticRoutes" in data:
+        attach_static_routes(data)
 
     # Get schema-defined attribute orders
     fabric_keys = get_attribute_keys("fabrics")
@@ -107,6 +129,9 @@ def restructure_yaml(data):
                     filter_attributes(sr, static_route_keys) for sr in vrf["staticRoutes"]
                 ]
             reordered["vrfs"].append(filtered_vrf)
+    
+    restructure_annotations(reordered)
+    # pprint(reordered)
 
     return {"fabrics": [reordered]}
 
@@ -114,33 +139,41 @@ def main(fabric_name):
     fabric_data = {
         "name": fabric_name
     }
+    response = None
     try:
         response = get_fabric_configurations(fabric_data)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        print(f"API request failed: {e}")
-        response = None 
+        logger.error(f"API request failed: {e}")
+        raise
     except Exception as e:
-        print(f"Unexpected error: {e}")
-        response = None
+        logger.exception(f"Unexpected error: {e}")
+        raise
     
     output_path = f"output/{fabric_name}.yaml"
-    output_path_json = f"output/{fabric_name}.json"
     if response is not None:
         try:
             data = response.json()
+
             yaml = YAML()
             yaml.indent(sequence=4, offset=2) 
             yaml.default_flow_style = False
+
+            now = generate_timestamp()
+            comment = f"# Generated on {now}"
             if data is not None:
                 data = restructure_yaml(data)
-            with open(output_path, "w") as f:
-                yaml.dump(data, f)
-            with open(output_path_json, "w") as f:
-                json.dump(data, f, indent=2)
-            print(f"Saved YAML to {output_path}")
+                
+                with open(output_path, "w") as f:
+                    f.write(comment + "\n")
+                    yaml.dump(data, f)
+                logger.info(f"Saved YAML to {output_path}")
+            else:
+                with open(output_path, "w") as f:
+                    f.write(comment + "\n")
+                logger.warning("No data found")
         except Exception as e:
-            print(f"Failed to write YAML: {e}")
+            logger.error(f"Failed to write YAML: {e}", exc_info=True)
             
 if __name__ == "__main__":
     if len(sys.argv) < 2:

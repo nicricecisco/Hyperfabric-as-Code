@@ -68,6 +68,32 @@ def _connection_exists(connections, target_connection):
 
     return None  # No match, no id
 
+def _delete_connections(redundant_connections, leaf_connections, delete_connection_obj):
+    print(f"Number of redundant connections to delete: {len(redundant_connections)}")
+    for conn in redundant_connections:
+        print(f"Connection between {conn['local']['nodeName']} on port {conn['local']['portName']} and {conn['remote']['nodeName']} on port {conn['remote']['portName']}")
+    
+    print(f"Number of leaf-leaf connections to delete: {len(leaf_connections)}")
+    for conn in leaf_connections:
+        print(f"Connection between {conn['local']['nodeName']} on port {conn['local']['portName']} and {conn['remote']['nodeName']} on port {conn['remote']['portName']}")
+    
+    connections_to_delete = redundant_connections + leaf_connections
+    # Call _delete_entity instead?
+    for del_conn in connections_to_delete:
+        delete_connection_obj["id"] = del_conn.get("id")
+        handle_delete(delete_fabric_connection, delete_connection_obj, "connection")
+
+def _put_connections(fabric_id, connections):
+    try:
+        logger.info(f"[CONNECTION] [PUT] Making API request for all connections...")
+        response = put_connections(fabric_id, connections, set_fabric_connections)
+        response.raise_for_status()
+    except Exception as e:
+        raise EntityProcessingError(f"Error processing connections. Error: {response.json()}")
+    
+def _restructure_annotations(annotations):
+    return [{"name": k, "value": v} for k, v in annotations.items()]
+    
 def _delete_entity(key, objects, fabric_id):
     entity_obj = get_entity(key[:-1]) # key is plural, but the keys in get_entity are all singular
     if not entity_obj: return
@@ -110,29 +136,6 @@ def _delete_entity(key, objects, fabric_id):
             
         handle_delete(delete_func, delete_obj, key[:-1])
 
-def _delete_connections(redundant_connections, leaf_connections, delete_connection_obj):
-    print(f"Number of redundant connections to delete: {len(redundant_connections)}")
-    for conn in redundant_connections:
-        print(f"Connection between {conn['local']['nodeName']} on port {conn['local']['portName']} and {conn['remote']['nodeName']} on port {conn['remote']['portName']}")
-    
-    print(f"Number of leaf-leaf connections to delete: {len(leaf_connections)}")
-    for conn in leaf_connections:
-        print(f"Connection between {conn['local']['nodeName']} on port {conn['local']['portName']} and {conn['remote']['nodeName']} on port {conn['remote']['portName']}")
-    
-    connections_to_delete = redundant_connections + leaf_connections
-    # Call _delete_entity instead?
-    for del_conn in connections_to_delete:
-        delete_connection_obj["id"] = del_conn.get("id")
-        handle_delete(delete_fabric_connection, delete_connection_obj, "connection")
-
-def _put_connections(fabric_id, connections):
-    try:
-        logger.info(f"[CONNECTION] [PUT] Making API request for all connections...")
-        response = put_connections(fabric_id, connections, set_fabric_connections)
-        response.raise_for_status()
-    except Exception as e:
-        raise EntityProcessingError(f"Error processing connections. Error: {response.json()}")
-
 def _process_entity(entity, data_object, key, reset_stack=False):
     """
     Submits entity to Hyperfabric Cloud Controller
@@ -151,8 +154,15 @@ def _process_entity(entity, data_object, key, reset_stack=False):
     attributes, func_obj = entity_obj.get("attributes"), entity_obj.get("func_obj")
     get_func, post_func, put_func, del_func = func_obj.get("get_func"), func_obj.get("post_func"), func_obj.get("put_func"), func_obj.get("del_func")
     
+    # Split the object into "pure" and "other" attributes
+    # Pure attributes are ones that get sent directly to the API to configure that object
+    # Other attributes are ones that may need to get iterated over and processed themselves (ex. nodes under a fabric, or ports under a node)
     entity_pure, entity_other = _parse_attributes(entity, attributes)
     data_object[key] = entity_pure
+
+    # Restructure annotations, if any
+    if "annotations" in entity_pure:
+        entity_pure["annotations"] = _restructure_annotations(entity_pure["annotations"])
 
     if entity_pure.pop("protected", False):
         protected_key = ProtectedKey(key)

@@ -1,6 +1,7 @@
+# Last uploaded (success): 2025-08-05 21:46:40 UTC
 fabrics:
-  - name: from-python2
-    description: I am updated from python
+  - name: from-python
+    description: I am from python
     location: CA-95134
     address: 300 East Tasman Drive
     city: Milpitas
@@ -9,19 +10,21 @@ fabrics:
       - TAG_ONE
       - TAG_TWO
     topology: SPINE_LEAF
-    autocabling:
-      # enabled: false
-      pluggable: QDD-400-AOC2M
+    # annotations:
+    #   hello: test
+    # autocabling:
+    #   # enabled: false
+    #   pluggable: QDD-400-AOC2M
     
     nodes:
-      - name: Leaf01
+      - name: Leaf-01
         description: Leaf Switch 01 
         modelName: HF6100-32D
         roles:
           - LEAF
         labels:
           - TAG_ONE
-      - name: Leaf02
+      - name: Leaf-02
         description: Leaf Switch 02
         modelName: HF6100-32D
         roles: 
@@ -36,7 +39,7 @@ fabrics:
         #     ipv6Gateway: 2a02:1243:5687:0:8d91:ba6b:b24d:9b41
         #     dnsAddresses:
         #       - 9.9.9.9
-        #       - 8.8.8.8
+        #       - ::ffff:192.0.2.128
         #     proxyAddress: https://10.10.1.10:8080
         #     proxyUsername: adminUser
         #     proxyPassword: ThisIsMyPassword
@@ -65,21 +68,21 @@ fabrics:
             enabled: true
             roles: 
               - HOST_PORT
-      - name: Leaf03
+      - name: Leaf-03
         description: Leaf Switch 03
         modelName: HF6100-32D
         roles:
           - LEAF
         labels:
           - TAG_ONE
-      - name: Leaf04
+      - name: Leaf-04
         description: Leaf Switch 04
         modelName: HF6100-60L4D
         roles:
           - LEAF
         labels:
           - TAG_ONE
-      - name: Spine01
+      - name: Spine-01
         description: Spine Switch 01
         modelName: HF6100-32D
         roles: 
@@ -88,20 +91,26 @@ fabrics:
     connections:
       - local:
           portName: Ethernet1_16
-          nodeName: Leaf01
+          nodeName: Leaf-01
         remote:
           portName: Ethernet1_16
-          nodeName: Spine01
+          nodeName: Spine-01
       - local:
           portName: Ethernet1_20
-          nodeName: Leaf01
+          nodeName: Leaf-01
         remote:
           portName: Ethernet1_20
-          nodeName: Spine01
+          nodeName: Spine-01
       - local:
           portName: Ethernet1_22
-          nodeName: Leaf01
+          nodeName: Leaf-01
         remote:
           portName: Ethernet1_22
-          nodeName: Spine01
+          nodeName: Spine-01
     
+
+# bind:
+#   - nodeName: something
+#     deviceId: be-ad
+#   - nodeName: something
+#     deviceId: be-ad
