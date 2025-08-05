@@ -1,0 +1,628 @@
+"hyperfabric": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "fabrics": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "title": "Name",
+                                "description": "Name (String)"
+                            },
+                            "topology": {
+                                "type": "string",
+                                "enum": [
+                                    "MESH",
+                                    "SPINE_LEAF"
+                                ],
+                                "default": "MESH",
+                                "title": "Topology",
+                                "description": "Topology (String)\n- Default value: MESH\n- Allowed values: MESH, SPINE_LEAF"
+                            },
+                            "description": {
+                                "type": "string",
+                                "title": "Description",
+                                "description": "Description (String)"
+                            },
+                            "address": {
+                                "type": "string",
+                                "title": "Address",
+                                "description": "Address (String)"
+                            },
+                            "city": {
+                                "type": "string",
+                                "title": "City",
+                                "description": "City (String)"
+                            },
+                            "country": {
+                                "type": "string",
+                                "title": "Country",
+                                "description": "Country (String)"
+                            },
+                            "location": {
+                                "type": "string",
+                                "title": "Location",
+                                "description": "Location (String)"
+                            },
+                            "labels": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "title": "Labels",
+                                "description": "Labels (List - String)"
+                            },
+                            "annotations": {
+                                "type": "object",
+                                "title": "Annotations",
+                                "description": "Annotations (Object)\n- Map (key-value pairs)"
+                            },
+                            "nodes": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "title": "Name",
+                                            "description": "Name (String)"
+                                        },
+                                        "model": {
+                                            "type": "string",
+                                            "enum": [
+                                                "HF6100-32D",
+                                                "HF6100-60L4D"
+                                            ],
+                                            "title": "Model",
+                                            "description": "Model (String)\n- Allowed values: HF6100-32D, HF6100-60L4D"
+                                        },
+                                        "roles": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "LEAF",
+                                                    "SPINE"
+                                                ]
+                                            },
+                                            "title": "Roles",
+                                            "description": "Roles (List - String)"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "title": "Description",
+                                            "description": "Description (String)"
+                                        },
+                                        "serial_number": {
+                                            "type": "string",
+                                            "title": "Serial Number",
+                                            "description": "Serial Number (String)"
+                                        },
+                                        "location": {
+                                            "type": "string",
+                                            "title": "Location",
+                                            "description": "Location (String)"
+                                        },
+                                        "labels": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "title": "Labels",
+                                            "description": "Labels (List - String)"
+                                        },
+                                        "annotations": {
+                                            "type": "object",
+                                            "title": "Annotations",
+                                            "description": "Annotations (Object)\n- Map (key-value pairs)"
+                                        },
+                                        "management_port": {
+                                            "type": "object",
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "title": "Name",
+                                                    "description": "Name (String)"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "title": "Description",
+                                                    "description": "Description (String)"
+                                                },
+                                                "cloud_urls": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "title": "Cloud URLs",
+                                                    "description": "Cloud URLs (List - String)"
+                                                },
+                                                "ipv4_address": {
+                                                    "type": "string",
+                                                    "title": "Ipv4 Address",
+                                                    "description": "Ipv4 Address (String)\n- IPv4 or IPv6 address"
+                                                },
+                                                "ipv4_gateway": {
+                                                    "type": "string",
+                                                    "title": "Ipv4 Gateway",
+                                                    "description": "Ipv4 Gateway (String)\n- IPv4 or IPv6 address"
+                                                },
+                                                "ipv6_address": {
+                                                    "type": "string",
+                                                    "title": "IPv6 Address",
+                                                    "description": "IPv6 Address (String)\n- IPv4 or IPv6 address"
+                                                },
+                                                "ipv6_gateway": {
+                                                    "type": "string",
+                                                    "title": "IPv6 Gateway",
+                                                    "description": "IPv6 Gateway (String)\n- IPv4 or IPv6 address"
+                                                },
+                                                "dns_addresses": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "title": "DNS Addresses",
+                                                    "description": "DNS Addresses (List - String)"
+                                                },
+                                                "ntp_addresses": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "title": "NTP Addresses",
+                                                    "description": "NTP Addresses (List - String)"
+                                                },
+                                                "no_proxy": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "title": "No Proxy",
+                                                    "description": "No Proxy (List - String)"
+                                                },
+                                                "proxy_address": {
+                                                    "type": "string",
+                                                    "title": "Proxy Address",
+                                                    "description": "Proxy Address (String)"
+                                                },
+                                                "proxy_username": {
+                                                    "type": "string",
+                                                    "title": "Proxy Username",
+                                                    "description": "Proxy Username (String)"
+                                                },
+                                                "proxy_password": {
+                                                    "type": "string",
+                                                    "title": "Proxy Password",
+                                                    "description": "Proxy Password (String)"
+                                                }
+                                            },
+                                            "required": [],
+                                            "title": "Management Port",
+                                            "description": "Management Port (Object)\n\nElements:\n- name\n- description\n- cloud_urls\n- ipv4_address\n- ipv4_gateway\n- ipv6_address\n- ipv6_gateway\n- dns_addresses\n- ntp_addresses\n- no_proxy\n- proxy_address\n- proxy_username\n- proxy_password"
+                                        },
+                                        "loopbacks": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string",
+                                                        "title": "Name",
+                                                        "description": "Name (String)"
+                                                    },
+                                                    "ipv4_address": {
+                                                        "type": "string",
+                                                        "title": "Ipv4 Address",
+                                                        "description": "Ipv4 Address (String)\n- IPv4 or IPv6 address"
+                                                    },
+                                                    "ipv6_address": {
+                                                        "type": "string",
+                                                        "title": "IPv6 Address",
+                                                        "description": "IPv6 Address (String)\n- IPv4 or IPv6 address"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "title": "Description",
+                                                        "description": "Description (String)"
+                                                    },
+                                                    "vrf": {
+                                                        "type": "string",
+                                                        "title": "VRF",
+                                                        "description": "VRF (String)"
+                                                    },
+                                                    "labels": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "title": "Labels",
+                                                        "description": "Labels (List - String)"
+                                                    },
+                                                    "annotations": {
+                                                        "type": "object",
+                                                        "title": "Annotations",
+                                                        "description": "Annotations (Object)\n- Map (key-value pairs)"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "name"
+                                                ]
+                                            },
+                                            "title": "Loopbacks",
+                                            "description": "Loopbacks (List - Object)\n\nElements:\n- name (required)\n- ipv4_address\n- ipv6_address\n- description\n- vrf\n- labels\n- annotations"
+                                        },
+                                        "ports": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string",
+                                                        "title": "Name",
+                                                        "description": "Name (String)"
+                                                    },
+                                                    "roles": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "UNUSED_PORT",
+                                                                "FABRIC_PORT",
+                                                                "HOST_PORT",
+                                                                "ROUTED_PORT"
+                                                            ]
+                                                        },
+                                                        "title": "Roles",
+                                                        "description": "Roles (List - String)"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "title": "Description",
+                                                        "description": "Description (String)"
+                                                    },
+                                                    "enabled": {
+                                                        "type": "boolean",
+                                                        "default": "true",
+                                                        "title": "Enabled",
+                                                        "description": "Enabled (Boolean)\n- Default value: true"
+                                                    },
+                                                    "ipv4_addresses": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "title": "Ipv4 Addresses",
+                                                        "description": "Ipv4 Addresses (List - String)"
+                                                    },
+                                                    "ipv6_addresses": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "title": "IPv6 Addresses",
+                                                        "description": "IPv6 Addresses (List - String)"
+                                                    },
+                                                    "prevent_forwarding": {
+                                                        "type": "boolean",
+                                                        "title": "Prevent Forwarding",
+                                                        "description": "Prevent Forwarding (Boolean)"
+                                                    },
+                                                    "vrf": {
+                                                        "type": "string",
+                                                        "title": "VRF",
+                                                        "description": "VRF (String)"
+                                                    },
+                                                    "labels": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "title": "Labels",
+                                                        "description": "Labels (List - String)"
+                                                    },
+                                                    "annotations": {
+                                                        "type": "object",
+                                                        "title": "Annotations",
+                                                        "description": "Annotations (Object)\n- Map (key-value pairs)"
+                                                    },
+                                                    "sub_interfaces": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "additionalProperties": false,
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "title": "ID",
+                                                                    "description": "ID (Integer)"
+                                                                },
+                                                                "description": {
+                                                                    "type": "string",
+                                                                    "title": "Description",
+                                                                    "description": "Description (String)"
+                                                                },
+                                                                "enabled": {
+                                                                    "type": "boolean",
+                                                                    "default": "true",
+                                                                    "title": "Enabled",
+                                                                    "description": "Enabled (Boolean)\n- Default value: true"
+                                                                },
+                                                                "ipv4_addresses": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "title": "Ipv4 Addresses",
+                                                                    "description": "Ipv4 Addresses (List - String)"
+                                                                },
+                                                                "ipv6_addresses": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "title": "IPv6 Addresses",
+                                                                    "description": "IPv6 Addresses (List - String)"
+                                                                },
+                                                                "vlan_id": {
+                                                                    "type": "integer",
+                                                                    "minimum": 1,
+                                                                    "maximum": 4094,
+                                                                    "title": "Vlan ID",
+                                                                    "description": "Vlan ID (Integer)\n- Minimum value: 1\n- Maximum value: 4094"
+                                                                },
+                                                                "vrf": {
+                                                                    "type": "string",
+                                                                    "title": "VRF",
+                                                                    "description": "VRF (String)"
+                                                                },
+                                                                "labels": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "title": "Labels",
+                                                                    "description": "Labels (List - String)"
+                                                                },
+                                                                "annotations": {
+                                                                    "type": "object",
+                                                                    "title": "Annotations",
+                                                                    "description": "Annotations (Object)\n- Map (key-value pairs)"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "id"
+                                                            ]
+                                                        },
+                                                        "title": "Sub Interfaces",
+                                                        "description": "Sub Interfaces (List - Object)\n\nElements:\n- id (required)\n- description\n- enabled\n- ipv4_addresses\n- ipv6_addresses\n- vlan_id\n- vrf\n- labels\n- annotations"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "name",
+                                                    "roles"
+                                                ]
+                                            },
+                                            "title": "Ports",
+                                            "description": "Ports (List - Object)\n\nElements:\n- name (required)\n- roles (required)\n- description\n- enabled\n- ipv4_addresses\n- ipv6_addresses\n- prevent_forwarding\n- vrf\n- labels\n- annotations\n- sub_interfaces"
+                                        }
+                                    },
+                                    "required": [
+                                        "name",
+                                        "model",
+                                        "roles"
+                                    ]
+                                },
+                                "title": "Nodes",
+                                "description": "Nodes (List - Object)\n\nElements:\n- name (required)\n- model (required)\n- roles (required)\n- description\n- serial_number\n- location\n- labels\n- annotations\n- management_port\n- loopbacks\n- ports"
+                            },
+                            "connections": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "local_node": {
+                                            "type": "string",
+                                            "title": "Local Node",
+                                            "description": "Local Node (String)"
+                                        },
+                                        "local_port": {
+                                            "type": "string",
+                                            "title": "Local Port",
+                                            "description": "Local Port (String)"
+                                        },
+                                        "remote_node": {
+                                            "type": "string",
+                                            "title": "Remote Node",
+                                            "description": "Remote Node (String)"
+                                        },
+                                        "remote_port": {
+                                            "type": "string",
+                                            "title": "Remote Port",
+                                            "description": "Remote Port (String)"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "title": "Description",
+                                            "description": "Description (String)"
+                                        },
+                                        "pluggable": {
+                                            "type": "string",
+                                            "title": "Pluggable",
+                                            "description": "Pluggable (String)"
+                                        }
+                                    },
+                                    "required": [
+                                        "local_node",
+                                        "local_port",
+                                        "remote_node",
+                                        "remote_port"
+                                    ]
+                                },
+                                "title": "Connections",
+                                "description": "Connections (List - Object)\n\nElements:\n- local_node (required)\n- local_port (required)\n- remote_node (required)\n- remote_port (required)\n- description\n- pluggable"
+                            },
+                            "vrfs": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "title": "Name",
+                                            "description": "Name (String)"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "title": "Description",
+                                            "description": "Description (String)"
+                                        },
+                                        "asn": {
+                                            "type": "integer",
+                                            "title": "Asn",
+                                            "description": "Asn (Integer)"
+                                        },
+                                        "vni": {
+                                            "type": "integer",
+                                            "title": "Vni",
+                                            "description": "Vni (Integer)"
+                                        },
+                                        "labels": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "title": "Labels",
+                                            "description": "Labels (List - String)"
+                                        },
+                                        "annotations": {
+                                            "type": "object",
+                                            "title": "Annotations",
+                                            "description": "Annotations (Object)\n- Map (key-value pairs)"
+                                        }
+                                    },
+                                    "required": [
+                                        "name"
+                                    ]
+                                },
+                                "title": "VRFs",
+                                "description": "VRFs (List - Object)\n\nElements:\n- name (required)\n- description\n- asn\n- vni\n- labels\n- annotations"
+                            },
+                            "vnis": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "title": "Name",
+                                            "description": "Name (String)"
+                                        },
+                                        "vni": {
+                                            "type": "integer",
+                                            "title": "Vni",
+                                            "description": "Vni (Integer)"
+                                        },
+                                        "svi": {
+                                            "type": "object",
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "enabled": {
+                                                    "type": "boolean",
+                                                    "default": "true",
+                                                    "title": "Enabled",
+                                                    "description": "Enabled (Boolean)\n- Default value: true"
+                                                },
+                                                "ipv4_addresses": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "title": "Ipv4 Addresses",
+                                                    "description": "Ipv4 Addresses (List - String)"
+                                                },
+                                                "ipv6_addresses": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "title": "IPv6 Addresses",
+                                                    "description": "IPv6 Addresses (List - String)"
+                                                }
+                                            },
+                                            "required": [],
+                                            "title": "SVI",
+                                            "description": "SVI (Object)\n\nElements:\n- enabled\n- ipv4_addresses\n- ipv6_addresses"
+                                        },
+                                        "members": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "node": {
+                                                        "type": "string",
+                                                        "title": "Node",
+                                                        "description": "Node (String)"
+                                                    },
+                                                    "nodes": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "title": "Nodes",
+                                                        "description": "Nodes (List - String)"
+                                                    },
+                                                    "port": {
+                                                        "type": "string",
+                                                        "title": "Port",
+                                                        "description": "Port (String)"
+                                                    },
+                                                    "ports": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "title": "Ports",
+                                                        "description": "Ports (List - String)"
+                                                    },
+                                                    "vlan_id": {
+                                                        "type": "integer",
+                                                        "minimum": 2,
+                                                        "maximum": 3600,
+                                                        "title": "Vlan ID",
+                                                        "description": "Vlan ID (Integer)\n- Minimum value: 2\n- Maximum value: 3600"
+                                                    }
+                                                },
+                                                "required": []
+                                            },
+                                            "title": "Members",
+                                            "description": "Members (List - Object)\n\nElements:\n- node\n- nodes\n- port\n- ports\n- vlan_id"
+                                        }
+                                    },
+                                    "required": [
+                                        "name"
+                                    ]
+                                },
+                                "title": "Vnis",
+                                "description": "Vnis (List - Object)\n\nElements:\n- name (required)\n- vni\n- svi\n- members"
+                            }
+                        },
+                        "required": [
+                            "name"
+                        ]
+                    },
+                    "title": "Fabrics",
+                    "description": "Fabrics (List - Object)\n\nElements:\n- name (required)\n- topology\n- description\n- address\n- city\n- country\n- location\n- labels\n- annotations\n- nodes\n- connections\n- vrfs\n- vnis"
+                }

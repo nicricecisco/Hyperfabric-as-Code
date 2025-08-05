@@ -15,6 +15,7 @@ fabrics:
     
     nodes:
       - name: Leaf01
+      - name: Leaf01
         description: Leaf Switch 01 
         modelName: HF6100-32D
         roles:

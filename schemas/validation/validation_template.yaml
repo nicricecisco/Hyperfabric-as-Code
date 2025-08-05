@@ -15,17 +15,17 @@ fabrics:
     autocabling:
       enabled: boolean, default = false, must be true to enable autocabling, ignores all other fields if enabled is false
       pluggable: string, max length 150
-      speed: string, set of {100, 200, 400} and accepts G at the end of any number, rejected if enabled is false
-      length: enum = [short, medium, long]
+      speed: int, set of {100, 400}, rejected if enabled is false
+      length: int, range 0.5-10000000000, must be greater than 0.5, rejected if enabled is false
       cablePreference: enum = ["DAC", "AOC", "Transceiver"]
       portType: enum = ["SFP", "SFP28" "QSFP28", "QSFP-DD"]
     
     nodes:
       - name: required, string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
-        description: string, max length 2000
-        location: string, min length 3, max length 50, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
         modelName: required, enum = ["HF6100-32D", "HF6100-60L4D"]
         roles: required, enum = ["LEAF", "SPINE", "SERVER"] 
+        description: string, max length 2000
+        location: string, min length 3, max length 50, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
         serialNumber: string, max length 50
         psuAirflows:
           - airflow: enum = ["AIRFLOW_TYPE_PORT_SIDE_INTAKE", "AIRFLOW_TYPE_PORT_SIDE_EXHAUST"], default = "AIRFLOW_TYPE_PORT_SIDE_INTAKE"
@@ -41,8 +41,6 @@ fabrics:
         managementPorts:
           - name: string, pattern "eth_N" where N is between 0-8
             description: string, max length 2000
-            configOrigin: enum = ["CONFIG_ORIGIN_CLOUD", "CONFIG_ORIGIN_DEVICE"], default = "CONFIG_ORIGIN_CLOUD"
-            connectedState: enum = ["CONNECTED_STATE_NOT_CONNECTED", "CONNECTED_STATE_CONNECTED"], default = "CONNECTED_STATE_NOT_CONNECTED"
             ipv4ConfigType: enum = ["CONFIG_TYPE_STATIC", "CONFIG_TYPE_DHCP"], default = "CONFIG_TYPE_STATIC"
             ipv4Address: string, valid IPv4 address, required if ipv4ConfigType is "CONFIG_TYPE_STATIC"
             ipv4Gateway: string, valid IPv4 address, required if ipv4ConfigType is "CONFIG_TYPE_STATIC"
@@ -148,7 +146,7 @@ fabrics:
                 name: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, required if value is passed
                 value: string, min length 1, max length 512, required if name is passed
             routes:
-              - nodeId: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+              - nodeId: required, string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
                 interface: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
                 preference: integer, range 1-255 
                 prefix: required, string, valid IPv4 or IPv6 address
@@ -163,6 +161,11 @@ fabrics:
           vrfs:
             - name: required, string, must follow format "Vrf-", 1 to 16 alphanumeric characters which cannot all be digits"
     
+    bind:
+      - nodeName: 
+        deviceId: 
+      
+
 
 
 

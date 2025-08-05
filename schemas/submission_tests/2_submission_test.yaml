@@ -4,15 +4,21 @@ fabrics:
     location: idk
     address: 300 East Tasman Drive
     city: Milpitas
+    topology: SPINE_LEAF
     country: US
     labels:
       - TAG_ONE
       - TAG_TWO
-    topology: SPINE_LEAF
     ext: p
+    annotations:
+        annotation1: "This is a string"
+        annotation12: "blah blah"
+    
     
     autocabling:
+      cablePreference: DAC
       pluggable: QDD-400-AOC2M
+      portType: QSFP
 
     nodes:
       - name: Leaf01
@@ -22,7 +28,7 @@ fabrics:
           - LEAF
         labels:
           - TAG_ONE
-      - name: Leaf02
+      - name: Leaf01
         description: Leaf Switch 02
         modelName: HF6100-32D
         roles:
@@ -32,7 +38,22 @@ fabrics:
           - description: Management Ethernet Port Configuration
             ipv4ConfigType: CONFIG_TYPE_DHCP
             ipv4Address: 10.10.10.11/24
-            ipv6ConfigType: CONFIG_TYPE_DHCP
+            ipv6ConfigType: CONFIG_TYPE_STATIC
+        ports:
+          - name: Ethernet1_1
+            description: Leaf01 updated
+            roles: 
+            - "UNUSED_PORT"
+          - name: Ethernet1_5
+            enabled: true
+            roles: 
+              - "HOST_PORT"
+          - name: Ethernet1_5
+            enabled: true
+            roles: 
+              - "HOST_PORT"
+              
+
       - name: Leaf01
         description: Leaf Switch 01
         modelName: HF6100-32D
@@ -41,6 +62,7 @@ fabrics:
         labels:
           - TAG_ONE
         location: sj01-1-101-AAA01
+
       - name: Leaf02
         description: Leaf Switch 02
         modelName: HF6100-32D
@@ -65,7 +87,6 @@ fabrics:
             cloudUrls:
               - https://a.example.com
               - https://b.example.com
-            configOrigin: CONFIG_ORIGIN_CLOUD
             setProxyPassword: true
             noProxy:
               - 10.0.0.5
@@ -131,8 +152,9 @@ fabrics:
         labels:
           - MY_TAG
         vni: 1000
+        asn: 100
         enabled: true
-      - name: VRF02
+      - name: Vrf02
         description: "My second VRF"
         labels:
           - MY_TAG
