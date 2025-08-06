@@ -1,116 +1,124 @@
-# Last uploaded (success): 2025-08-05 21:46:40 UTC
+# Last uploaded (success): 2025-08-06 18:22:03 UTC
+# fabrics:
+#   - name: from-python
+#     description: I am from python
+#     location: CA-95134
+#     address: 300 East Tasman Drive
+#     city: Milpitas
+#     country: US
+#     labels:
+#       - TAG_ONE
+#       - TAG_TWO
+#     topology: SPINE_LEAF
+#     # annotations:
+#     #   hello: test
+#     # autocabling:
+#     #   # enabled: false
+#     #   pluggable: QDD-400-AOC2M
+    
+#     nodes:
+#       - name: Leaf-01
+#         description: Leaf Switch 01 
+#         modelName: HF6100-32D
+#         roles:
+#           - LEAF
+#         labels:
+#           - TAG_ONE
+#       - name: Leaf-02
+#         description: Leaf Switch 02
+#         modelName: HF6100-32D
+#         roles: 
+#           - LEAF
+#         location: sj01-1-101-AAA02
+#         protected: true
+#         # managementPorts:
+#         #   - description: Management Ethernet Port Configuration
+#         #     ipv4Address: 10.10.10.1/24
+#         #     ipv4Gateway: 10.10.10.254
+#         #     ipv6Address: 2a02:1243:5687:0:9c09:2c7a:7c78:9ffc/33
+#         #     ipv6Gateway: 2a02:1243:5687:0:8d91:ba6b:b24d:9b41
+#         #     dnsAddresses:
+#         #       - 9.9.9.9
+#         #       - ::ffff:192.0.2.128
+#         #     proxyAddress: https://10.10.1.10:8080
+#         #     proxyUsername: adminUser
+#         #     proxyPassword: ThisIsMyPassword
+#         #     enabled: true
+#         #     ipv4ConfigType: CONFIG_TYPE_STATIC
+#         #     ipv6ConfigType: CONFIG_TYPE_DHCP
+#         #     cloudUrls:
+#         #       - https://a.example.com
+#         #       - https://b.example.com
+#         #     configOrigin: CONFIG_ORIGIN_CLOUD
+#         #     setProxyPassword: true
+#         #     noProxy:
+#         #       - 10.0.0.5
+#         #       - 2001:db8:3333:4444:5555:6666:7777:8888/8
+#         #       - 68.0.0.0/8
+#         #       - 72.0.0.0/8
+#         #       - 172.0.0.1/8
+#         #       - .cisco.com
+#         #       - .local
+#         ports:
+#           - name: Ethernet1_5
+#             enabled: true
+#             roles: 
+#               - HOST_PORT
+#           - name: Ethernet1_6
+#             enabled: true
+#             roles: 
+#               - HOST_PORT
+#       - name: Leaf-03
+#         description: Leaf Switch 03
+#         modelName: HF6100-32D
+#         roles:
+#           - LEAF
+#         labels:
+#           - TAG_ONE
+#       - name: Leaf-04
+#         description: Leaf Switch 04
+#         modelName: HF6100-60L4D
+#         roles:
+#           - LEAF
+#         labels:
+#           - TAG_ONE
+#       - name: Spine-01
+#         description: Spine Switch 01
+#         modelName: HF6100-32D
+#         roles: 
+#           - SPINE
+
+#     connections:
+#       - local:
+#           portName: Ethernet1_16
+#           nodeName: Leaf-01
+#         remote:
+#           portName: Ethernet1_16
+#           nodeName: Spine-01
+#       - local:
+#           portName: Ethernet1_20
+#           nodeName: Leaf-01
+#         remote:
+#           portName: Ethernet1_20
+#           nodeName: Spine-01
+#       - local:
+#           portName: Ethernet1_22
+#           nodeName: Leaf-01
+#         remote:
+#           portName: Ethernet1_22
+#           nodeName: Spine-01
+    
+
 fabrics:
-  - name: from-python
-    description: I am from python
-    location: CA-95134
-    address: 300 East Tasman Drive
-    city: Milpitas
-    country: US
+  - name: jarod-nick-intern-test
     labels:
-      - TAG_ONE
-      - TAG_TWO
-    topology: SPINE_LEAF
-    # annotations:
-    #   hello: test
-    # autocabling:
-    #   # enabled: false
-    #   pluggable: QDD-400-AOC2M
-    
-    nodes:
-      - name: Leaf-01
-        description: Leaf Switch 01 
-        modelName: HF6100-32D
-        roles:
-          - LEAF
-        labels:
-          - TAG_ONE
-      - name: Leaf-02
-        description: Leaf Switch 02
-        modelName: HF6100-32D
-        roles: 
-          - LEAF
-        location: sj01-1-101-AAA02
-        protected: true
-        # managementPorts:
-        #   - description: Management Ethernet Port Configuration
-        #     ipv4Address: 10.10.10.1/24
-        #     ipv4Gateway: 10.10.10.254
-        #     ipv6Address: 2a02:1243:5687:0:9c09:2c7a:7c78:9ffc/33
-        #     ipv6Gateway: 2a02:1243:5687:0:8d91:ba6b:b24d:9b41
-        #     dnsAddresses:
-        #       - 9.9.9.9
-        #       - ::ffff:192.0.2.128
-        #     proxyAddress: https://10.10.1.10:8080
-        #     proxyUsername: adminUser
-        #     proxyPassword: ThisIsMyPassword
-        #     enabled: true
-        #     ipv4ConfigType: CONFIG_TYPE_STATIC
-        #     ipv6ConfigType: CONFIG_TYPE_DHCP
-        #     cloudUrls:
-        #       - https://a.example.com
-        #       - https://b.example.com
-        #     configOrigin: CONFIG_ORIGIN_CLOUD
-        #     setProxyPassword: true
-        #     noProxy:
-        #       - 10.0.0.5
-        #       - 2001:db8:3333:4444:5555:6666:7777:8888/8
-        #       - 68.0.0.0/8
-        #       - 72.0.0.0/8
-        #       - 172.0.0.1/8
-        #       - .cisco.com
-        #       - .local
-        ports:
-          - name: Ethernet1_5
-            enabled: true
-            roles: 
-              - HOST_PORT
-          - name: Ethernet1_6
-            enabled: true
-            roles: 
-              - HOST_PORT
-      - name: Leaf-03
-        description: Leaf Switch 03
-        modelName: HF6100-32D
-        roles:
-          - LEAF
-        labels:
-          - TAG_ONE
-      - name: Leaf-04
-        description: Leaf Switch 04
-        modelName: HF6100-60L4D
-        roles:
-          - LEAF
-        labels:
-          - TAG_ONE
-      - name: Spine-01
-        description: Spine Switch 01
-        modelName: HF6100-32D
-        roles: 
-          - SPINE
-
-    connections:
-      - local:
-          portName: Ethernet1_16
-          nodeName: Leaf-01
-        remote:
-          portName: Ethernet1_16
-          nodeName: Spine-01
-      - local:
-          portName: Ethernet1_20
-          nodeName: Leaf-01
-        remote:
-          portName: Ethernet1_20
-          nodeName: Spine-01
-      - local:
-          portName: Ethernet1_22
-          nodeName: Leaf-01
-        remote:
-          portName: Ethernet1_22
-          nodeName: Spine-01
-    
-
-# bind:
-#   - nodeName: something
-#     deviceId: be-ad
-#   - nodeName: something
-#     deviceId: be-ad
+      - LABEL_ONE
+    bind:
+      - nodeName: jarod-nick-intern-test-HF6100-32D-spine1
+        deviceId: b4-4c-90-da-97-90
+      - nodeName: jarod-nick-intern-test-HF6100-32D-spine2
+        deviceId: 48-80-02-99-c7-c0
+      - nodeName: jarod-nick-intern-test-HF6100-60L4D-leaf1
+        deviceId: ec-19-2e-c0-68-00
+      - nodeName: jarod-nick-intern-test-HF6100-60L4D-leaf2
+        deviceId: ec-19-2e-c0-4c-00

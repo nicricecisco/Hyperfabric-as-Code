@@ -1,15 +1,14 @@
 import sys
 import os
 import yaml
-import logging
 import argparse
 from pprint import pprint
+from utils.logger import get_logger
 from utils.timestamp import generate_timestamp
 from scripts.autocabling import autocabling
 
 # Setup logger
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger(__name__)
+logger = get_logger()
 
 class IndentListDumper(yaml.SafeDumper):
     def increase_indent(self, flow=False, indentless=False):

@@ -1,1 +1,22 @@
-# Generated on 2025-08-05 17:26:57 UTC
+# Generated on 2025-08-06 16:51:10 UTC
+devices:
+  - deviceId: 48-80-02-99-c7-c0
+    serialNumber: FLM272807U9
+    modelName: HF6100-32D
+    name: shaphill-demo-HF6100-32D-spine2
+  - deviceId: b4-4c-90-da-97-90
+    serialNumber: FLM281601WX
+    modelName: HF6100-32D
+    name: shaphill-demo-HF6100-32D-spine1
+  - deviceId: ec-19-2e-c0-4c-00
+    serialNumber: FDO28150Q1A
+    modelName: HF6100-60L4D
+    name: shaphill-demo-HF6100-60L4D-leaf2
+  - deviceId: ec-19-2e-c0-68-00
+    serialNumber: FDO28150Q1F
+    modelName: HF6100-60L4D
+    name: shaphill-demo-HF6100-60L4D-leaf1
+  - deviceId: ec-19-2e-c0-80-00
+    serialNumber: FDO28150Q0Z
+    modelName: HF6100-60L4D
+    name: mihiguch-test-HF6100-60L4D-leaf1

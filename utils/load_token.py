@@ -1,11 +1,10 @@
 import os
-import logging
 from pathlib import Path
 from dotenv import dotenv_values, load_dotenv
+from utils.logger import get_logger
 
 # Setup logger
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger(__name__)
+logger = get_logger()
 
 def load_token():
     # Define path to .env
@@ -32,14 +31,3 @@ def load_token():
         raise RuntimeError("HYPERFABRIC_TOKEN not found in .env file or environment variables")
 
     return token
-
-# try:
-#     TOKEN = os.environ['HYPERFABRIC_TOKEN']
-# except KeyError:
-#     # Load .env file located in the same directory as this file
-#     dotenv_path = Path(__file__).parent / '.env'
-#     load_dotenv(dotenv_path)
-
-#     TOKEN = os.environ.get('HYPERFABRIC_TOKEN')
-#     if not TOKEN:
-#         raise RuntimeError("HYPERFABRIC_TOKEN not found in environment or .env file")

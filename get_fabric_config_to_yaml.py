@@ -1,16 +1,15 @@
 import sys
 import json
-import logging
 import requests
 from pprint import pprint
 from ruamel.yaml import YAML
+from utils.logger import get_logger
 from utils.timestamp import generate_timestamp
 from utils.schema_loader import get_schema_path
 from scripts.hyperfabric_api import get_fabric_configurations
 
 # Setup logger
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger(__name__)
+logger = get_logger()
 
 with open(get_schema_path()) as f:
     schema = json.load(f)
@@ -131,7 +130,6 @@ def restructure_yaml(data):
             reordered["vrfs"].append(filtered_vrf)
     
     restructure_annotations(reordered)
-    # pprint(reordered)
 
     return {"fabrics": [reordered]}
 

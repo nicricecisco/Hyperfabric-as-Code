@@ -935,17 +935,20 @@ def bind_device(bind_data_obj):
     return response
 
 # /fabrics/{fabricId}/nodes/{nodeId}/devices
-def unbind_device(auth, fabricId, nodeId):
+def unbind_device(unbind_data_obj):
     """
     Unbinds a device from a specific node
      Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
+        unbind_data_obj (dict): A dictionary containing fabric ID and node ID. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "node_id" (str): The ID or name of the node.
 
     Returns:
-         Int: Response Code or None on Error
+         dict: JSON response or None on Error
     """
-    response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/devices")
+    fabricId = unbind_data_obj["fabric_id"]
+    nodeId = unbind_data_obj["node_id"]
+    response = _make_delete_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/devices")
     return response
 
 

@@ -56,19 +56,26 @@ def add_comment(yaml_files, message):
             lines = f.readlines()
 
         # Separate existing top comment block
+        generated_comment = None
         existing_comments = []
         rest_of_file = []
         comment_block_ended = False
 
         for line in lines:
             if not comment_block_ended and line.lstrip().startswith("#"):
-                if not line.lstrip().startswith("# Last uploaded"):
+                if line.lstrip().startswith("# Generated on"):
+                    generated_comment = line
+                elif not line.lstrip().startswith("# Last uploaded"):
                     existing_comments.append(line)
             else:
                 comment_block_ended = True
                 rest_of_file.append(line)
         
-        updated_lines = existing_comments + [comment] + rest_of_file
+        if generated_comment:
+            comments = [generated_comment] + [comment] + existing_comments
+        else:
+            comments = [comment] + existing_comments
+        updated_lines = comments + rest_of_file
 
         with open(file, "w") as f:
             f.writelines(updated_lines)

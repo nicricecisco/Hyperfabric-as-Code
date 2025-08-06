@@ -1,4 +1,4 @@
-# Generated on 2025-08-05 21:47:38 UTC
+# Generated on 2025-08-05 22:32:54 UTC
 fabrics:
   - name: from-python
     description: I am from python
@@ -173,6 +173,24 @@ fabrics:
           nodeName: Leaf-01
         remote:
           portName: Ethernet1_1
+          nodeName: Spine-01
+      - local:
+          portName: Ethernet1_16
+          nodeName: Leaf-01
+        remote:
+          portName: Ethernet1_16
+          nodeName: Spine-01
+      - local:
+          portName: Ethernet1_20
+          nodeName: Leaf-01
+        remote:
+          portName: Ethernet1_20
+          nodeName: Spine-01
+      - local:
+          portName: Ethernet1_22
+          nodeName: Leaf-01
+        remote:
+          portName: Ethernet1_22
           nodeName: Spine-01
       - pluggable: QDD-400-CU3M
         local:

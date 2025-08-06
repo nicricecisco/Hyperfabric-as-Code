@@ -1,8 +1,7 @@
-import sys
-import logging
 import requests
 import argparse
 from ruamel.yaml import YAML
+from utils.logger import get_logger
 from utils.timestamp import generate_timestamp
 from scripts.hyperfabric_api import get_devices
 
@@ -10,9 +9,7 @@ yaml = YAML()
 yaml.indent(mapping=2, sequence=4, offset=2) 
 
 # Setup logger
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger(__name__)
-
+logger = get_logger()
 
 def fetch_devices():
     try:
@@ -32,7 +29,7 @@ def fetch_devices():
     except Exception as e:
         logger.exception("Unexpected error while retrieving devices.")
 
-    return None, None  # Return None or raise, depending on your needs
+    return None, None  
 
 def filter_attributes(devices):
     devices = devices["devices"]
@@ -63,7 +60,7 @@ def main(only_unbound=False):
             with open(output_path, "w") as f:
                 f.write(comment + "\n")
     else:
-        logger.error("Error retrieving devices")
+        logger.error("Error retrieving devices", exc_info=True)
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Get devices")
