@@ -1,83 +1,33 @@
+# Generated on 2025-08-05 21:46:50 UTC
+# Last uploaded (success): 2025-08-05 21:47:04 UTC
 fabrics:
-  - name: from-python2
-    description: I am updated from python
-    location: CA-95134
-    address: 300 East Tasman Drive
-    city: Milpitas
-    country: US
-    labels:
-      - TAG_ONE
-      - TAG_TWO
-    topology: SPINE_LEAF
-    nodes:
-      - name: Leaf01
-        description: Leaf Switch 01
-        modelName: HF6100-32D
-        roles:
-          - LEAF
-        labels:
-          - TAG_ONE
-      - name: Leaf02
-        description: Leaf Switch 02
-        modelName: HF6100-32D
-        roles:
-          - LEAF
-        location: sj01-1-101-AAA02
-        protected: true
-        ports:
-          - name: Ethernet1_5
-            enabled: true
-            roles:
-              - HOST_PORT
-          - name: Ethernet1_6
-            enabled: true
-            roles:
-              - HOST_PORT
-      - name: Leaf03
-        description: Leaf Switch 03
-        modelName: HF6100-32D
-        roles:
-          - LEAF
-        labels:
-          - TAG_ONE
-      - name: Leaf04
-        description: Leaf Switch 04
-        modelName: HF6100-60L4D
-        roles:
-          - LEAF
-        labels:
-          - TAG_ONE
-      - name: Spine01
-        description: Spine Switch 01
-        modelName: HF6100-32D
-        roles:
-          - SPINE
+  - name: from-python
     connections:
       - local:
           portName: Ethernet1_1
-          nodeName: Leaf02
+          nodeName: Leaf-01
         remote:
           portName: Ethernet1_1
-          nodeName: Spine01
-        pluggable: QDD-400-AOC2M
+          nodeName: Spine-01
+        pluggable: QDD-400-CU3M
       - local:
           portName: Ethernet1_1
-          nodeName: Leaf03
+          nodeName: Leaf-02
         remote:
           portName: Ethernet1_2
-          nodeName: Spine01
-        pluggable: QDD-400-AOC2M
+          nodeName: Spine-01
+        pluggable: QDD-400-CU3M
       - local:
-          portName: Ethernet1_31
-          nodeName: Leaf04
+          portName: Ethernet1_1
+          nodeName: Leaf-03
         remote:
           portName: Ethernet1_3
-          nodeName: Spine01
-        pluggable: QDD-400-AOC2M
+          nodeName: Spine-01
+        pluggable: QDD-400-CU3M
       - local:
-          portName: Ethernet1_16
-          nodeName: Leaf01
+          portName: Ethernet1_31
+          nodeName: Leaf-04
         remote:
-          portName: Ethernet1_16
-          nodeName: Spine01
-        pluggable: QDD-400-AOC2M
+          portName: Ethernet1_4
+          nodeName: Spine-01
+        pluggable: QDD-400-CU3M

@@ -41,11 +41,6 @@ def load_json_file(file_path):
     print("JSON schema loaded successfully")
     return data
 
-def write_json(data, output_path):
-    with open(output_path, 'w') as f:
-        json.dump(data, f, indent=2)
-    print(f"JSON written to {output_path}")
-
 def get_line_number(root, path):
     """
     Walk the absolute_path (`jsonschema` list of keys / indexes) and return the

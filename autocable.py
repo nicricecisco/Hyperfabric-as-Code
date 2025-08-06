@@ -1,14 +1,14 @@
 import sys
 import os
 import yaml
-import logging
 import argparse
 from pprint import pprint
+from utils.logger import get_logger
+from utils.timestamp import generate_timestamp
 from scripts.autocabling import autocabling
 
 # Setup logger
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger(__name__)
+logger = get_logger()
 
 class IndentListDumper(yaml.SafeDumper):
     def increase_indent(self, flow=False, indentless=False):
@@ -44,8 +44,11 @@ def output_connections(fabric, connection_result, output_delete=False):
     output_path = "output/autocable_output.yaml"
     logger.info(f"Writing output to '{output_path}'")
 
+    now = generate_timestamp()
+    comment = f"# Generated on {now}"
     try:
         with open(output_path, "w") as f:
+            f.write(comment + "\n")
             f.write(yaml_fabric)
 
         logger.info(f"[COMPLETE] Output written successfully to {output_path}")
@@ -74,6 +77,7 @@ def output_connections(fabric, connection_result, output_delete=False):
 
         try:
             with open(removed_output_path, "w") as f:
+                f.write(comment + "\n")
                 f.write(yaml_unwanted)
 
             logger.info(f"[COMPLETE] Removed connections written successfully to {removed_output_path}")

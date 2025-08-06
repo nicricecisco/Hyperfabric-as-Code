@@ -1,21 +1,9 @@
-import requests, json, os
+import requests, json
 from pprint import pprint
-from schemas.fabric_schema import validate_fabric
-from pathlib import Path
-from dotenv import load_dotenv
+from utils.load_token import load_token
 
 BASE_URL = "https://hyperfabric.cisco.com/api/v1"
-
-try:
-    TOKEN = os.environ['HYPERFABRIC_TOKEN']
-except KeyError:
-    # Load .env file located in the same directory as this file
-    dotenv_path = Path(__file__).parent / '.env'
-    load_dotenv(dotenv_path)
-
-    TOKEN = os.environ.get('HYPERFABRIC_TOKEN')
-    if not TOKEN:
-        raise RuntimeError("HYPERFABRIC_TOKEN not found in environment or .env file")
+TOKEN = load_token()
 
 headers = {
   "Content-Type": "application/json",
@@ -44,17 +32,11 @@ def create_fabric(fabric_data_obj):
     """
     Creates a new fabric.
     Args:
-        fabric_name (str): The name of the fabric.  Must be unique and DNS compliant.
-        description (str): A description of the fabric.
-        location (str): A location identifier.
-        address (str): The street address.
-        city (str): The city.
-        country (str): The two-letter country code.
-        labels (list, optional): A list of labels for the fabric. Defaults to [].
-        topology (str, optional): The fabric topology (MESH or SPINE_LEAF). Defaults to None.
+        fabric_data_obj (dict): A dictionary containing the fabric specification.
+            Must include the fabric definition under fabric_data_obj["fabric"].
 
     Returns:
-        dict: JSON response containing the created fabric information, or None on error.
+        dict: The JSON response containing the created fabric information, or None if the request fails.
     """
 
     payload = {"fabrics": [fabric_data_obj["fabric"]]}
@@ -68,11 +50,14 @@ def get_fabric(fabric_data_obj):
     """
     Retrieves a specific fabric.
     Args:
-        fabricId (str): The ID or name of the fabric.
-        candidate (str, optional): The candidate configuration name. Defaults to None.
-        include_metadata (bool, optional): Include object metadata in the response. Defaults to False.
+        fabric_data_obj (dict): A dictionary containing fabric configuration details. 
+            Must include the fabric name under fabric_data_obj["fabric"]["name"].
+            Optional keys include:
+              - "candidate": The candidate configuration name.
+              - "includeMetadata": Whether to include object metadata in the response.
+
     Returns:
-        dict: JSON response containing the fabric information, or None on error.
+        dict: The JSON response containing the fabric information, or None if the request fails.
     """
     params = {key: fabric_data_obj["fabric"][key] for key in ["candidate", "includeMetadata"] if key in fabric_data_obj["fabric"]}
     fabricId = fabric_data_obj["fabric"]["name"]
@@ -84,29 +69,22 @@ def update_fabric(fabric_data_obj):
     Updates a specific fabric.
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        payload (dict): A JSON payload containing the updated fabric properties. The keys depend upon #/components/schemas/configFabric:
-          * name (str, optional):  The user-defined name of the fabric
-          * description (str, optional): The description of the fabric.
-          * location (str, optional): The location of the fabric.
-          * address (str, optional): The street address.
-          * city (str, optional): The city.
-          * country (str, optional): The two-letter country code.
-          * labels (list, optional): A list of labels for the fabric.
+        fabric_data_obj (dict): A dictionary containing the fabric data. Expected keys:
+            - "fabric" (dict): A dictionary containing the updated fabric properties.
+              Example:
+              ```json
+              {
+                "name": "updated-fabric-name",
+                "description": "Updated fabric description",
+                "location": "Updated Location",
+                "address": "Updated Address",
+                "city": "Updated City",
+                "country": "US",
+                "labels": ["label1", "label2"],
+                "topology": "SPINE_LEAF"
+              }
+              ```
 
-        Example:
-        ```json
-        {
-          "name": "updated-fabric-name",
-          "description": "Updated fabric description",
-          "location": "Updated Location",
-          "address": "Updated Address",
-          "city": "Updated City",
-          "country": "US",
-          "labels": ["label1", "label2"],
-          "topology": "SPINE_LEAF"
-        }
-        ```
     Returns:
         dict: JSON response containing the updated fabric information, or None on error.
     """
@@ -118,7 +96,9 @@ def delete_fabric(fabric_data_obj):
     """
     Deletes a specific fabric.
     Args:
-        fabricId (str): The ID or name of the fabric to delete.
+        fabric_data_obj (dict): A dictionary containing the fabric data. Expected keys:
+            - "fabric" (dict): A dictionary containing the fabric's name.
+              Example: {"fabric": {"name": "fabric-to-delete"}}
     Returns:
         int: HTTP status code, or None on error.
     """
@@ -136,9 +116,12 @@ def get_fabric_nodes(autocabling_data_obj):
     Retrieves a list of nodes within a fabric.
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        candidate (str, optional): The candidate configuration name. Defaults to None.
-        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+        autocabling_data_obj (dict): A dictionary containing the fabric ID and optional parameters. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "autocabling_obj" (dict, optional): A dictionary containing query parameters.
+              Expected sub-keys:
+                - "candidate" (str, optional): The candidate configuration name. Defaults to None.
+                - "includeMetadata" (bool, optional): Include object metadata in the response. Defaults to False.
 
     Returns:
         dict: JSON response, or None on error.
@@ -155,10 +138,13 @@ def get_fabric_node(node_data_obj):
     Retrieves a specific node by ID or name.
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
-        candidate (str, optional): The candidate configuration name. Defaults to None.
-        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+        node_data_obj (dict): A dictionary containing the fabric and node IDs, and optional parameters. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "node" (dict): A dictionary containing the node's name and optional query parameters.
+              Expected sub-keys:
+                - "name" (str): The ID or name of the node.
+                - "candidate" (str, optional): The candidate configuration name. Defaults to None.
+                - "includeMetadata" (bool, optional): Include object metadata in the response. Defaults to False.
 
     Returns:
         dict: JSON response, or None on error.
@@ -174,11 +160,11 @@ def add_fabric_nodes(node_data_obj):
     Adds one or more nodes to a fabric.
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        nodes (list): A list of node objects to add.
-         Example:
-            ```json
-             [
+        node_data_obj (dict): A dictionary containing the fabric ID and node data. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "node" (dict): A dictionary representing a single node object to add.
+              Example:
+              ```json
               {
                "name": "node-leaf0",
                "description": "example fabric node leaf zero",
@@ -191,16 +177,10 @@ def add_fabric_nodes(node_data_obj):
                "labels": [
                 "TAG_ONE_ZERO"
                ]
-              },
-              {
-               "name": "node-leaf1",
-               "description": "example fabric node leaf one",
-               "enabled": true,
-               "serialNumber": "RESTAA2001",
-               "modelName": "HF6100-32D"
-              },
-             ]
-            ```
+              }
+              ```
+              Note: The function wraps this single node in a list for the API call.
+
     Returns:
         dict: JSON response, or None on error.
     """
@@ -214,9 +194,17 @@ def update_fabric_node(node_data_obj):
     Updates a specific node.
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
-        payload (dict): A JSON payload containing the updated node properties.
+        node_data_obj (dict): A dictionary containing the fabric ID, node ID, and updated node properties. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "node" (dict): A dictionary containing the updated node properties. Must include "name" for node ID.
+              Example:
+              ```json
+              {
+                "name": "node-leaf0",
+                "description": "Updated description",
+                "enabled": true
+              }
+              ```
 
     Returns:
         dict: JSON response, or None on error.
@@ -234,11 +222,13 @@ def delete_fabric_node(node_data_obj):
     Deletes a specific node.
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
+        node_data_obj (dict): A dictionary containing the fabric ID and node ID. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "node" (dict): A dictionary containing the node's name.
+              Example: {"node": {"name": "node-to-delete"}}
 
     Returns:
-        int: HTTP status code, or None on error.
+        dict: JSON response
     """
     fabricId = node_data_obj["fabric_id"]
     nodeId = node_data_obj["node"]["name"]
@@ -254,10 +244,13 @@ def get_management_ports(mgmt_port_data_obj):
     """
     Retrieves a list of management ports for a specific node.
     Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
-        candidate (str, optional): The candidate configuration name. Defaults to None.
-        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+        mgmt_port_data_obj (dict): A dictionary containing fabric ID, node ID, and optional parameters. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "node_id" (str): The ID or name of the node.
+            - "mgmt_port" (dict, optional): A dictionary containing query parameters.
+              Expected sub-keys:
+                - "candidate" (str, optional): The candidate configuration name. Defaults to None.
+                - "includeMetadata" (bool, optional): Include object metadata in the response. Defaults to False.
     Returns:
         dict: JSON response containing the list of management ports, or None on error.
     """
@@ -273,10 +266,12 @@ def get_management_port(mgmt_port_data_obj):
     Retrieves information on the management port specified
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str):  The node id or name from which a device is bound.
-        id (str): ID of the port
-
+        mgmt_port_data_obj (dict): A dictionary containing fabric ID, node ID, and port identifier. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "node_id" (str): The node id or name from which a device is bound.
+            - "mgmt_port" (dict): A dictionary which may contain the "name" of the port if "id" is not provided.
+            - "id" (str, optional): ID of the port. If not provided, it attempts to use `mgmt_port["name"]` or defaults to "eth0".
+            
     Returns:
         dict: JSON response
     """
@@ -297,45 +292,24 @@ def add_management_ports(mgmt_port_data_obj):
     Creates or updates one or more ManagementPorts for a fabric node
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str):  The node id or name from which a device is bound.
-        ports (list): A list of one or more ports to update.
-              Example payload:
+        mgmt_port_data_obj (dict): A dictionary containing fabric ID, node ID, and management port data. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "node_id" (str): The node id or name from which a device is bound.
+            - "mgmt_port" (dict): A dictionary representing a single management port to add/update.
+              Example payload for "mgmt_port":
               ```json
-               [
-                 {
-                  "name": "eth0",
-                  "ipv4Address": "10.1.1.250/31",
-                  "ipv4Gateway": "10.1.1.251",
-                  "ipv6Address": "2a02:1243:5687:0:9c09:2c7a:7c78:9ffc/64",
-                  "ipv6Gateway": "2a02:1243:5687:0:8d91:ba6b:b24d:9b41",
-                  "dnsAddresses": [
-                   "8.8.8.8",
-                   "8.8.4.4"
-                  ],
-                  "proxyAddress": "https://10.1.1.10:8080",
-                  "proxyUsername": "admin",
-                  "proxyPassword": "admin123",
-                  "enabled": true,
-                  "cloudUrls": [
-                   "https://a.b.com"
-                  ],
-                  "setProxyPassword": true,
-                  "noProxy": [
-                   "10.0.0.0/8",
-                   "68.0.0.0/8",
-                   "72.0.0.0/8",
-                   "172.0.0.0/8",
-                   "172.0.0.0/8",
-                   "173.0.0.0/8",
-                   "cisco.com",
-                   "localhost",
-                   "127.0.0.1",
-                   ".local"
-                  ]
-                 }
-                ]
+               {
+                "name": "eth0",
+                "ipv4Address": "10.1.1.250/31",
+                "ipv4Gateway": "10.1.1.251",
+                "dnsAddresses": [
+                 "8.8.8.8",
+                 "8.8.4.4"
+                ],
+                "enabled": true
+               }
               ```
+              Note: The function wraps this single port in a list for the API call. If "name" is not provided in `mgmt_port`, it defaults to "eth0".
 
     Returns:
         dict: JSON response
@@ -354,9 +328,11 @@ def update_management_port(mgmt_port_data_obj):
     Updates the settings on a management port
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str):  The node id or name from which a device is bound.
-        ports (list): A list of one or more ports to update.
+        mgmt_port_data_obj (dict): A dictionary containing fabric ID, node ID, and updated management port data. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "node_id" (str): The node id or name from which a device is bound.
+            - "id" (str, optional): The ID of the port to update. If not provided, it uses `mgmt_port["name"]`.
+            - "mgmt_port" (dict): A dictionary containing the updated properties for the management port. Must include "name" if "id" is not provided.
 
     Returns:
         dict: JSON response
@@ -373,11 +349,15 @@ def update_management_port(mgmt_port_data_obj):
 
 def delete_management_port(mgmt_port_data_obj):
     """
-    Updates management port with default values (cannot explicitly delete a management port)
+    Updates management port with default values (cannot explicitly delete a management port).
 
     Args:
-        mgmt_port_data_obj (dict): Data object containing necessary information to make the call
-      
+        mgmt_port_data_obj (dict): Data object containing necessary information to make the call. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "node_id" (str): The ID or name of the node.
+            - "mgmt_port" (dict): A dictionary containing the name of the management port to "delete" (reset to default).
+              Example: {"mgmt_port": {"name": "eth0"}}
+
     Returns:
         dict: JSON response
     """
@@ -398,11 +378,14 @@ def get_port(port_data_obj):
     Retrieves a specific port by its ID.
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
-        portId (str): The ID of the port.
-        candidate (str, optional): The candidate configuration name. Defaults to None.
-        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+        port_data_obj (dict): A dictionary containing fabric ID, node ID, port ID, and optional parameters. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "node_id" (str): The ID or name of the node.
+            - "port" (dict): A dictionary containing the port's name and optional query parameters.
+              Expected sub-keys:
+                - "name" (str): The ID of the port.
+                - "candidate" (str, optional): The candidate configuration name. Defaults to None.
+                - "includeMetadata" (bool, optional): Include object metadata in the response. Defaults to False.
 
     Returns:
         dict: JSON response, or None on error.
@@ -419,10 +402,18 @@ def update_port(port_data_obj):
     Updates a specific port.
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
-        portId (str): The ID of the port.
-        payload (dict): A JSON payload containing the updated port properties.
+        port_data_obj (dict): A dictionary containing fabric ID, node ID, and updated port properties. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "node_id" (str): The ID or name of the node.
+            - "port" (dict): A dictionary containing the updated port properties. Must include "name" for port ID.
+              Example:
+              ```json
+              {
+                "name": "Ethernet1_1",
+                "description": "Updated port description",
+                "enabled": true
+              }
+              ```
 
     Returns:
         dict: JSON response, or None on error.
@@ -444,8 +435,11 @@ def get_fabric_connections(connection_data_obj):
     Retrieves a list of connections within a fabric.
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        candidate (str, optional): The candidate configuration name. Defaults to None.
+        connection_data_obj (dict): A dictionary containing the fabric ID and optional parameters. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "connection" (dict, optional): A dictionary containing query parameters.
+              Expected sub-keys:
+                - "candidate" (str, optional): The candidate configuration name. Defaults to None.
 
     Returns:
         dict: JSON response, or None on error.
@@ -461,9 +455,12 @@ def get_fabric_connection(connection_data_obj):
     Retrieves a specific connection by ID.
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        connectionId (str): The ID of the connection.
-        candidate (str, optional):  Candidate configuration name. Defaults to None.
+        connection_data_obj (dict): A dictionary containing fabric ID, connection ID, and optional parameters. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "connection" (dict): A dictionary containing the connection ID and optional query parameters.
+              Expected sub-keys:
+                - "connection_id" (str): The ID of the connection.
+                - "candidate" (str, optional): Candidate configuration name. Defaults to None.
 
     Returns:
         dict: JSON response, or None on error.
@@ -479,11 +476,11 @@ def add_fabric_connections(connection_data_obj):
     Adds one or more connections to a fabric.
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        connections (list): A list of connections to add.
-            Example:
-            ```json
-            [
+        connection_data_obj (dict): A dictionary containing fabric ID and connection data. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "connection" (dict): A dictionary representing a single connection object to add.
+              Example:
+              ```json
               {
                 "local": {
                   "portName": "Ethernet1_19",
@@ -493,19 +490,10 @@ def add_fabric_connections(connection_data_obj):
                   "portName": "Ethernet1_19",
                   "nodeName": "node-spine0"
                 }
-              },
-              {
-                "local": {
-                  "portName": "Ethernet1_22",
-                  "nodeName": "node-leaf1"
-                },
-                "remote": {
-                  "portName": "Ethernet1_22",
-                  "nodeName": "node-spine0"
-                }
               }
-            ]
-            ```
+              ```
+              Note: The function wraps this single connection in a list for the API call.
+
     Returns:
         dict: JSON response, or None on error.
     """
@@ -521,7 +509,21 @@ def set_fabric_connections(fabricId, connections):
     Args:
         fabricId (str): The ID or name of the fabric.
         connections (list): A list of connections to set.
-
+            Example:
+            ```json
+            [
+              {
+                "local": {
+                  "portName": "Ethernet1_19",
+                  "nodeName": "node-leaf0"
+                },
+                "remote": {
+                  "portName": "Ethernet1_19",
+                  "nodeName": "node-spine0"
+                }
+              }
+            ]
+            ```
     Returns:
         dict: JSON response, or None on error.
     """
@@ -530,16 +532,20 @@ def set_fabric_connections(fabricId, connections):
     return response
 
 def delete_fabric_connection(connection_data_obj):
-  """
+    """
     Delete a specific connection.
     Args:
-        fabricId (str): The ID or name of the fabric.
-        connectionId (str): The ID of the connection.
+        connection_data_obj (dict): A dictionary containing fabric ID and connection ID. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "id" (str): The ID of the connection to delete.
+
+    Returns:
+        dict: JSON response
     """
-  fabricId = connection_data_obj["fabric_id"]
-  connectionId = connection_data_obj["id"]
-  response = _make_delete_request(headers, f"{BASE_URL}/fabrics/{fabricId}/connections/{connectionId}")
-  return response
+    fabricId = connection_data_obj["fabric_id"]
+    connectionId = connection_data_obj["id"]
+    response = _make_delete_request(headers, f"{BASE_URL}/fabrics/{fabricId}/connections/{connectionId}")
+    return response
 
 
 # ------------------------------ VNIs ------------------------------
@@ -550,11 +556,11 @@ def add_fabric_vnis(vni_data_obj):
     Adds one or more VNIs to a fabric.
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        vnis (list): A list of VNI objects to add. Each VNI object must conform to the `#/components/schemas/modelsVni` schema.
-            Example:
-            ```json
-            [
+        vni_data_obj (dict): A dictionary containing fabric ID and VNI data. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "vni" (dict): A dictionary representing a single VNI object to add.
+              Example:
+              ```json
               {
                 "name": "vni-example-1001",
                 "description": "Example VNI",
@@ -568,15 +574,9 @@ def add_fabric_vnis(vni_data_obj):
                     }
                 ],
                 "labels": ["VLAN1001"]
-              },
-              {
-                "name": "vni-example-1002",
-                "description": "Example VNI 2, no SVI",
-                "vni": 1002,
-                "vrfId": "1234-4567-7890-abcd"
               }
-            ]
-            ```
+              ```
+              Note: The function wraps this single VNI in a list for the API call. "enabled" is forced to True.
 
     Returns:
         dict: JSON response, or None on error.
@@ -593,10 +593,13 @@ def get_fabric_vni(vni_data_obj):
     Retrieves a specific VNI by ID or name.
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        vniId (str): The ID or name of the VNI.
-        candidate (str, optional): The candidate configuration name. Defaults to None.
-        includeMetadata (bool, optional): Include object Metadata in the response. Defaults to False.
+        vni_data_obj (dict): A dictionary containing fabric ID, VNI ID, and optional parameters. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "vni" (dict): A dictionary containing the VNI's name and optional query parameters.
+              Expected sub-keys:
+                - "name" (str): The ID or name of the VNI.
+                - "candidate" (str, optional): The candidate configuration name. Defaults to None.
+                - "includeMetadata" (bool, optional): Include object Metadata in the response. Defaults to False.
 
     Returns:
         dict: JSON response, or None on error.
@@ -612,9 +615,18 @@ def update_fabric_vni(vni_data_obj):
     Updates a specific VNI.
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        vniId (str): The ID or name of the VNI.
-        payload (dict): A JSON payload containing the updated VNI properties.
+        vni_data_obj (dict): A dictionary containing fabric ID, VNI ID, and updated VNI properties. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "vni" (dict): A dictionary containing the updated VNI properties. Must include "name" for VNI ID.
+              Example:
+              ```json
+              {
+                "name": "vni-example-1001",
+                "description": "Updated VNI description",
+                "enabled": true
+              }
+              ```
+              Note: "enabled" is forced to True.
 
     Returns:
         dict: JSON response, or None on error.
@@ -630,9 +642,13 @@ def delete_fabric_vni(vni_data_obj):
    """
     Deletes a VNI given its ID
 
-     Args:
-        fabricId (str): The ID or name of the fabric.
-        vniId (str, optional): The name for the device you are listing deleting a VNI device
+    Args:
+        vni_data_obj (dict): A dictionary containing fabric ID and VNI ID. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "id" (str): The ID or name of the VNI to delete.
+
+    Returns:
+        dict: JSON response
    """
    fabricId = vni_data_obj["fabric_id"]
    vniId = vni_data_obj["id"]
@@ -645,34 +661,20 @@ def delete_fabric_vni(vni_data_obj):
 
 def add_fabric_vrfs(vrf_data_obj):
     """
-    Creates or updates one or more Vrf with a specific name
+    Creates or updates one or more VRFs with a specific name.
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        vnis (list): Each VRF objects must conform to the `#/components/schemas/modelsVrf`.
-           Example:
-           ```json
-           [
-             {
-              "name": "Vrf-exampleOne",
-              "enabled": true
-             },
-             {
-              "name": "Vrf-exampleTwo",
-              "description": "Test Vrf for example-fabric",
-              "labels": [
-               "VRF_LABEL_ONE",
-               "vrf_label_two",
-               "vrf label three"
-              ],
-              "enabled": true
-             },
-             {
-              "name": "Vrf-exampleThree",
-              "enabled": true
-             }
-           ]
-           ```
+        vrf_data_obj (dict): A dictionary containing fabric ID and VRF data. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "vrf" (dict): A dictionary representing a single VRF object to add.
+              Example:
+              ```json
+              {
+               "name": "Vrf-exampleOne",
+               "enabled": true
+              }
+              ```
+              Note: The function wraps this single VRF in a list for the API call. "enabled" is forced to True.
 
     Returns:
         dict: JSON response, or None on error.
@@ -686,16 +688,19 @@ def add_fabric_vrfs(vrf_data_obj):
 # /fabrics/{fabricId}/vrfs/{vrfId}
 def get_fabric_vrf(vrf_data_obj):
     """
-        Gets details for a vrf
+    Gets details for a VRF.
 
-        Args:
-            fabricId (str): The ID or name of the fabric.
-            vrfId (str): A list of user-defined labels that can be used for grouping and filtering VRFs.
-            candidate (str, optional): The candidate configuration name. Defaults to None.
-            includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+    Args:
+        vrf_data_obj (dict): A dictionary containing fabric ID, VRF ID, and optional parameters. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "vrf" (dict): A dictionary containing the VRF's name and optional query parameters.
+              Expected sub-keys:
+                - "name" (str): The ID or name of the VRF.
+                - "candidate" (str, optional): The candidate configuration name. Defaults to None.
+                - "includeMetadata" (bool, optional): Include object metadata in the response. Defaults to False.
 
-        Returns:
-            dict: JSON response, or None on error.
+    Returns:
+        dict: JSON response, or None on error.
     """
     params = {key: vrf_data_obj["vrf"][key] for key in ["candidate", "includeMetadata"] if key in vrf_data_obj["vrf"]}
     fabricId = vrf_data_obj["fabric_id"]
@@ -705,26 +710,32 @@ def get_fabric_vrf(vrf_data_obj):
 
 def update_fabric_vrf(vrf_data_obj):
     """
-        Updates a specific Vrf
+    Updates a specific VRF.
+    Note: This function currently only performs a GET request for the VRF due to API limitations.
+    The PUT API call for VRF updates is not currently supported/working as intended.
 
-        Args:
-            fabricId (str): The ID or name of the fabric.
-            vrfId (str): A list of user-defined labels that can be used for grouping and filtering VRFs.
-            payload (str, optional): The Route Payload Defaults to None
+    Args:
+        vrf_data_obj (dict): A dictionary containing fabric ID, VRF ID, and updated VRF properties. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "vrf" (dict): A dictionary containing the VRF's name and updated properties.
+              Example:
+              ```json
+              {
+              "name": "Vrf-examplevrf1",
+              "annotations": [
+                {
+                "name": "position",
+                "value": "1234"
+                }
+              ],
+              "enabled": true,
+              "isDefault": true
+              }
+              ```
+              Note: "enabled" is forced to True in the commented-out PUT logic.
 
-            ```json
-            {
-            "name": "Vrf-examplevrf1",
-            "annotations": [
-             {
-              "name": "position",
-              "value": "1234"
-             }
-            ],
-            "enabled": true,
-            "isDefault": true
-            }
-            ```
+    Returns:
+        dict: JSON response from the GET request, or None on error.
     """
     return get_fabric_vrf(vrf_data_obj) # Needs to return a response with 200 status code, and you (should) only get here if the GET was successful
 
@@ -738,10 +749,14 @@ def update_fabric_vrf(vrf_data_obj):
 
 def delete_fabric_vrf(vrf_data_obj):
     """
-       Deletes a specific Vrf object.
-       Args:
-          fabricId (str): The ID or name of the fabric.
-          vrfId (str): A list of user-defined labels that can be used for grouping and filtering VRFs.
+      Deletes a specific VRF object.
+      Args:
+        vrf_data_obj (dict): A dictionary containing fabric ID and VRF ID. Expected keys:
+          - "fabric_id" (str): The ID or name of the fabric.
+          - "vrf" (dict): A dictionary containing the VRF's name.
+            Example: {"vrf": {"name": "Vrf-to-delete"}}
+      Returns:
+        dict: JSON response
     """
     fabricId = vrf_data_obj["fabric_id"]
     vrfId = vrf_data_obj["vrf"]["name"]
@@ -754,39 +769,31 @@ def delete_fabric_vrf(vrf_data_obj):
 
 def add_fabric_static_routes(static_route_data_obj):
     """
-        Creates or updates one or more static route for a fabric vrf object
+    Creates or updates one or more static routes for a fabric VRF object.
 
-        Args:
-            fabricId (str): The ID or name of the fabric.
-            vrfId (str): A list of user-defined labels that can be used for grouping and filtering VRFs.
-            staticRoutes (str, optional): Payload which creates or updates the static route. Defaults to None
+    Args:
+        static_route_data_obj (dict): A dictionary containing fabric ID, VRF ID, and static route data. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "vrf_id" (str): The ID or name of the VRF.
+            - "static_route" (dict): A dictionary representing a single static route object to add.
+              Example payload for "static_route":
+              ```json
+              {
+                "name": "Vrf-exampleOne-SR1",
+                "enabled": true,
+                "routes": [
+                  {
+                    "prefix": "10.10.10.0/24",
+                    "preference": 10,
+                    "discard": true
+                  }
+                ]
+              }
+              ```
+              Note: The function wraps this single static route in a list for the API call.
 
     Returns:
         dict: JSON response, or None on error.
-
-     **staticRoutes** example payload:
-        ```json
-        [
-        {
-          "name": "Vrf-exampleOne-SR1",
-          "enabled": true,
-          "routes": [
-            {
-              "prefix": "10.10.10.0/24",
-              "preference": 10,
-              "discard": true
-            },
-            {
-              "prefix": "11.10.10.0/24",
-              "preference": 10,
-              "discard": true
-            }
-          ]
-        }
-       ]
-
-        ```
-
     """
     payload = {"staticRoutes": [static_route_data_obj["static_route"]]}
     fabricId = static_route_data_obj["fabric_id"]
@@ -797,12 +804,17 @@ def add_fabric_static_routes(static_route_data_obj):
 # /fabrics/{fabricId}/vrfs/{vrfId}/staticRoutes/{routeId}
 def get_fabric_static_route(static_route_data_obj):
     """
-     Gets information for a single fabric static Route
+     Gets information for a single fabric static Route.
 
      Args:
-         fabricId (str): The ID or name of the fabric.
-         vrfId (str): A list of user-defined labels that can be used for grouping and filtering VRFs.
-         routeId (str, optional): The name for the device you are listing information for. Defaults to None
+         static_route_data_obj (dict): A dictionary containing fabric ID, VRF ID, static route ID, and optional parameters. Expected keys:
+             - "fabric_id" (str): The ID or name of the fabric.
+             - "vrf_id" (str): The ID or name of the VRF.
+             - "static_route" (dict): A dictionary containing the static route's name and optional query parameters.
+               Expected sub-keys:
+                 - "name" (str): The ID or name of the static route.
+                 - "candidate" (str, optional): The candidate configuration name. Defaults to None.
+                 - "includeMetadata" (bool, optional): Include object metadata in the response. Defaults to False.
 
     Returns:
         int: JSON response on success or None on Fail
@@ -816,13 +828,29 @@ def get_fabric_static_route(static_route_data_obj):
 
 def update_fabric_static_route(static_route_data_obj):
     """
-     Updates a specific static route for a given VRF object
+     Updates a specific static route for a given VRF object.
 
      Args:
-         fabricId (str): The ID or name of the fabric.
-         vrfId (str): A list of user-defined labels that can be used for grouping and filtering VRFs.
-         routeId (str, optional): The name for the device you are listing information for. Defaults to None
-         payload (str, optional): The Route Payload Defaults to None
+         static_route_data_obj (dict): A dictionary containing fabric ID, VRF ID, static route ID, and updated static route properties. Expected keys:
+             - "fabric_id" (str): The ID or name of the fabric.
+             - "vrf_id" (str): The ID or name of the VRF.
+             - "static_route" (dict): A dictionary containing the updated static route properties. Must include "name" for route ID.
+               Example:
+               ```json
+               {
+                 "name": "Vrf-exampleOne-SR1",
+                 "enabled": true,
+                 "routes": [
+                   {
+                     "prefix": "10.10.10.0/24",
+                     "preference": 20,
+                     "discard": false
+                   }
+                 ]
+               }
+               ```
+      Returns:
+        dict: JSON response from the GET request, or None on error.
     """
     fabricId = static_route_data_obj["fabric_id"]
     vrfId = static_route_data_obj["vrf_id"]
@@ -833,12 +861,16 @@ def update_fabric_static_route(static_route_data_obj):
 
 def delete_fabric_static_route(static_route_data_obj):
    """
-    Deletes a static route for a vrf ID in a fabric
+    Deletes a static route for a VRF ID in a fabric.
 
-     Args:
-         fabricId (str): The ID or name of the fabric.
-         vrfId (str): A list of user-defined labels that can be used for grouping and filtering VRFs.
-         routeId (str, optional): The name for the device you are listing information for. Defaults to None
+    Args:
+         static_route_data_obj (dict): A dictionary containing fabric ID, VRF ID, and static route ID. Expected keys:
+             - "fabric_id" (str): The ID or name of the fabric.
+             - "vrf_id" (str): The ID or name of the VRF.
+             - "static_route" (dict): A dictionary containing the name of the static route to delete.
+               Example: {"static_route": {"name": "Vrf-exampleOne-SR1"}}
+    Returns:
+        dict: JSON response
    """
    fabricId = static_route_data_obj["fabric_id"]
    vrfId = static_route_data_obj["vrf_id"]
@@ -855,9 +887,10 @@ def get_fabric_configurations(fabric_data):
     Retrieves the configuration for a specific fabric.
 
     Args:
-        fabricId (str): The ID or name of the fabric.
-        candidate (str, optional): The candidate configuration name. Defaults to None.
-        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+        fabric_data (dict): A dictionary containing the fabric ID and optional parameters. Expected keys:
+            - "name" (str): The ID or name of the fabric.
+            - "candidate" (str, optional): The candidate configuration name. Defaults to None.
+            - "includeMetadata" (bool, optional): Include object metadata in the response. Defaults to False.
 
     Returns:
         dict: JSON response containing the fabric configuration, or None on error.
@@ -865,6 +898,57 @@ def get_fabric_configurations(fabric_data):
     params = {key: fabric_data[key] for key in ["candidate", "includeMetadata"] if key in fabric_data}
     fabricId = fabric_data["name"]
     response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/configurations", params=params)
+    return response
+
+
+# ------------------------------ BINDING ------------------------------
+
+
+# /devices
+def get_devices():
+    """
+    Retrieves a list of devices.
+
+    Returns:
+        dict: JSON response containing the list of devices, or None on error.
+    """
+    response = _make_get_request(headers, f"{BASE_URL}/devices")
+    return response
+
+# /fabrics/{fabricId}/nodes/{nodeId}/devices/{deviceId}
+def bind_device(bind_data_obj):
+    """
+    Binds a device to a specific node.
+     Args:
+        bind_data_obj (dict): A dictionary containing fabric ID, node ID, and device ID. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "node_id" (str): The ID or name of the node.
+            - "device_id" (str): The serial of the device.
+
+    Returns:
+         dict: JSON response or None on Error
+    """
+    fabricId = bind_data_obj["fabric_id"]
+    nodeId = bind_data_obj["node_id"]
+    deviceId = bind_data_obj["device_id"]
+    response = _make_put_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/devices/{deviceId}")
+    return response
+
+# /fabrics/{fabricId}/nodes/{nodeId}/devices
+def unbind_device(unbind_data_obj):
+    """
+    Unbinds a device from a specific node
+     Args:
+        unbind_data_obj (dict): A dictionary containing fabric ID and node ID. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "node_id" (str): The ID or name of the node.
+
+    Returns:
+         dict: JSON response or None on Error
+    """
+    fabricId = unbind_data_obj["fabric_id"]
+    nodeId = unbind_data_obj["node_id"]
+    response = _make_delete_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/devices")
     return response
 
 
@@ -937,15 +1021,15 @@ def delete_bearer_token(auth, tokenId):
     return response
 
 # /devices
-def get_devices(auth):
-    """
-    Retrieves a list of devices.
+# def get_devices(auth):
+#     """
+#     Retrieves a list of devices.
 
-    Returns:
-        dict: JSON response containing the list of devices, or None on error.
-    """
-    response = _make_get_request(auth, f"{BASE_URL}/devices")
-    return response
+#     Returns:
+#         dict: JSON response containing the list of devices, or None on error.
+#     """
+#     response = _make_get_request(auth, f"{BASE_URL}/devices")
+#     return response
 
 # /fabrics/{fabricId}/candidates
 def get_fabric_candidates(auth, fabricId, name=None, txnId=None, needInactive=None, needReviews=None, needEvents=None, startTime=None, endTime=None):
@@ -1062,76 +1146,6 @@ def delete_fabric_connections(auth, fabricId):
     """
     response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections")
     return response
-
-# # # /fabrics/{fabricId}/nodes
-# def get_fabric_nodes(auth, fabricId, candidate=None, includeMetadata=None):
-#     """
-#     Retrieves a list of nodes within a fabric.
-
-#     Args:
-#         fabricId (str): The ID or name of the fabric.
-#         candidate (str, optional): The candidate configuration name. Defaults to None.
-#         includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
-
-#     Returns:
-#         dict: JSON response, or None on error.
-#     """
-#     params = {}
-#     if candidate:
-#         params["candidate"] = candidate
-#     if includeMetadata:
-#         params["includeMetadata"] = includeMetadata
-#     response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes", params=params)
-#     return response
-
-# /fabrics/{fabricId}/nodes/{nodeId}/devices/{deviceId}
-def bind_device(auth, fabricId, nodeId, deviceId):
-    """
-    Binds a device to a specific node
-     Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
-        deviceId (str): The serial of the device.
-
-    Returns:
-         dict: JSON response or None on Error
-    """
-    response = _make_put_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/devices/{deviceId}")
-    return response
-# /fabrics/{fabricId}/nodes/{nodeId}/devices
-def unbind_device(auth, fabricId, nodeId):
-    """
-    Unbinds a device from a specific node
-     Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
-
-    Returns:
-         Int: Response Code or None on Error
-    """
-    response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/devices")
-    return response
-
-# # /fabrics/{fabricId}/nodes/{nodeId}/managementPorts
-# def get_management_ports(auth, fabricId, nodeId, candidate=None, includeMetadata=None):
-#     """
-#     Retrieves a list of management ports for a specific node.
-#     Args:
-#         fabricId (str): The ID or name of the fabric.
-#         nodeId (str): The ID or name of the node.
-#         candidate (str, optional): The candidate configuration name. Defaults to None.
-#         includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
-#     Returns:
-#         dict: JSON response containing the list of management ports, or None on error.
-#     """
-#     params = {}
-#     if candidate:
-#         params["candidate"] = candidate
-#     if includeMetadata:
-#         params["includeMetadata"] = includeMetadata
-
-#     response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts", params=params)
-#     return response
 
 # /fabrics/{fabricId}/nodes/{nodeId}/ports
 def get_ports(auth, fabricId, nodeId, candidate=None, includeMetadata=None):
