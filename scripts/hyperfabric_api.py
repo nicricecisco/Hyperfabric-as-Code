@@ -127,7 +127,7 @@ def get_fabric_nodes(autocabling_data_obj):
         dict: JSON response, or None on error.
     """
 
-    params = {key: autocabling_data_obj["autocabling_obj"][key] for key in ["candidate", "includeMetadata"] if "autocabling_obj" in autocabling_data_obj and key in autocabling_data_obj["autocabling_obj"]}
+    params = {key: autocabling_data_obj["autocabling_obj"][key] for key in ["candidate", "includeMetadata"] if key in autocabling_data_obj.get("autocabling_obj", {})}
     fabricId = autocabling_data_obj["fabric_id"]
     response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes", params=params)
     return response
@@ -254,7 +254,7 @@ def get_management_ports(mgmt_port_data_obj):
     Returns:
         dict: JSON response containing the list of management ports, or None on error.
     """
-    params = {key: mgmt_port_data_obj["mgmt_port"][key] for key in ["candidate", "includeMetadata"] if "mgmt_port" in mgmt_port_data_obj and key in mgmt_port_data_obj["mgmt_port"]}
+    params = {key: mgmt_port_data_obj["mgmt_port"][key] for key in ["candidate", "includeMetadata"] if key in mgmt_port_data_obj.get("mgmt_port", {})}
     fabricId = mgmt_port_data_obj["fabric_id"]
     nodeId = mgmt_port_data_obj["node_id"]
     response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/managementPorts", params=params)
@@ -372,6 +372,27 @@ def delete_management_port(mgmt_port_data_obj):
 # ------------------------------ PORTS ------------------------------
 
 
+# /fabrics/{fabricId}/nodes/{nodeId}/ports
+def get_ports(port_data_obj):
+    """
+    Retrieves a list of ports for a specific node.
+    Args:
+        port_data_obj (dict): A dictionary containing fabric ID, node ID, and optional parameters. Expected keys:
+            - "fabric_id" (str): The ID or name of the fabric.
+            - "node_id" (str): The ID or name of the node.
+            - "port" (dict, optional): A dictionary containing query parameters.
+              Expected sub-keys:
+                - "candidate" (str, optional): The candidate configuration name. Defaults to None.
+                - "includeMetadata" (bool, optional): Include object metadata in the response. Defaults to False.
+    Returns:
+        dict: JSON response containing the list of ports, or None on error.
+    """
+    params = {key: port_data_obj["port"][key] for key in ["candidate", "includeMetadata"] if key in port_data_obj.get("port", {})}
+    fabricId = port_data_obj["fabric_id"]
+    nodeId = port_data_obj["node_id"]
+    response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/ports", params=params)
+    return response
+
 # /fabrics/{fabricId}/nodes/{nodeId}/ports/{portId}
 def get_port(port_data_obj):
     """
@@ -444,7 +465,7 @@ def get_fabric_connections(connection_data_obj):
     Returns:
         dict: JSON response, or None on error.
     """
-    params = {key: connection_data_obj["connection"][key] for key in ["candidate"] if "connection" in connection_data_obj and key in connection_data_obj["connection"]}
+    params = {key: connection_data_obj["connection"][key] for key in ["candidate"] if key in connection_data_obj.get("connection", {})}
     fabricId = connection_data_obj["fabric_id"]
     response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/connections", params=params)
     return response
@@ -550,6 +571,24 @@ def delete_fabric_connection(connection_data_obj):
 
 # ------------------------------ VNIs ------------------------------
 
+
+# /fabrics/{fabricId}/vnis
+def get_fabric_vnis(vni_data_obj):
+    """
+    Retrieves a list of VNIs within a fabric.
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        candidate (str, optional): The candidate configuration name. Defaults to None.
+        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+
+    Returns:
+        dict: JSON response, or None on error.
+    """
+    params = {key: vni_data_obj["vni"][key] for key in ["candidate", "includeMetadata"] if key in vni_data_obj.get("vni", {})}
+    fabricId = vni_data_obj["fabric_id"]
+    response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/vnis", params=params)
+    return response
 
 def add_fabric_vnis(vni_data_obj):
     """
@@ -659,6 +698,24 @@ def delete_fabric_vni(vni_data_obj):
 # ------------------------------ VRFs ------------------------------
 
 
+# /fabrics/{fabricId}/vrfs
+def get_fabric_vrfs(vrf_data_obj):
+    """
+    Retrieves a list of VRFs within a fabric.
+
+    Args:
+        fabricId (str): The ID or name of the fabric.
+        candidate (str, optional): The candidate configuration name. Defaults to None.
+        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+
+    Returns:
+        dict: JSON response, or None on error.
+    """
+    params = {key: vrf_data_obj["vrf"][key] for key in ["candidate", "includeMetadata"] if key in vrf_data_obj.get("vrf", {})}
+    fabricId = vrf_data_obj["fabric_id"]
+    response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/vrfs", params=params)
+    return response
+
 def add_fabric_vrfs(vrf_data_obj):
     """
     Creates or updates one or more VRFs with a specific name.
@@ -766,6 +823,26 @@ def delete_fabric_vrf(vrf_data_obj):
 
 # ------------------------------ STATIC ROUTES ------------------------------
 
+
+# /fabrics/{fabricId}/vrfs/{vrfId}/staticRoutes
+def get_fabric_static_routes(static_route_data_obj):
+    """
+     Gets a list of staticRoutes for a vrf
+
+     Args:
+         fabricId (str): The ID or name of the fabric.
+         vrfId (str): The unique identifier of the VRF to which this static routes belong to.
+         candidate (str, optional): The candidate configuration name. Defaults to None.
+         includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
+
+    Returns:
+        dict: JSON response, or None on error.
+    """
+    params = {key: static_route_data_obj["static_route"][key] for key in ["candidate", "includeMetadata"] if key in static_route_data_obj.get("static_route", {})}
+    fabricId = static_route_data_obj["fabric_id"]
+    vrfId = static_route_data_obj["vrf_id"]
+    response = _make_get_request(headers, f"{BASE_URL}/fabrics/{fabricId}/vrfs/{vrfId}/staticRoutes", params=params)
+    return response
 
 def add_fabric_static_routes(static_route_data_obj):
     """
@@ -1147,28 +1224,6 @@ def delete_fabric_connections(auth, fabricId):
     response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/connections")
     return response
 
-# /fabrics/{fabricId}/nodes/{nodeId}/ports
-def get_ports(auth, fabricId, nodeId, candidate=None, includeMetadata=None):
-    """
-    Retrieves a list of ports for a specific node.
-
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        nodeId (str): The ID or name of the node.
-        candidate (str, optional): The candidate configuration name. Defaults to None.
-        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
-
-    Returns:
-        dict: JSON response, or None on error.
-    """
-    params = {}
-    if candidate:
-        params["candidate"] = candidate
-    if includeMetadata:
-        params["includeMetadata"] = includeMetadata
-    response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/ports", params=params)
-    return response
-
 def set_ports(auth, fabricId, nodeId, ports):
     """
     Replaces all ports for a specific node.
@@ -1217,27 +1272,6 @@ def set_ports(auth, fabricId, nodeId, ports):
     """
     payload = {"ports": ports}
     response = _make_put_request(auth, f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/ports", payload=payload)
-    return response
-
-# /fabrics/{fabricId}/vnis
-def get_fabric_vnis(auth, fabricId, candidate=None, includeMetadata=None):
-    """
-    Retrieves a list of VNIs within a fabric.
-
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        candidate (str, optional): The candidate configuration name. Defaults to None.
-        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
-
-    Returns:
-        dict: JSON response, or None on error.
-    """
-    params = {}
-    if candidate:
-        params["candidate"] = candidate
-    if includeMetadata:
-        params["includeMetadata"] = includeMetadata
-    response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/vnis", params=params)
     return response
 
 # /fabrics/{fabricId}/vnis/{vniId}/members
@@ -1306,49 +1340,6 @@ def delete_fabric_vni_member(auth, fabricId, vniId, memberId):
           memberId (str, optional): The name for the device you are listing deleting a VNI device
     """
     response = _make_delete_request(auth, f"{BASE_URL}/fabrics/{fabricId}/vnis/{vniId}/members/{memberId}")
-    return response
-
-# /fabrics/{fabricId}/vrfs
-def get_fabric_vrfs(auth, fabricId, candidate=None, includeMetadata=None):
-    """
-    Retrieves a list of VRFs within a fabric.
-
-    Args:
-        fabricId (str): The ID or name of the fabric.
-        candidate (str, optional): The candidate configuration name. Defaults to None.
-        includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
-
-    Returns:
-        dict: JSON response, or None on error.
-    """
-    params = {}
-    if candidate:
-        params["candidate"] = candidate
-    if includeMetadata:
-        params["includeMetadata"] = includeMetadata
-    response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/vrfs", params=params)
-    return response
-
-# /fabrics/{fabricId}/vrfs/{vrfId}/staticRoutes
-def get_fabric_static_routes(auth, fabricId, vrfId, candidate=None, includeMetadata=None):
-    """
-     Gets a list of staticRoutes for a vrf
-
-     Args:
-         fabricId (str): The ID or name of the fabric.
-         vrfId (str): The unique identifier of the VRF to which this static routes belong to.
-         candidate (str, optional): The candidate configuration name. Defaults to None.
-         includeMetadata (bool, optional): Include object metadata in the response. Defaults to False.
-
-    Returns:
-        dict: JSON response, or None on error.
-    """
-    params = {}
-    if candidate:
-        params["candidate"] = candidate
-    if includeMetadata:
-        params["includeMetadata"] = includeMetadata
-    response = _make_get_request(auth, f"{BASE_URL}/fabrics/{fabricId}/vrfs/{vrfId}/staticRoutes", params=params)
     return response
 
 # /users
