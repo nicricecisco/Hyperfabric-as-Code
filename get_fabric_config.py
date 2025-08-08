@@ -102,15 +102,22 @@ def get_object(entity, data_obj, allowed_attr_path, key):
 
     return None
 
-def output_yaml(obj):
-    output_path = f"output/{fabric_name}.yaml"
+def output_yaml(infra_result, tenant_result):
+    infra_output_path = f"output/{fabric_name}-infra.yaml"
+    tenant_output_path = f"output/{fabric_name}-tenant.yaml"
+
     now = generate_timestamp()
     comment = f"# Generated on {now}"
-    if obj is not None:        
-        with open(output_path, "w") as f:
+    if infra_result:        
+        with open(infra_output_path, "w") as f:
             f.write(comment + "\n")
-            yaml.dump(obj, f)
-        logger.info(f"Saved YAML to {output_path}")
+            yaml.dump(infra_result, f)
+        logger.info(f"Saved YAML to {infra_output_path}")
+    if tenant_result:        
+        with open(tenant_output_path, "w") as f:
+            f.write(comment + "\n")
+            yaml.dump(tenant_result, f)
+        logger.info(f"Saved YAML to {tenant_output_path}")
     else:
         logger.info(f"Nothing to output")
 
@@ -167,10 +174,12 @@ def main(fabric_name):
     if connection_result:
         fabric_result["connections"] = connection_result
 
+    fabric_tenant = {}
+    fabric_tenant["name"] = fabric_result["name"]
     # -------------------- VNIs --------------------
     vni_result = get_object("VNI", fabric_level_data_obj, vni_keys_path, "vnis")
     if vni_result:
-        fabric_result["vnis"] = vni_result
+        fabric_tenant["vnis"] = vni_result
 
     # -------------------- VRFs --------------------
     vrf_result = get_object("VRF", fabric_level_data_obj, vrf_keys_path, "vrfs")
@@ -186,15 +195,20 @@ def main(fabric_name):
             if static_route_result:
                 vrf["staticRoutes"] = static_route_result
 
-        fabric_result["vrfs"] = vrf_result
+        fabric_tenant["vrfs"] = vrf_result
 
-    restructure_annotations(fabric_result) # In our schema, we define annotations as key: value as opposed to name: key, value: value
+    # In our schema, we define annotations as key: value as opposed to name: key, value: value
+    restructure_annotations(fabric_result) 
+    restructure_annotations(fabric_tenant)
 
-    result = {
+    infra_result = {
         "fabrics": [fabric_result]
     }
+    tenant_result = {
+        "fabrics": [fabric_tenant]
+    }
     
-    output_yaml(result)
+    output_yaml(infra_result, tenant_result)
     
 if __name__ == "__main__":
     if len(sys.argv) < 2:
