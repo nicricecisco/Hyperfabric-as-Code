@@ -1,4 +1,5 @@
 import json
+from entities.definitions import ENTITY_PATHS
 from utils.schema_loader import get_schema_path
 
 def parse_attributes(obj, input_key):
@@ -17,18 +18,24 @@ EXCLUDE_ATTR = ["fabrics", "nodes", "managementPorts", "ports", "connections", "
 def _get_attribute_keys(*args):
     result = schema.get("properties", {})
     for item in args:
-        result = result.get(f"{item}").get("items", {}).get("properties", {})
-    result = list(result.keys())
-    return [attr for attr in result if attr not in EXCLUDE_ATTR]
+        # Safely get the next level dict
+        next_level = result.get(item)
+        if next_level is None:
+            # Key not found, return empty list or raise error as you prefer
+            return []
+        result = next_level.get("items", {}).get("properties", {})
+    keys = list(result.keys())
+    return [attr for attr in keys if attr not in EXCLUDE_ATTR]
 
-FABRIC_ATTRIBUTES = _get_attribute_keys("fabrics")
-NODE_ATTRIBUTES = _get_attribute_keys("fabrics", "nodes")
-MGMT_PORT_ATTRIBUTES = _get_attribute_keys("fabrics", "nodes", "managementPorts")
-PORT_ATTRIBUTES = _get_attribute_keys("fabrics", "nodes", "ports")
-CONNECTION_ATTRIBUTES = _get_attribute_keys("fabrics", "connections")
-VNI_ATTRIBUTES = _get_attribute_keys("fabrics", "vnis")
-VRF_ATTRIBUTES = _get_attribute_keys("fabrics", "vrfs")
-STATIC_ROUTE_ATTRIBUTES = _get_attribute_keys("fabrics", "vrfs", "staticRoutes")
+
+FABRIC_ATTRIBUTES = _get_attribute_keys(*ENTITY_PATHS["FABRIC"])
+NODE_ATTRIBUTES = _get_attribute_keys(*ENTITY_PATHS["NODE"])
+MGMT_PORT_ATTRIBUTES = _get_attribute_keys(*ENTITY_PATHS["MGMT_PORT"])
+PORT_ATTRIBUTES = _get_attribute_keys(*ENTITY_PATHS["PORT"])
+CONNECTION_ATTRIBUTES = _get_attribute_keys(*ENTITY_PATHS["CONNECTION"])
+VNI_ATTRIBUTES = _get_attribute_keys(*ENTITY_PATHS["VNI"])
+VRF_ATTRIBUTES = _get_attribute_keys(*ENTITY_PATHS["VRF"])
+STATIC_ROUTE_ATTRIBUTES = _get_attribute_keys(*ENTITY_PATHS["STATIC_ROUTE"])
 
 ATTRIBUTES = {
     "FABRIC": FABRIC_ATTRIBUTES,

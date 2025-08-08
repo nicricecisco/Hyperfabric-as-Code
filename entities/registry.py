@@ -1,17 +1,6 @@
+from entities.definitions import ENTITY_KEYS
 from entities.attributes import ATTRIBUTES
 from entities.functions import FUNCTION_OBJECTS
-
-# Keys must match the ones used in ATTRIBUTES and FUNCTION_OBJECTS
-ENTITY_KEYS = [
-    "FABRIC",
-    "NODE",
-    "MGMT_PORT",
-    "PORT",
-    "CONNECTION",
-    "VNI",
-    "VRF",
-    "STATIC_ROUTE"
-]
 
 def _build_entities(keys, attributes_map, functions_map):
     return {

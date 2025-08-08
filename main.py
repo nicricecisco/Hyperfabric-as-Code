@@ -1,11 +1,11 @@
-import yaml
 import sys
+import yaml
+import argparse
 from pprint import pprint
 from copy import deepcopy
 from validate_yaml import validate_files
 from utils.timestamp import generate_timestamp
 from scripts.handle_json_input import handle_json_input
-from scripts.submission_validator_nick import validate_schema
 
 def merge_fabric_dicts(f1, f2):
     merged = deepcopy(f1)
@@ -80,16 +80,28 @@ def add_comment(yaml_files, message):
         with open(file, "w") as f:
             f.writelines(updated_lines)
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Upload to Hyperfabric")
+    parser.add_argument(
+        "yaml_files",
+        nargs="+",
+        help="One or more YAML files to process"
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Bypass the validator and force an upload to Hyperfabric"
+    )
+    return parser.parse_args()
+
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print(f"Usage: python {sys.argv[0]} <yaml_file1> [yaml_file2 ...]")
-        sys.exit(1)
-    
-    yaml_files = sys.argv[1:]
+    args = parse_args()
+    yaml_files = args.yaml_files
+    force = args.force
 
     all_valid_files = validate_files(yaml_files)
-    # if not all_valid_files:
-    #     sys.exit(1)
+    if not all_valid_files and not force:
+        sys.exit(1)
         
     json_input = combine_files([file for file in yaml_files])
 
