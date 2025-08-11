@@ -1,20 +1,30 @@
+# Generated on 2025-08-05 21:46:50 UTC
+# Last uploaded (success): 2025-08-05 21:47:15 UTC
 fabrics:
   - name: from-python
     delete:
       connections:
-        - id: 12483de3-5cc5-4bb5-9316-21f23b1866ce
+        - id: dc2b9894-fc39-43e3-99b0-ace651d37c7b
           local:
-            portName: Ethernet1_20
-            nodeName: Leaf01
+            portName: Ethernet1_16
+            nodeName: Leaf-01
           remote:
-            portName: Ethernet1_20
-            nodeName: Spine01
+            portName: Ethernet1_16
+            nodeName: Spine-01
           pluggable: QDD-400-CU3M
-        - id: dba89f4d-2e59-4447-958e-5b873ead5374
+        - id: a54f93b4-c889-4aa3-9d6b-c26595108336
+          local:
+            portName: Ethernet1_20
+            nodeName: Leaf-01
+          remote:
+            portName: Ethernet1_20
+            nodeName: Spine-01
+          pluggable: QDD-400-CU3M
+        - id: 7dcf60f0-d9f8-431d-9711-834e031c485d
           local:
             portName: Ethernet1_22
-            nodeName: Leaf01
+            nodeName: Leaf-01
           remote:
             portName: Ethernet1_22
-            nodeName: Spine01
+            nodeName: Spine-01
           pluggable: QDD-400-CU3M

@@ -1,14 +1,13 @@
 import json
-import logging
 from pprint import pprint
 from collections import defaultdict
+from utils.logger import get_logger
 from scripts.hyperfabric_api import get_fabric, get_fabric_nodes, get_fabric_connections
 
 
 
 # Setup logger
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger(__name__)
+logger = get_logger()
 
 cables = [
     # 400G cables

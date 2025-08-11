@@ -1,0 +1,25 @@
+# Generated on 2025-08-08 16:02:45 UTC
+# Last uploaded (success): 2025-08-08 16:06:47 UTC
+fabrics:
+  - name: jarod-nick-intern-test
+    vnis:
+      - name: VNI01
+        description: My first VNI
+        vni: 10001
+        labels:
+          - MY_TAG!
+      - name: VNI02
+        description: My second VNI
+        vni: 10002
+        vrfId: de7263a0-0124-45f3-a66b-ac19d09dfc97
+        svis:
+          - ipv4Addresses:
+              - 172.222.40.1/24
+            enabled: true
+        labels:
+          - MY_TAG
+          - ANOTHER_TAG
+    vrfs:
+      - name: Vrf12000000
+        enabled: true
+        vni: 12000000

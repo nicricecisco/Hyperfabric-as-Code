@@ -13,7 +13,7 @@
         ],
         "additionalProperties": false,
         "properties": {
-          "name": { 
+          "name": {
             "type": "string",
             "title": "Name",
             "description": "Name (String)",
@@ -21,13 +21,13 @@
             "maxLength": 120, 
             "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
           },
-          "description": { 
+          "description": {
             "type": "string",
             "title": "Description",
             "description": "Description (String)",
             "maxLength": 2000 
           },
-          "location": { 
+          "location": {
             "type": "string",
             "title": "Location",
             "description": "Location (String)",
@@ -35,20 +35,20 @@
             "maxLength": 50,
             "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
           },
-          "address": { 
+          "address": {
             "type": "string",
             "title": "Address",
             "description": "Address (String)",
             "maxLength": 200 
           },
-          "city": { 
+          "city": {
             "type": "string",
             "title": "City",
             "description": "City (String)",
             "maxLength": 50,
-            "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$" 
+            "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
           },
-          "country": { 
+          "country": {
             "type": "string",
             "title": "Country",
             "description": "Country (String)",
@@ -151,7 +151,7 @@
                 "name", "modelName", "roles"
               ],
               "properties": {
-                "name": { 
+                "name": {
                   "type": "string",
                   "title": "Name",
                   "description": "Name (String)",
@@ -192,7 +192,7 @@
                   "maxLength": 50,
                   "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
                 },
-                "serialNumber": { 
+                "serialNumber": {
                   "type": "string",
                   "title": "Serial Number",
                   "description": "Serial Number (String)",
@@ -215,7 +215,7 @@
                         "title": "Airflow",
                         "description": "Airflow (List - String)"
                       },
-                      "psuModel": { 
+                      "psuModel": {
                         "type": "string",
                         "title": "PSU Model",
                         "description": "PSU Model (String)",
@@ -263,13 +263,13 @@
                     "type": "object",
                     "additionalProperties": false,
                     "properties": {
-                        "name": { 
+                        "name": {
                           "type": "string",
                           "title": "Name",
                           "description": "Name (String)",
                           "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
                         },
-                        "description": { 
+                        "description": {
                           "type": "string",
                           "title": "Description",
                           "description": "Description (String)",
@@ -278,21 +278,21 @@
                         "ipv4ConfigType": {
                           "type": "string",
                           "enum": [
-                            "CONFIG_TYPE_STATIC", 
+                            "CONFIG_TYPE_STATIC",
                             "CONFIG_TYPE_DHCP"
                           ],
                           "default": "CONFIG_TYPE_STATIC",
                           "title": "IPv4 Config Type",
                           "description": "IPv4 configuration type (String)"
                         },
-                        "ipv4Address": { 
+                        "ipv4Address": {
                           "type": "string",
                           "title": "IPv4 Address",
                           "description": "IPv4 Address (String)",
                           "pattern": "^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\/([0-9]|[1-2][0-9]|3[0-2]))?$"
 
                         },
-                        "ipv4Gateway": { 
+                        "ipv4Gateway": {
                           "type": "string",
                           "title": "IPv4 Gateway",
                           "description": "IPv4 Gateway (String)",
@@ -301,14 +301,14 @@
                         "ipv6ConfigType": {
                           "type": "string",
                           "enum": [
-                            "CONFIG_TYPE_STATIC", 
+                            "CONFIG_TYPE_STATIC",
                             "CONFIG_TYPE_DHCP"
                           ],
                           "default": "CONFIG_TYPE_STATIC",
                           "title": "IPv6 Config Type",
                           "description": "IPv6 configuration type (String)"
                         },
-                        "ipv6Address": { 
+                        "ipv6Address": {
                           "type": "string",
                           "title": "IPv6 Address",
                           "description": "Ipv6 Address (String)",
@@ -329,30 +329,30 @@
                           "title": "DNS Addresses",
                           "description": "DNS Addresses (List - String)"
                         },
-                        "proxyAddress": { 
+                        "proxyAddress": {
                           "type": "string",
                           "title": "Proxy Address",
                           "description": "Proxy Address (String)",
                           "format": "uri" 
                         },
-                        "proxyUsername": { 
+                        "proxyUsername": {
                           "type": "string",
                           "title": "Proxy Username",
                           "description": "Proxy Username (String)",
                           "maxLength":120 
                         },
-                        "proxyPassword": { 
+                        "proxyPassword": {
                           "type": "string",
                           "title": "Proxy Password",
                           "description": "Proxy Password (String)",
                           "maxLength":120 
                         },
-                        "enabled": { 
+                        "enabled": {
                           "type": "boolean",
                           "title": "Enabled",
                           "description": "Enabled (Boolean)"
                         },
-                        "setProxyPassword": { 
+                        "setProxyPassword": {
                           "type": "boolean",
                           "title": "Set Proxy Password",
                           "description": "Set Proxy Password (Boolean)"
@@ -451,53 +451,53 @@
                       "name", "roles"
                     ],
                     "properties": {
-                      "name": { 
+                      "name": {
                         "type": "string",
                         "title": "Name",
                         "description": "Name (String)\n- Allowed values: Ethernet1_N where N is between 1-64",
                         "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$"
                       },
-                      "description": { 
+                      "description": {
                         "type": "string",
                         "title": "Description",
                         "description": "Description (String)",
                         "maxLength": 2000 
                       },
-                      "mtu": { 
+                      "mtu": {
                         "type": "integer",
                         "title": "MTU",
                         "description": "MTU (Integer)\n- Minimum: 1500\n- Maximum: 9100",
                         "minimum": 1500, 
                         "maximum": 9100 
                       },
-                      "fec": { 
+                      "fec": {
                         "type": "string",
                         "title": "FEC",
                         "description": "FEC (String)",
                         "enum": [
                           "rs", "none"
-                        ] 
+                        ]
                       },
-                      "pluggable": { 
+                      "pluggable": {
                         "type": "string",
                         "title": "Pluggable",
                         "description": "Pluggable (String)",
                         "maxLength": 150 
                       },
-                      "forceCounter": { 
+                      "forceCounter": {
                         "type": "integer",
                         "title": "Force Counter",
                         "description": "Force Counter (Integer)",
                         "minimum": 0,
                         "maximum": 40000000
                       },
-                      "speed": { 
+                      "speed": {
                         "type": "string",
                         "title": "Speed",
                         "description": "Speed (String)\n- Allowed values: 1x40G(4), 1x100G(2), 1x100G(4), 1x200G(4), 1x400G, 1x10G(1), 1x25G(1), 1x50G(1)",
                         "pattern": "^(1x40G\\(4\\)|1x100G\\(2\\)|1x100G\\(4\\)|1x200G\\(4\\)|1x400G|1x10G\\(1\\)|1x25G\\(1\\)|1x50G\\(1\\))$" 
                       },
-                      "enabled": { 
+                      "enabled": {
                         "type": "boolean",
                         "title": "Enabled",
                         "description": "Enabled (Boolean)"
@@ -507,22 +507,22 @@
                         "items": {
                           "type": "string",
                           "enum": [
-                            "UNUSED_PORT", 
-                            "FABRIC_PORT", 
-                            "HOST_PORT", 
-                            "ROUTED_PORT", 
+                            "UNUSED_PORT",
+                            "FABRIC_PORT",
+                            "HOST_PORT",
+                            "ROUTED_PORT",
                             "LAG_PORT"
                           ]
                         },
                         "title": "Roles",
                         "description": "Roles (List - String)\nAllowed values:\n  - UNUSED_PORT\n  - FABRIC_PORT\n  - HOST_PORT\n  - ROUTED_PORT\n  - LAG_PORT"
                       },
-                      "linkDown": { 
+                      "linkDown": {
                         "type": "boolean",
                         "title": "Link Down",
                         "description": "Link Down (Boolean)"
                       },
-                      "vrfId": { 
+                      "vrfId": {
                         "type": "string",
                         "description": "VRF ID (String)",
                         "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
@@ -555,27 +555,27 @@
                           "type": "object",
                           "additionalProperties": false,
                           "properties": {
-                            "bpduGuard": { 
+                            "bpduGuard": {
                               "type": "boolean",
                               "title": "BPDU Guard",
                               "description": "BPDU Guard (Boolean)"
                             },
-                            "enabled": { 
+                            "enabled": {
                               "type": "boolean",
                               "title": "Enabled",
                               "description": "Enabled (Boolean)"
                             },
-                            "portFast": { 
+                            "portFast": {
                               "type": "boolean",
                               "title": "Port Fast",
                               "description": "Port Fast (Boolean)"
                             },
-                            "rootGuard": { 
+                            "rootGuard": {
                               "type": "boolean",
                               "title": "Root Guard",
                               "description": "Root Guard (Boolean)"
                             },
-                            "uplinkFast": { 
+                            "uplinkFast": {
                               "type": "boolean",
                               "title": "Uplink Fast",
                               "description": "Uplink Fast (Boolean)"
@@ -615,8 +615,8 @@
                           "required": ["roles"],
                           "properties": {
                             "roles": {
-                              "contains": { 
-                                "const": "ROUTED_PORT" 
+                              "contains": {
+                                "const": "ROUTED_PORT"
                               }
                             }
                           }
@@ -626,15 +626,15 @@
                             "vrfId"
                           ],
                           "anyOf": [
-                            { 
+                            {
                               "required": [
                                 "ipv4Address"
-                              ] 
+                              ]
                             },
-                            { 
+                            {
                               "required": [
                                 "ipv6Address"
-                              ] 
+                              ]
                             }
                           ]
                         }
@@ -653,13 +653,13 @@
               "type": "object",
               "additionalProperties": false,
               "properties": {
-                "description": { 
+                "description": {
                   "type": "string",
                   "title": "Description",
                   "description": "Description (String)",
                   "maxLength": 2000 
                 },
-                "pluggable": { 
+                "pluggable": {
                   "type": "string",
                   "title": "Pluggable",
                   "description": "Pluggable (String)",
@@ -669,19 +669,19 @@
                   "type": "object",
                   "additionalProperties": false,
                   "required": [
-                    "portName", 
+                    "portName",
                     "nodeName"
                   ],
                   "title": "Local",
                   "description": "Local (List - Object)\n\nElements:\n- portName (required)\n- nodeName (required)",
                   "properties": {
-                    "portName": { 
+                    "portName": {
                       "type": "string",
                       "title": "Port Name",
                       "description": "Port Name (String)\n- Allowed values: Ethernet1_N where N is between 1-64",
                       "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$"
                     },
-                    "nodeName": { 
+                    "nodeName": {
                       "type": "string",
                       "title": "Node Name",
                       "description": "Node Name (String)",
@@ -696,17 +696,17 @@
                   "additionalProperties": false,
                   "description": "The remote endpoint of the connection.",
                   "required": [
-                    "portName", 
+                    "portName",
                     "nodeName"
                   ],
                   "properties": {
-                    "portName": { 
+                    "portName": {
                       "type": "string",
                       "title": "Port Name",
                       "description": "Port Name (String)\n- Allowed values: Ethernet1_N where N is between 1-64",
                       "pattern": "^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$"
                     },
-                    "nodeName": { 
+                    "nodeName": {
                       "type": "string",
                       "title": "Node Name",
                       "description": "Node Name (String)",
@@ -730,7 +730,7 @@
                 "name"
               ],
               "properties": {
-                "name": { 
+                "name": {
                   "type": "string",
                   "title": "Name",
                   "description": "Name (String)",
@@ -738,13 +738,13 @@
                   "maxLength":120, 
                   "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
                 },
-                "description": { 
+                "description": {
                   "type": "string",
                   "title": "Description",
                   "description": "Description (String)",
                   "maxLength": 2000 
                 },
-                "vni": { 
+                "vni": {
                   "type": "integer",
                   "title": "VNI",
                   "description": "VNI (Integer)\n- Minimum: 2\n- Maximum: 6000000",
@@ -758,14 +758,14 @@
                     }
                   ]
                 },
-                "mtu": { 
+                "mtu": {
                   "type": "integer",
                   "title": "MTU",
                   "description": "MTU (Integer)\n- Minimum: 1500\n- Maximum: 9100",
                   "minimum": 1500, 
                   "maximum": 9100 
                 },
-                "vrfId": { 
+                "vrfId": {
                   "type": "string",
                   "title": "VRF ID",
                   "description": "VRF ID (String)",
@@ -779,7 +779,7 @@
                     "type": "object",
                     "additionalProperties": false,
                     "properties": {
-                      "enabled": { 
+                      "enabled": {
                         "type": "boolean",
                         "title": "Enabled",
                         "description": "Enabled (Boolean)"
@@ -924,7 +924,7 @@
                 "name"
               ],
               "properties": {
-                "name": { 
+                "name": {
                   "type": "string",
                   "title": "Name",
                   "description": "Name (String)",
@@ -939,13 +939,13 @@
                     }
                   ]
                 },
-                "description": { 
+                "description": {
                   "type": "string",
                   "title": "Description",
                   "description": "Description (String)",
                   "maxLength": 2000 
                 },
-                "enabled": { 
+                "enabled": {
                   "type": "boolean",
                   "title": "Enabled",
                   "description": "Enabled (Boolean)"
@@ -956,13 +956,13 @@
                   "description": "ASN (Integer)\n- Minimum: 1\n- Maximum: 4294967294\n- Disallowed values: 23456, 65535",
                   "minimum": 1,
                   "maximum": 4294967294,
-                  "not": { 
+                  "not": {
                     "enum": [
                       23456, 65535
-                      ] 
+                      ]
                     }
                 },
-                "vni": { 
+                "vni": {
                   "type": "integer",
                   "title": "VNI",
                   "description": "VNI (Integer)\n- Minimum: 2\n- Maximum: 6000000",
@@ -1015,7 +1015,7 @@
                     "type": "object",
                     "additionalProperties": false,
                     "properties": {
-                      "name": { 
+                      "name": {
                         "type": "string",
                         "title": "Name",
                         "description": "Name (String)",
@@ -1023,13 +1023,13 @@
                         "maxLength": 120, 
                         "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
                       },
-                      "description": { 
+                      "description": {
                         "type": "string",
                         "title": "Description",
                         "description": "Description (String)",
                         "maxLength": 2000 
                       },
-                      "enabled": { 
+                      "enabled": {
                         "type": "boolean",
                         "title": "Enabled",
                         "description": "Enabled (Boolean)"
@@ -1070,7 +1070,7 @@
                             "prefix", "discard"
                           ],
                           "properties": {
-                            "nodeId": { 
+                            "nodeId": {
                               "type": "string",
                               "title": "Node ID",
                               "description": "Node ID (String)",
@@ -1078,7 +1078,7 @@
                               "maxLength": 120, 
                               "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
                             },
-                            "interface": { 
+                            "interface": {
                               "type": "string",
                               "title": "Interface",
                               "description": "Interface (String)",
@@ -1086,7 +1086,7 @@
                               "maxLength": 120, 
                               "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
                             },
-                            "preference": { 
+                            "preference": {
                               "type": "integer",
                               "title": "Preference",
                               "description": "Preference (Integer)\n- Minimum: 1\n- Maximum: 255",
@@ -1105,7 +1105,7 @@
                               "description": "Next Hop (String)",
                               "pattern": "^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)){3})(\\/(3[0-2]|[12]?\\d|0))?$|^(::ffff:(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)){3})(\\/(3[0-2]|[12]?\\d|0))?$|^([0-9a-fA-F:]+)(\\/(12[0-8]|1[01][0-9]|[1-9]?\\d))?$"
                             },
-                            "nextVrf": { 
+                            "nextVrf": {
                               "type": "string",
                               "title": "Next VRF",
                               "description": "Next VRF (String)",
@@ -1125,7 +1125,7 @@
                                 "TAG_BLACK"
                               ]
                             },
-                            "discard": { 
+                            "discard": {
                               "type": "boolean",
                               "title": "Discard",
                               "description": "Discard (Boolean)\n- If true, nextHop is disallowed and tag is must be TAG_BLACK\n- If false, nextHop is required and tag must not be TAG_BLACK"

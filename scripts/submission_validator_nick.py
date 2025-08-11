@@ -1,5 +1,6 @@
 import sys
 import json
+from utils.schema_loader import get_schema_path
 from ruamel.yaml import YAML
 from ruamel.yaml.compat import StringIO
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
@@ -58,7 +59,7 @@ def load_yaml_file(file_path):
     yaml = YAML()
     with open(file_path, 'r') as f:
         data = yaml.load(f)
-        console.print("YAML file loaded successfully")
+        console.print(f"YAML file '{file_path}' loaded successfully")
         return data
 
 def load_json_file(file_path):
@@ -66,11 +67,6 @@ def load_json_file(file_path):
         data = json.load(f)
     print("JSON schema loaded successfully")
     return data
-
-def write_json(data, output_path):
-    with open(output_path, 'w') as f:
-        json.dump(data, f, indent=2)
-    print(f"JSON written to {output_path}")
 
 def get_line_number(root, path):
     """
@@ -340,17 +336,20 @@ def validate_json(instance, schema):
     sorted_errors = sorted(all_errors, key=extract_line_number)
 
     if not all_errors:
-        print("YAML is valid according to the JSON schema.")
+        console.print(f"{file_path} is valid according to the JSON schema.", style="bold green")
+        print("=" * 50)
+        return True
     else:
-        console.print("YAML validation errors found:", style="bold red")
+        console.print(f"YAML validation errors found in file '{file_path}':", style="bold red")
         for e in sorted_errors:
             console.print(e)
-        sys.exit(1)
+        print("=" * 50)
+        # sys.exit(1)
+        return False
 
 
 def validate_schema(yaml_path):
-    SCHEMA_PATH = "schemas/validation/new_validation_with_desc.json"
-    # if len(sys.argv) != 4:
+    schema_path = get_schema_path()    # if len(sys.argv) != 4:
     #     print("Usage: python validate_yaml.py input.yaml schema.json output.json")
     #     sys.exit(1)
 
@@ -359,11 +358,6 @@ def validate_schema(yaml_path):
     # json_output_path = sys.argv[3]
 
     yaml_data = load_yaml_file(yaml_path)
-    json_schema = load_json_file(SCHEMA_PATH)
-    # write_json(yaml_data, json_output_path)
+    json_schema = load_json_file(schema_path)
 
-    validate_json(yaml_data, json_schema)
-    # print(f"Converted {yaml_path} to {json_output_path} and validated against {schema_path}.")
-
-if __name__ == "__main__":
-    validate_schema()
+    return validate_json(yaml_data, yaml_path, json_schema)
