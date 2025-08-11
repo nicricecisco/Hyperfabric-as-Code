@@ -5,6 +5,7 @@ from ruamel.yaml.compat import StringIO
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 from jsonschema import Draft7Validator, ValidationError
 from jsonschema.exceptions import best_match
+from typing import Any, Dict, List, Tuple
 """
     from textual.app import App, ComposeResult
     from textual.containers import Horizontal
@@ -21,8 +22,8 @@ REGEX_DESCRIPTIONS = {
     r"^(?!-)(?!\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$":
         "allowed characters are letters and digits and hyphens, cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens",
 
-    r"^eth\\([0-8]\\)$":
-        "must be in the format 'eth(0)' to 'eth(8)'",
+    r"^([0-9A-Fa-f:]+)\\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])$":
+        "must be a valid ipv6 address with optional cidr subnet mask from 0 to 128",
 
     r"^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$":
         "must be in the format 'Ethernet1_1' to 'Ethernet1_64'",
@@ -33,18 +34,21 @@ REGEX_DESCRIPTIONS = {
     r"^Vrf-?(?=.{1,15}$)(?!(?:\d{8,})$)[A-Za-z0-9]+$":
         "must be 'Vrf' optionally followed by a hyphen and 1 to 15 alphanumeric characters, with a limit of 7 digits if no letters",
 
-    r"^(Default VRF|Vrf-?(?=.{1,15}$)(?!(?:\\d{8,})$)[A-Za-z0-9]+)$":
+    r"^(Default VRF|Vrf-?(?=.{1,15}$)(?!(?:\d{8,})$)[A-Za-z0-9]+)$":
         "must be either 'Default VRF' or 'Vrf' optionally followed by a hyphen, followed by 1 to 15 alphanumeric characters with a limit of 7 digits if no letters",
 
-    r"^((25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(\.(?!$)|$)){4}(\/([0-9]|[1-2][0-9]|3[0-2]))?$":
+    r"^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\/([0-9]|[1-2][0-9]|3[0-2]))?$":
         "must be a valid ipv4 address with optional cidr subnet mask from 0 to 32",
 
-    r"^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}(\/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8]))?$|^(([0-9a-fA-F]{1,4}:){1,7}:|:((:[0-9a-fA-F]{1,4}){1,7}))((\/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8])))?$":
+    r"^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}(/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8]))?$|^(([0-9a-fA-F]{1,4}:){1,7}:|:((:[0-9a-fA-F]{1,4}){1,7}))((/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8])))?$":
         "must be a valid ipv6 address with optional cidr subnet mask from 0 to 128",
-
-    r"^(((25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(\.(?!$)|$)){4}(\/(3[0-2]|[12]?\d))?)$|^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(([0-9a-fA-F]{1,4}:){1,7}:)|(:([0-9a-fA-F]{1,4}:){1,7}))(/(12[0-8]|1[01][0-9]|[1-9]?[0-9]))?$":
-        "must be a valid ipv4 or ipv6 address with optional CIDR prefix"
     
+    r"^(((25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(\.(?!$)|$)){4}(\/(3[0-2]|[12]?\d))?)$|^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(([0-9a-fA-F]{1,4}:){1,7}:)|(:([0-9a-fA-F]{1,4}:){1,7}))(/(12[0-8]|1[01][0-9]|[1-9]?[0-9]))?$":
+        "must be a valid ipv4 or ipv6 address with optional CIDR ",
+    
+    r"^((25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3})(/(3[0-2]|[12]?\d|0))?$|^(::ffff:(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3})(/(3[0-2]|[12]?\d|0))?$|^([0-9a-fA-F:]+)(/(12[0-8]|1[01][0-9]|[1-9]?\d))?$":
+        "must be a valid ipv4 or ipv6 address with optional CIDR"
+
 }
 
 console = Console()
@@ -232,63 +236,44 @@ def describe_error(error: ValidationError, instance: dict):
 
     return msg
 
-def check_for_duplicate_names(instance):
-    """
-    Returns a list of fake ValidationError-like objects for duplicate name checks.
-    """
+def check_for_duplicate_names(instance: Dict[str, Any]) -> List[SimpleNamespace]:
     errors = []
-    global_node_names = set()
 
-    def make_error(path, instance, msg):
+    def make_error(path: List[Any], instance_value: Any, msg: str) -> SimpleNamespace:
         return SimpleNamespace(
             path=path,
             absolute_path=path,
-            instance=instance,
+            instance=instance_value,
             message=msg,
             validator="duplicate",
             validator_value=None
         )
 
-    fabrics = instance.get("fabrics", [])
-    for fabric_idx, fabric in enumerate(fabrics):
-        fabric_name = fabric.get("name", f"fabrics[{fabric_idx}]")
-        fabric_path = ["fabrics", fabric_idx]
-
-        # Global nodeName uniqueness
-        nodes = fabric.get("nodes", [])
-        for node_idx, node in enumerate(nodes):
-            node_name = node.get("nodeName")
-            if node_name:
-                if node_name in global_node_names:
-                    msg = f"Duplicate nodeName '{node_name}' found in fabric '{fabric_name}'"
-                    errors.append(make_error(fabric_path + ["nodes", node_idx, "nodeName"], node_name, msg))
+    def recurse(obj: Any, path: List[Any]):
+        if isinstance(obj, dict):
+            name_map: Dict[str, List[Any]] = {}
+            for key, value in obj.items():
+                if isinstance(value, list):
+                    seen_names = set()
+                    for idx, item in enumerate(value):
+                        if isinstance(item, dict):
+                            name = item.get("name")
+                            if name:
+                                if name in seen_names:
+                                    error_path = path + [key, idx, "name"]
+                                    msg = f"Duplicate name '{name}'"
+                                    errors.append(make_error(error_path, name, msg))
+                                else:
+                                    seen_names.add(name)
+                        # Recurse into list item
+                        recurse(item, path + [key, idx])
                 else:
-                    global_node_names.add(node_name)
+                    recurse(value, path + [key])
+        elif isinstance(obj, list):
+            for idx, item in enumerate(obj):
+                recurse(item, path + [idx])
 
-        # Scoped name keys
-        scoped_keys = ["name", "vrfName", "vniName", "staticRouteName"]
-        for key in scoped_keys:
-            seen = set()
-
-            def collect_objects(obj, path=[], parent_key=None):
-                if isinstance(obj, list):
-                    for i, item in enumerate(obj):
-                        yield from collect_objects(item, path + [i], parent_key)
-                elif isinstance(obj, dict):
-                    if key in obj:
-                        if key == "Name" and parent_key == "ports":
-                            return  # skip duplicates inside ports
-                        yield (obj[key], path + [key])
-                    for k, v in obj.items():
-                        yield from collect_objects(v, path + [k], k)
-
-            for val, path in collect_objects(fabric, fabric_path):
-                if val in seen:
-                    msg = f"Duplicate {key} '{val}' found in fabric '{fabric_name}'"
-                    errors.append(make_error(path, val, msg))
-                else:
-                    seen.add(val)
-
+    recurse(instance, [])
     return errors
 
 def get_field_order(schema):
@@ -326,7 +311,6 @@ def get_field_order(schema):
         return order
 
     return recurse(schema)
-
 
 
 def validate_json(instance, schema):

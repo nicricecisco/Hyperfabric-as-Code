@@ -1,110 +1,230 @@
-fabric:
-  - name: ""  # required, string
-    description: "dsadsa"
-    location: "dsada"
-    address: "dsad"
-    city: "dqew"
-    country: ""
-    topology: "MESH"  # enum: [MESH, SPINE_LEAF], default = MESH
-    labels: []  # string list, write using dash with new line for each item
-    annotations: []  # string list
-
+# Generated on 2025-08-07 18:29:05 UTC
+fabrics:
+  - name: frompythontest1
+    location: CA-95134
+    address: 300 East Tasman Drive
+    city: Milpitas
+    country: US
+    topology: SPINE_LEAF
+    labels:
+      - LABEL_ONE
+    autocabling:
+      enabled: true
+      speed: 100
+      length: 4
     nodes:
-      - name: ""  # required, string
-        description: ""
-        location: ""
-        modelName: "HF6100-32D"  # required, enum: [HF6100-32D, HF6100-60L4D]
-        roles: ["LEAF"]  # required, enum: [LEAF, SPINE, SERVER]
-        serialNumber: ""
-        psuAirflows:
-          - airflow: "AIRFLOW_TYPE_PORT_SIDE_INTAKE"  # enum: [AIRFLOW_TYPE_PORT_SIDE_INTAKE, AIRFLOW_TYPE_PORT_SIDE_EXHAUST]
-            psuModel: ""
+      - name: Leaftest-001
+        description: Leaf Switch 01
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        serialNumber: FDO28150Q1F
         labels:
-          - "leaf"
-          - "row-1"
-
-        managementPorts:
-          - name: ""  # required, string 
-            description: ""
-            configOrigin: "CONFIG_ORIGIN_CLOUD"  # enum: [CONFIG_ORIGIN_CLOUD, CONFIG_ORIGIN_DEVICE]
-            connectedState: "CONNECTED_STATE_NOT_CONNECTED"  # enum: [CONNECTED_STATE_NOT_CONNECTED, CONNECTED_STATE_CONNECTED]
-            ipv4ConfigType: "CONFIG_TYPE_STATIC"  # enum: [CONFIG_TYPE_STATIC, CONFIG_TYPE_DHCP], default = CONFIG_TYPE_STATIC
-            ipv4Address: "" # ipv4 string, must be set if ipv4ConfigType is CONFIG_TYPE_STATIC
-            ipv4Gateway: "" 
-            ipv6ConfigType: "CONFIG_TYPE_STATIC"  # enum: [CONFIG_TYPE_STATIC, CONFIG_TYPE_DHCP], default = CONFIG_TYPE_STATIC
-            ipv6Address: "" # ipv6 string, must be set if ipv6ConfigType is CONFIG_TYPE_STATIC
-            ipv6Gateway: ""
-            dnsAddresses: [] # ipv4 or ipv6 string list
-            proxyAddress: "" # URL string
-            proxyPassword: ""
-            proxyUsername: ""
-            enabled: false
-            setProxyPassword: false
-            cloudUrls: [] # URL string list
-            noProxy: [] # string list
-
+          - TAG_ONE
+        annotations:
+          position: LF001
         ports:
-          - name: ""  # required, string
-            description: ""
-            mtu: 9100  # integer, range 1500-9100
-            fec: "none"  # enum: [rs, none]
-            pluggable: ""
-            speed: "1x100G4"  # enum: ["1x40G2", "1x100G2", "1x100G4", "1x200G2", "1x400G", ...]
-            enabled: false
-            roles: ["UNUSED_PORT"]  # enum: [UNUSED_PORT, FABRIC_PORT, HOST_PORT, ROUTED_PORT, LAG_PORT]
-            linkDown: false # boolean, required if roles is not ["FABRIC_PORT", "LAG_PORT"]
-            vrfId: "" # string, required if roles is "ROUTED_PORT"
-            ipv4Address: "" # ipv4 string, this or ipv6Address required if roles is "ROUTED_PORT"
-            ipv6Address: "" # ipv6 string, this or ipv4Address required if roles is "ROUTED_PORT"
-            annotations: [] 
-
-    connections:
-      - description: ""
-        osType: "HYPER_FABRIC"  # enum: ["HYPER_FABRIC", "NEXUS", "IOS_XE", "IOS_XR", "LINUX", ...]
-        pluggable: ""
-        local:
-          portName: ""  # required, string predefined immutable Ethernet1_[N] where N is range 1-32 / 1-64
-          nodeName: ""  # required, string set of nodes in fabric
-        remote:
-          portName: ""  # required
-          nodeName: ""  # required
-
-    vnis:
-      - name: ""  # required, string
-        description: ""
-        vni: 2  # integer, range 2-6000000
-        mtu: 9100  # integer, range 1500-9100
-        svis:
-          - enabled: false
-            ipv4Addresses: []
-            ipv6Addresses: []
-        members:
-          - untagged: false
-            vlanId: 2  # integer, range 2-3600
-            port:
-              nodeName: ""  # required
-              portName: ""  # required
-
-    vrfs:
-      - name: ""  # required
-        description: ""
-        enabled: true
-        asn: 65000  # integer
-        vni: 2  # integer range 2-6000000
-        labels: [] 
-        annotations: [] 
-        staticroute:
-          - name: ""  # required
-            description: ""
-            enabled: false
-            labels: [] 
-            annotations: [] 
-            routes:
-              - nodeId: ""  # required
-                interface: ""
-                preference: 1  # integer, range 1-255
-                prefix: ""  # IP string
-                nextHop: ""  # IP string
-                nextVrf: ""
-                tag: "TAG_AMBER"  # enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", ...], default = "TAG_AMBER"
-                discard: false
+          - name: Ethernet1_16
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_20
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_22
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Leaftest-002
+        description: Leaf Switch 02
+        location: sj01-1-101-AAA02
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        serialNumber: FDO28150Q1A
+        annotations:
+          position: LF002
+        managementPorts:
+          - name: eth0
+            description: Management Ethernet Port Configuration
+            ipv4ConfigType: CONFIG_TYPE_DHCP
+            # ipv4Address: 10.10.10.1/24
+            # ipv4Gateway: 10.10.10.254
+            ipv6ConfigType: CONFIG_TYPE_DHCP
+            # ipv6Address: 2a02:1243:5687:0:9c09:2c7a:7c78:9ffc/33
+            # ipv6Gateway: 2a02:1243:5687:0:8d91:ba6b:b24d:9b41
+            dnsAddresses:
+              - 9.9.9.9
+              - ::ffff:192.0.2.128
+            proxyAddress: https://10.10.1.10:8080
+            proxyUsername: adminUser
+           # proxyPassword: '******'
+            enabled: true
+            cloudUrls:
+              - https://a.example.com
+              - https://b.example.com
+            noProxy:
+              - 10.0.0.5
+              - 2001:db8:3333:4444:5555:6666:7777:8888/8
+              - 68.0.0.0/8
+              - 72.0.0.0/8
+              - 172.0.0.1/8
+              - .cisco.com
+              - .local
+        ports:
+          - name: Ethernet1_5
+            mtu: 9100
+            enabled: true
+            roles:
+              - HOST_PORT
+          - name: Ethernet1_6
+            mtu: 9100
+            enabled: true
+            roles:
+              - HOST_PORT
+      - name: Leaftest-003
+        description: Leaf Switch 03
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        labels:
+          - TAG_ONE
+        annotations:
+          position: LF003
+      - name: Leaftest-004
+        description: Leaf Switch 04
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+        labels:
+          - TAG_ONE
+        annotations:
+          position: LF004
+      - name: Spinetest-001
+        description: Spine Switch 01
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+        serialNumber: FLM281601WX
+        annotations:
+          position: SP001
+        ports:
+          - name: Ethernet1_16
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_20
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_22
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+    # connections:
+    #   - local:
+    #       portName: Ethernet1_16
+    #       nodeName: Leaf-01
+    #     remote:
+    #       portName: Ethernet1_16
+    #       nodeName: Spine-01
+    #   - local:
+    #       portName: Ethernet1_20
+    #       nodeName: Leaf-01
+    #     remote:
+    #       portName: Ethernet1_20
+    #       nodeName: Spine-01
+    #   - local:
+    #       portName: Ethernet1_22
+    #       nodeName: Leaf-01
+    #     remote:
+    #       portName: Ethernet1_22
+    #       nodeName: Spine-01
+    # vnis:
+    #   - name: VNI01
+    #     description: My first VNI
+    #     vni: 10001
+    #     labels:
+    #       - MY_TAG!
+    #   - name: VNI02
+    #     description: My second VNI
+    #     vni: 10002
+    #     vrfId: 551df160-a480-4e1c-942a-3df42444417d
+    #     svis:
+    #       - ipv4Addresses:
+    #           - 172.222.40.1/24
+    #         enabled: true
+    #     labels:
+    #       - MY_TAG
+    #       - ANOTHER_TAG
+    # vrfs:
+    #   - name: Vrf-02
+    #     description: My second VRF
+    #     enabled: true
+    #     vni: 1001
+    #     labels:
+    #       - MY_TAG
+    #     staticRoutes:
+    #       - name: SR01
+    #         description: My first static route
+    #         enabled: true
+    #         labels:
+    #           - MY_TAG
+    #         routes:
+    #           - prefix: 10.10.10.0/24
+    #             preference: 10
+    #             discard: true
+    #             tag: TAG_BLACK
+    #           - prefix: 11.10.10.0/24
+    #             preference: 10
+    #             discard: true
+    #             tag: TAG_BLACK
+    #       - name: SR02
+    #         description: My first static route
+    #         enabled: true
+    #         labels:
+    #           - MY_TAG
+    #         routes:
+    #           - prefix: 12.10.10.0/24
+    #             preference: 10
+    #             discard: true
+    #             tag: TAG_BLACK
+    #           - prefix: 13.10.10.0/24
+    #             preference: 10
+    #             discard: true
+    #             tag: TAG_BLACK
+    #             nextHop: 32131a
+    #   - name: Vrf-test
+    #     description: My first VRF
+    #     enabled: true
+    #     vni: 1000
+    #     labels:
+    #       - MY_TAG
+    #     staticRoutes:
+    #       - name: SR001
+    #         description: My first static route
+    #         enabled: true
+    #         labels:
+    #           - MY_TAG
+    #         routes:
+    #           - prefix: 14.10.10.0/24
+    #             preference: 10
+    #             discard: true
+    #             tag: TAG_BLACK
+    #           - prefix: 15.10.10.0/24
+    #             preference: 10
+    #             discard: true
+    #             tag: TAG_BLACK
+    #   - name: Vrf12000000
+    #     enabled: true
+    #     vni: 12000000
+    # bind:
+    # - nodeName: Leaf-01
+    #   deviceId: 1312312adsaf

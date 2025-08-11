@@ -10,6 +10,7 @@ fabrics:
     annotations:
       - name:
         value:
+        
     autocabling:
       - enabled:
         pluggable:

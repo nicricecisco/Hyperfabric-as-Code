@@ -137,4 +137,26 @@ fabricname:
                     nodeName*: string, set of node names in fabric
                         
 
-            
+
+
+
+
+staticroutes:
+    owner: vrf
+    name*: string
+    description: string
+    enabled: boolean
+    labels: string[]
+    annotations: map
+               
+               
+routes:
+    owner: staticroute
+    preference: integer, range 1-255
+    interface: string, WIP
+    nextHop: string, WIP
+    nextVrf: string, WIP
+    nodeId: string, WIP
+    prefix: string, IP CIDR notation
+    tag: enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", ...] default = "TAG_AMBER"
+    discard: boolean, if true/false WIP

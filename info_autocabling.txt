@@ -27,16 +27,32 @@ CABLES:
     Hot-swappable ends	No	No	Yes (with transceivers)
     Distance reliability	Drops after 5m	Stable to ~30m	Excellent for 100m–10km+
 
+Type	Medium	Connector	Max Distance (typical)	Active/Passive	Cost	Flexibility
+DAC	Copper	QSFP/SFP	~1–5m	Passive	🟢 Cheapest	🟢 High
+AOC	Fiber (MMF)	QSFP/SFP	~5–30m	Active	🟡 Moderate	🟢 High
+MMF	Fiber	MPO/LC	~70–150m	Passive (via transceivers)	🔴 Higher (due to optics)	🟢 High
+SMF	Fiber	MPO/LC	~500m–10km+	Passive (via transceivers)	🔴 Highest	🟡 Moderate
+
+
+Use QDD‑form cable or module when:
+    You need breakout flexibility (e.g. QDD‑2x200G, QDD‑4×100G lanes).
+    You want higher lane‑density per physical port for advanced configurations.
+Use standard QSFP‑400G‑DR4 when:
+    You only need a 4×100G DR4 link, without breakout.
+    You’re connecting typical 400G optics between switches without extra lane-level functionality.
+
 
 
 LENGTH LOGIC:
 -------------
-IF length ≤ 5m AND both ports support DAC:
+IF length ≤ 5m:
     Use DAC
-ELSE IF length ≤ 30m AND AOC is available:
+ELSE IF 5m < length ≤ 30m AND AOC is available:
     Use AOC
+ELSE IF 30m < length < 150m:
+    Use SMF
 ELSE:
-    Use transceivers + fiber (SMF/MMF)
+    Use MMF
 
 
 
@@ -45,3 +61,189 @@ ELSE:
 21–50	Spine-Leaf	400G DAC/AOC for future-proofing
 >50	Spine-Leaf	400G AOC or transceivers (scale)
 
+
+SPEED LOGIC:
+------------
+IF speed = 400:
+    Use 400G 
+ELSE:
+    Use 100G 
+
+
+
+COMBINED LOGIC:
+---------------
+IF speed = 400:
+    if length ≤ 3m:
+        QDD-400-CU1M  
+        QDD-400-CU2M  
+        QDD-400-CU2.5M  
+        QDD-400-CU3M 
+    else if length > 3m && length ≤ 30m:
+        QDD-400-AOC5M  
+        QDD-400-AOC7M  
+        QDD-400-AOC10M  
+        QDD-400-AOC15M  
+        QDD-400-AOC20M  
+        QDD-400-AOC25M  
+        QDD-400-AOC30M
+    else if length > 30m && length ≤ 100m:
+        QDD-400G-SR8-S
+    else if length > 100m && length ≤ 150m:
+        QDD-400G-SR4.2-BD
+    else if length > 150m && length ≤ 400m:
+        QDD-400G-ZR-S
+    else if length > 400m && length ≤ 500m:
+        QSFP-400G-DR4
+    else if length > 500m && length ≤ 2000m:
+        QDD-400G-FR4-S
+    else if length > 2000m && length ≤ 10000m:
+        QDD-400G-LR4-S       
+    else:
+        "no pluggable supported"
+
+ELSE:
+    if length ≤ 3m:
+        QSFP-100G-CU1M
+        QSFP-100G-CU2M
+        QSFP-100G-CU3M
+        QSFP-100G-CU5M
+    else if length > 3m && length ≤ 30m:
+        QSFP-100G-AOC1M
+        QSFP-100G-AOC2M
+        QSFP-100G-AOC3M
+        QSFP-100G-AOC5M
+        QSFP-100G-AOC7M
+        QSFP-100G-AOC10M
+        QSFP-100G-AOC15M
+        QSFP-100G-AOC20M
+        QSFP-100G-AOC25M
+        QSFP-100G-AOC30M
+    else if length > 30m && length ≤ 150m:
+        QSFP-100G-SR4-S
+    else if length > 150m && length ≤ 500m:
+        QSFP-100G-DR-S
+    else if length > 500m && length ≤ 2000m:
+        QSFP-100G-FR-S
+    else:
+        "no pluggable supported"
+
+
+
+
+---------------------------------------------------------------
+cables = [
+    # 400G cables
+    {"name": "QDD-400-CU1M", "speed": 400, "length": 1},
+    {"name": "QDD-400-CU2M", "speed": 400, "length": 2},
+    {"name": "QDD-400-CU2.5M", "speed": 400, "length": 2.5},
+    {"name": "QDD-400-CU3M", "speed": 400, "length": 3},
+    {"name": "QDD-400-AOC5M", "speed": 400, "length": 5},
+    {"name": "QDD-400-AOC7M", "speed": 400, "length": 7},
+    {"name": "QDD-400-AOC10M", "speed": 400, "length": 10},
+    {"name": "QDD-400-AOC15M", "speed": 400, "length": 15},
+    {"name": "QDD-400-AOC20M", "speed": 400, "length": 20},
+    {"name": "QDD-400-AOC25M", "speed": 400, "length": 25},
+    {"name": "QDD-400-AOC30M", "speed": 400, "length": 30},
+    {"name": "QDD-400G-SR8-S", "speed": 400, "length": 100},
+    {"name": "QDD-400G-SR4.2-BD", "speed": 400, "length": 150},
+    {"name": "QDD-400G-ZR-S", "speed": 400, "length": 400},
+    {"name": "QSFP-400G-DR4", "speed": 400, "length": 500},
+    {"name": "QDD-400G-FR4-S", "speed": 400, "length": 2000},
+    {"name": "QDD-400G-LR4-S", "speed": 400, "length": 10000},
+
+    # 100G cables
+    {"name": "QSFP-100G-CU1M", "speed": 100, "length": 1},
+    {"name": "QSFP-100G-CU2M", "speed": 100, "length": 2},
+    {"name": "QSFP-100G-CU3M", "speed": 100, "length": 3},
+    {"name": "QSFP-100G-CU5M", "speed": 100, "length": 5},
+    {"name": "QSFP-100G-AOC1M", "speed": 100, "length": 1},
+    {"name": "QSFP-100G-AOC2M", "speed": 100, "length": 2},
+    {"name": "QSFP-100G-AOC3M", "speed": 100, "length": 3},
+    {"name": "QSFP-100G-AOC5M", "speed": 100, "length": 5},
+    {"name": "QSFP-100G-AOC7M", "speed": 100, "length": 7},
+    {"name": "QSFP-100G-AOC10M", "speed": 100, "length": 10},
+    {"name": "QSFP-100G-AOC15M", "speed": 100, "length": 15},
+    {"name": "QSFP-100G-AOC20M", "speed": 100, "length": 20},
+    {"name": "QSFP-100G-AOC25M", "speed": 100, "length": 25},
+    {"name": "QSFP-100G-AOC30M", "speed": 100, "length": 30},
+    {"name": "QSFP-100G-SR4-S", "speed": 100, "length": 150},
+    {"name": "QSFP-100G-DR-S", "speed": 100, "length": 500},
+    {"name": "QSFP-100G-FR-S", "speed": 100, "length": 2000}
+]
+
+
+    
+
+
+
+
+
+
+
+________________________________________________________
+                CABLE LIST:
+________________________________________________________
+400G:
+    QDD-400-CU1M  
+    QDD-400-CU2M  
+    QDD-400-CU2.5M  
+    QDD-400-CU3M 
+
+    QDD-400-AOC1M  
+    QDD-400-AOC2M  
+    QDD-400-AOC3M  
+    QDD-400-AOC5M  
+    QDD-400-AOC7M  
+    QDD-400-AOC10M  
+    QDD-400-AOC15M  
+    QDD-400-AOC20M  
+    QDD-400-AOC25M  
+    QDD-400-AOC30M
+
+    100M
+    QDD-400G-SR8-S
+    150M
+    QDD-400G-SR4.2-BD
+    400M
+    QDD-400G-ZR-S
+    500M
+    CB-M12-M12-SMF
+    QDD-400G-DR4-S
+    QSFP-400G-DR4
+    2000M
+    QDD-400G-FR4-S
+    10000M
+    QDD-400G-LR4-S
+    QDD-400G-LR8-S
+-------------------------------------------------
+100G:
+    QSFP-100G-CU1M
+    QSFP-100G-CU2M
+    QSFP-100G-CU3M
+    QSFP-100G-CU5M
+
+    QSFP-100G-AOC1M
+    QSFP-100G-AOC2M
+    QSFP-100G-AOC3M
+    QSFP-100G-AOC5M
+    QSFP-100G-AOC7M
+    QSFP-100G-AOC10M
+    QSFP-100G-AOC15M
+    QSFP-100G-AOC20M
+    QSFP-100G-AOC25M
+    QSFP-100G-AOC30M
+
+    20M
+    QSFP-100G-CWDM4-S
+    30M
+    QSFP-100G-SL4
+    150M
+    QSFP-100G-SR1.2
+    QSFP-100G-SR4-S
+    QSFP-40/100-SRBD
+    500M
+    QSFP-100G-DR-S
+    QSFP-100G-PSM4-S
+    2000M
+    QSFP-100G-FR-S

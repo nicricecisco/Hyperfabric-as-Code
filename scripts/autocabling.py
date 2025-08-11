@@ -4,13 +4,53 @@ from pprint import pprint
 from collections import defaultdict
 from scripts.hyperfabric_api import get_fabric, get_fabric_nodes, get_fabric_connections
 
+
+
 # Setup logger
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
+cables = [
+    # 400G cables
+    {"name": "QDD-400-CU1M", "speed": 400, "length": 1},
+    {"name": "QDD-400-CU2M", "speed": 400, "length": 2},
+    {"name": "QDD-400-CU2.5M", "speed": 400, "length": 2.5},
+    {"name": "QDD-400-CU3M", "speed": 400, "length": 3},
+    {"name": "QDD-400-AOC5M", "speed": 400, "length": 5},
+    {"name": "QDD-400-AOC7M", "speed": 400, "length": 7},
+    {"name": "QDD-400-AOC10M", "speed": 400, "length": 10},
+    {"name": "QDD-400-AOC15M", "speed": 400, "length": 15},
+    {"name": "QDD-400-AOC20M", "speed": 400, "length": 20},
+    {"name": "QDD-400-AOC25M", "speed": 400, "length": 25},
+    {"name": "QDD-400-AOC30M", "speed": 400, "length": 30},
+    {"name": "QDD-400G-SR8-S", "speed": 400, "length": 100},
+    {"name": "QDD-400G-SR4.2-BD", "speed": 400, "length": 150},
+    {"name": "QDD-400G-ZR-S", "speed": 400, "length": 400},
+    {"name": "QSFP-400G-DR4", "speed": 400, "length": 500},
+    {"name": "QDD-400G-FR4-S", "speed": 400, "length": 2000},
+    {"name": "QDD-400G-LR4-S", "speed": 400, "length": 10000},
+
+    # 100G cables
+    {"name": "QSFP-100G-CU1M", "speed": 100, "length": 1},
+    {"name": "QSFP-100G-CU2M", "speed": 100, "length": 2},
+    {"name": "QSFP-100G-CU3M", "speed": 100, "length": 3},
+    {"name": "QSFP-100G-CU5M", "speed": 100, "length": 5},
+    {"name": "QSFP-100G-AOC1M", "speed": 100, "length": 1},
+    {"name": "QSFP-100G-AOC2M", "speed": 100, "length": 2},
+    {"name": "QSFP-100G-AOC3M", "speed": 100, "length": 3},
+    {"name": "QSFP-100G-AOC5M", "speed": 100, "length": 5},
+    {"name": "QSFP-100G-AOC7M", "speed": 100, "length": 7},
+    {"name": "QSFP-100G-AOC10M", "speed": 100, "length": 10},
+    {"name": "QSFP-100G-AOC15M", "speed": 100, "length": 15},
+    {"name": "QSFP-100G-AOC20M", "speed": 100, "length": 20},
+    {"name": "QSFP-100G-AOC25M", "speed": 100, "length": 25},
+    {"name": "QSFP-100G-AOC30M", "speed": 100, "length": 30},
+    {"name": "QSFP-100G-SR4-S", "speed": 100, "length": 150},
+    {"name": "QSFP-100G-DR-S", "speed": 100, "length": 500},
+    {"name": "QSFP-100G-FR-S", "speed": 100, "length": 2000}
+]
+
 DEFAULT_PLUGGABLE = "QDD-400-CU3M"
-# PLUGGABLE_LIST = [
-#     "QDD-2Q200-CU3M",
     
 SUPPORTED_MODELS = ["HF6100-32D", "HF6100-60L4D"]
 
@@ -119,6 +159,19 @@ def _get_next_available_port(node, occupied_ports):
 
     return None
 
+def select_cable(cables, speed, length):
+
+    # Filter cables by speed
+    matching_speed = [c for c in cables if c["speed"] == speed]
+
+    # Find cable with exact matching length, or closest greater
+    for cable in sorted(matching_speed, key=lambda c: c.get("length", float("inf"))):
+        if "length" in cable and cable["length"] >= length:
+            return cable["name"]
+
+    raise ValueError(f"No suitable cable found for speed {speed} and length {length}")
+
+
 def _connect_nodes(local_node, remote_node, occupied_ports):
     local_model_name, remote_model_name = _get_model_name(local_node), _get_model_name(remote_node)
     if local_model_name is None or remote_model_name is None:
@@ -221,12 +274,14 @@ def autocabling(autocabling_data_obj, pull_nodes_from_yaml=False):
             leaf_nodes.append(node)
         else:
             logger.warning(f"[AUTOCABLING] Unknown node type: expected type 'LEAF' or 'SPINE', but has role: {node.get('roles')}. Node will be excluded in autocabling.")
-
     connection_set, occupied_ports, redundant_connections, connections_to_delete, existing_connections = _analyze_existing_connections(connections, names_of_spine_nodes, len(spine_nodes) > 0)
 
     pluggable = autocabling_data_obj["autocabling_obj"].get("pluggable")
+    
     if not pluggable:
-        pluggable = DEFAULT_PLUGGABLE
+        speed = autocabling_data_obj["autocabling_obj"].get("speed", 400)
+        length = autocabling_data_obj["autocabling_obj"].get("length", 1)
+        pluggable = select_cable(cables, length, speed)
 
     if len(spine_nodes) > 0:
         connections = _autocable_spine_leaf_topology(spine_nodes, leaf_nodes, pluggable, connection_set, occupied_ports)
