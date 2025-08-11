@@ -49,7 +49,7 @@ cables = [
     {"name": "QSFP-100G-FR-S", "speed": 100, "length": 2000}
 ]
 
-DEFAULT_PLUGGABLE = "QDD-400-CU3M"
+#DEFAULT_PLUGGABLE = "QDD-400-CU3M"
     
 SUPPORTED_MODELS = ["HF6100-32D", "HF6100-60L4D"]
 
@@ -280,7 +280,7 @@ def autocabling(autocabling_data_obj, pull_nodes_from_yaml=False):
     if not pluggable:
         speed = autocabling_data_obj["autocabling_obj"].get("speed", 400)
         length = autocabling_data_obj["autocabling_obj"].get("length", 1)
-        pluggable = select_cable(cables, length, speed)
+        pluggable = select_cable(cables, speed, length)
 
     if len(spine_nodes) > 0:
         connections = _autocable_spine_leaf_topology(spine_nodes, leaf_nodes, pluggable, connection_set, occupied_ports)

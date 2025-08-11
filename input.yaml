@@ -1,4 +1,4 @@
-# Last uploaded (success): 2025-08-08 22:08:24 UTC
+# Last uploaded (success): 2025-08-11 23:35:51 UTC
 fabrics:
   - name: frompythontest1
     location: CA-95134
@@ -19,3 +19,34 @@ fabrics:
           - TAG_ONE
         annotations:
           position: LF001
+      - name: Leaftest-002
+        description: Leaf Switch 02
+        location: sj01-1-101-AAA02
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        serialNumber: FDO28150Q1A
+        annotations:
+          position: LF002
+      - name: Leaftest-003
+        description: Leaf Switch 03
+        location: sj01-1-101-AAA03
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        serialNumber: FDO28150Q1B
+        annotations:
+          position: LF003
+      - name: Spinetest-001
+        description: Spine Switch 01
+        location: sj01-1-101-AAA04
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+        serialNumber: FDO28150Q1C
+        annotations:
+          position: SP001
+    autocabling:
+      enabled: true
+      speed: 100
+      length: 700
