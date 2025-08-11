@@ -309,7 +309,7 @@ def get_field_order(schema):
     return recurse(schema)
 
 
-def validate_json(instance, schema):
+def validate_json(instance, file_path, schema):
     field_order = get_field_order(schema)
     validator = Draft7Validator(schema)
 
