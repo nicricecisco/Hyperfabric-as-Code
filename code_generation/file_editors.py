@@ -3,7 +3,7 @@ import ast
 import json
 import astunparse
 import subprocess
-from utils.logger import get_logger
+from utils.logger import get_logger, log_success_green
 from code_generation.helpers import camel_to_screaming_snake, find_key_path, get_nested
 
 # Setup logger
@@ -50,8 +50,15 @@ def add_entity_to_definitions_file(new_key, new_path, definitions_file):
     with open(definitions_file, "w") as f:
         f.write(new_source)
 
-    subprocess.run([sys.executable, "-m", "black", definitions_file])
-    logger.info(f"[SUCCESS] Successfully added entity '{orig_key}' to ENTITY_KEYS and ENTITY_PATHS in file '{definitions_file}'")
+    subprocess.run(
+        [sys.executable, "-m", "black", definitions_file],
+        capture_output=True,
+        text=True
+    )
+    
+    success_message = f"[SUCCESS] Successfully added entity '{orig_key}' to ENTITY_KEYS and ENTITY_PATHS in file '{definitions_file}'"
+    log_success_green(logger, success_message)
+    # logger.info(f"[SUCCESS] Successfully added entity '{orig_key}' to ENTITY_KEYS and ENTITY_PATHS in file '{definitions_file}'")
 
 # Modifies schemas/validation/new_validation_with_desc.json
 def insert_into_json_schema(schema_file, parent_key, new_key, new_value):

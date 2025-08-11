@@ -90,6 +90,7 @@ def main():
             return
         
         parent = new_obj[0]["owner"]
+        new_obj[0].pop("owner", None)
         
         # Begin modifying files
         create_new_object(key, new_obj) # Modifies entities/definitions.py
