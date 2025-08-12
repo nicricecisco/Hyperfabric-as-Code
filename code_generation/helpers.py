@@ -33,7 +33,6 @@ def find_key_path(data, target_key, path=None):
                 return result
     return None
 
-
 def get_nested(data, path):
     """Navigate to a nested object given a path list."""
     current = data
