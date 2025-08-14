@@ -103,12 +103,12 @@
               "pluggable": {
                 "type": "string",
                 "title": "Pluggable",
-                "description": "WIP",
+                "description": "Pluggable (String)\n- QDD-400-CU1M\n- QDD-400-CU2M\n- QDD-400-CU2.5M\n- QDD-400-CU3M\n- QDD-400-AOC5M\n- QDD-400-AOC7M\n- QDD-400-AOC10M\n- QDD-400-AOC15M\n- QDD-400-AOC20M\n- QDD-400-AOC25M\n- QDD-400-AOC30M\n- QDD-400G-SR8-S\n- QDD-400G-SR4.2-BD\n- QDD-400G-ZR-S\n- QSFP-400G-DR4\n- QDD-400G-FR4-S\n- QDD-400G-LR4-S\n- QSFP-100G-CU1M\n- QSFP-100G-CU2M\n- QSFP-100G-CU3M\n- QSFP-100G-CU5M\n- QSFP-100G-AOC1M\n- QSFP-100G-AOC2M\n- QSFP-100G-AOC3M\n- QSFP-100G-AOC5M\n- QSFP-100G-AOC7M\n- QSFP-100G-AOC10M\n- QSFP-100G-AOC15M\n- QSFP-100G-AOC20M\n- QSFP-100G-AOC25M\n- QSFP-100G-AOC30M\n- QSFP-100G-SR4-S\n- QSFP-100G-DR-S\n- QSFP-100G-FR-S",
                 "maxLength": 150
               },
               "speed": {
-                "type": "string",
-                "enum": ["100", "400"],
+                "type": "integer",
+                "enum": [100, 400],
                 "title": "Speed",
                 "description": "Cable speed in Gbps (String)"
               },
@@ -266,8 +266,8 @@
                         "name": {
                           "type": "string",
                           "title": "Name",
-                          "description": "Name (String)\n- Allowed values: eth_N where N is between 0-8",
-                          "pattern": "^eth\\([0-8]\\)$"
+                          "description": "Name (String)",
+                          "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
                         },
                         "description": {
                           "type": "string",
@@ -312,7 +312,7 @@
                           "type": "string",
                           "title": "IPv6 Address",
                           "description": "Ipv6 Address (String)",
-                          "pattern": "^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}(\\/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8]))?$|^(([0-9a-fA-F]{1,4}:){1,7}:|:((:[0-9a-fA-F]{1,4}){1,7}))((\\/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8])))?$"
+                          "pattern": "^([0-9A-Fa-f:]+)\\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])$"
                         },
                         "ipv6Gateway": {
                           "type": "string",
@@ -324,7 +324,7 @@
                           "type": "array",
                           "items": {
                             "type": "string",
-                            "pattern": "^(((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.(?!$)|$)){4}(\\/(3[0-2]|[12]?\\d))?)$|^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(([0-9a-fA-F]{1,4}:){1,7}:)|(:([0-9a-fA-F]{1,4}:){1,7}))(/(12[0-8]|1[01][0-9]|[1-9]?[0-9]))?$"
+                            "pattern": "^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)){3})(\\/(3[0-2]|[12]?\\d|0))?$|^(::ffff:(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)){3})(\\/(3[0-2]|[12]?\\d|0))?$|^([0-9a-fA-F:]+)(\\/(12[0-8]|1[01][0-9]|[1-9]?\\d))?$"
                           },
                           "title": "DNS Addresses",
                           "description": "DNS Addresses (List - String)"
@@ -481,7 +481,7 @@
                       "pluggable": {
                         "type": "string",
                         "title": "Pluggable",
-                        "description": "Pluggable (String)",
+                        "description": "Pluggable (String)\n- QDD-400-CU1M\n- QDD-400-CU2M\n- QDD-400-CU2.5M\n- QDD-400-CU3M\n- QDD-400-AOC5M\n- QDD-400-AOC7M\n- QDD-400-AOC10M\n- QDD-400-AOC15M\n- QDD-400-AOC20M\n- QDD-400-AOC25M\n- QDD-400-AOC30M\n- QDD-400G-SR8-S\n- QDD-400G-SR4.2-BD\n- QDD-400G-ZR-S\n- QSFP-400G-DR4\n- QDD-400G-FR4-S\n- QDD-400G-LR4-S\n- QSFP-100G-CU1M\n- QSFP-100G-CU2M\n- QSFP-100G-CU3M\n- QSFP-100G-CU5M\n- QSFP-100G-AOC1M\n- QSFP-100G-AOC2M\n- QSFP-100G-AOC3M\n- QSFP-100G-AOC5M\n- QSFP-100G-AOC7M\n- QSFP-100G-AOC10M\n- QSFP-100G-AOC15M\n- QSFP-100G-AOC20M\n- QSFP-100G-AOC25M\n- QSFP-100G-AOC30M\n- QSFP-100G-SR4-S\n- QSFP-100G-DR-S\n- QSFP-100G-FR-S",
                         "maxLength": 150
                       },
                       "forceCounter": {
@@ -525,13 +525,13 @@
                       "vrfId": {
                         "type": "string",
                         "description": "VRF ID (String)",
-                        "pattern": "^(Default VRF|Vrf-?(?=.{1,15}$)(?!(?:\\d{8,})$)[A-Za-z0-9]+)$"
+                        "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
                       },
                       "ipv4Address": {
                         "type": "array",
                         "items": {
                           "type": "string",
-                          "format": "ipv4"
+                          "pattern": "^(((25[0-5]|2[0-4]\\\\d|1\\\\d{2}|[1-9]?\\\\d)(\\\\.(?!$)|$)){4}(\\\\/(3[0-2]|[12]?\\\\d))?)$|^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(([0-9a-fA-F]{1,4}:){1,7}:)|(:([0-9a-fA-F]{1,4}:){1,7}))(\\\\/(12[0-8]|1[01][0-9]|[1-9]?[0-9]))?$"
                         },
                         "title": "IPv4 Addresses",
                         "description": "IPv4 Addresses (List - String)\n- Max Items: 2",
@@ -541,7 +541,7 @@
                         "type": "array",
                         "items": {
                           "type": "string",
-                          "format": "ipv6"
+                          "pattern": "^([0-9A-Fa-f:]+)\\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])$"                        
                         },
                         "title": "IPv6 Addresses",
                         "description": "IPv6 Addresses (List - String)\n- Max Items: 2",
@@ -662,7 +662,7 @@
                 "pluggable": {
                   "type": "string",
                   "title": "Pluggable",
-                  "description": "Pluggable (String)",
+                  "description": "Pluggable (String)\n- QDD-400-CU1M\n- QDD-400-CU2M\n- QDD-400-CU2.5M\n- QDD-400-CU3M\n- QDD-400-AOC5M\n- QDD-400-AOC7M\n- QDD-400-AOC10M\n- QDD-400-AOC15M\n- QDD-400-AOC20M\n- QDD-400-AOC25M\n- QDD-400-AOC30M\n- QDD-400G-SR8-S\n- QDD-400G-SR4.2-BD\n- QDD-400G-ZR-S\n- QSFP-400G-DR4\n- QDD-400G-FR4-S\n- QDD-400G-LR4-S\n- QSFP-100G-CU1M\n- QSFP-100G-CU2M\n- QSFP-100G-CU3M\n- QSFP-100G-CU5M\n- QSFP-100G-AOC1M\n- QSFP-100G-AOC2M\n- QSFP-100G-AOC3M\n- QSFP-100G-AOC5M\n- QSFP-100G-AOC7M\n- QSFP-100G-AOC10M\n- QSFP-100G-AOC15M\n- QSFP-100G-AOC20M\n- QSFP-100G-AOC25M\n- QSFP-100G-AOC30M\n- QSFP-100G-SR4-S\n- QSFP-100G-DR-S\n- QSFP-100G-FR-S",
                   "maxLength": 150
                 },
                 "local": {
@@ -748,8 +748,15 @@
                   "type": "integer",
                   "title": "VNI",
                   "description": "VNI (Integer)\n- Minimum: 2\n- Maximum: 6000000",
-                  "minimum": 2,
-                  "maximum": 6000000
+                  "anyOf": [
+                    {
+                      "minimum": 2,
+                      "maximum": 6000000
+                    },
+                    {
+                      "const": 12000000
+                    }
+                  ]
                 },
                 "mtu": {
                   "type": "integer",
@@ -762,7 +769,7 @@
                   "type": "string",
                   "title": "VRF ID",
                   "description": "VRF ID (String)",
-                  "pattern": "^(Default VRF|Vrf-?(?=.{1,15}$)(?!(?:\\d{8,})$)[A-Za-z0-9]+)$"
+                  "pattern": "^(Default VRF|(?!--)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-))$"
                 },
                 "svis": {
                   "type": "array",
@@ -791,7 +798,7 @@
                         "type": "array",
                         "items": {
                           "type": "string",
-                          "pattern": "^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}(\\/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8]))?$|^(([0-9a-fA-F]{1,4}:){1,7}:|:((:[0-9a-fA-F]{1,4}){1,7}))((\\/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8])))?$",
+                          "pattern": "^([0-9A-Fa-f:]+)\\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])$",
                           "maxItems": 1
                         },
                         "title": "IPv6 Addresses",
@@ -923,7 +930,14 @@
                   "description": "Name (String)",
                   "minLength": 3,
                   "maxLength": 120,
-                  "pattern": "^Vrf-?(?=.{1,15}$)(?!(?:\\d{8,})$)[A-Za-z0-9]+$"
+                  "anyOf": [
+                    {
+                      "pattern": "^Vrf-?(?=.{1,15}$)(?!(?:\\d{8,})$)[A-Za-z0-9]+$"
+                    },
+                    {
+                      "const": "Vrf12000000"
+                    }
+                  ]
                 },
                 "description": {
                   "type": "string",
@@ -952,8 +966,15 @@
                   "type": "integer",
                   "title": "VNI",
                   "description": "VNI (Integer)\n- Minimum: 2\n- Maximum: 6000000",
-                  "minimum": 2,
-                  "maximum": 6000000
+                  "anyOf": [
+                    {
+                      "minimum": 2,
+                      "maximum": 6000000
+                    },
+                    {
+                      "const": 12000000
+                    }
+                  ]
                 },
                 "labels": {
                   "type": "array",
@@ -1076,14 +1097,13 @@
                               "type": "string",
                               "title": "Prefix",
                               "description": "Prefix (String)",
-                              "pattern": "^(((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.(?!$)|$)){4}(\\/(3[0-2]|[12]?\\d))?)$|^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(([0-9a-fA-F]{1,4}:){1,7}:)|(:([0-9a-fA-F]{1,4}:){1,7}))(/(12[0-8]|1[01][0-9]|[1-9]?[0-9]))?$"
-
+                              "pattern": "^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)){3})(\\/(3[0-2]|[12]?\\d|0))?$|^(::ffff:(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)){3})(\\/(3[0-2]|[12]?\\d|0))?$|^([0-9a-fA-F:]+)(\\/(12[0-8]|1[01][0-9]|[1-9]?\\d))?$"
                             },
                             "nextHop": {
                               "type": "string",
                               "title": "Next Hop",
                               "description": "Next Hop (String)",
-                              "pattern": "^(((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.(?!$)|$)){4}(\\/(3[0-2]|[12]?\\d))?)$|^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(([0-9a-fA-F]{1,4}:){1,7}:)|(:([0-9a-fA-F]{1,4}:){1,7}))(/(12[0-8]|1[01][0-9]|[1-9]?[0-9]))?$"
+                              "pattern": "^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)){3})(\\/(3[0-2]|[12]?\\d|0))?$|^(::ffff:(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)){3})(\\/(3[0-2]|[12]?\\d|0))?$|^([0-9a-fA-F:]+)(\\/(12[0-8]|1[01][0-9]|[1-9]?\\d))?$"
                             },
                             "nextVrf": {
                               "type": "string",
@@ -1101,49 +1121,41 @@
                                 "TAG_GREEN",
                                 "TAG_RED",
                                 "TAG_PURPLE",
-                                "TAG_YELLOW"
+                                "TAG_YELLOW",
+                                "TAG_BLACK"
                               ]
                             },
                             "discard": {
                               "type": "boolean",
                               "title": "Discard",
-                              "description": "Discard (Boolean)\n- If true, nextHop is disallowed and tag is set to TAG_BLACK\n- If false, nextHop is required"
+                              "description": "Discard (Boolean)\n- If true, nextHop is disallowed and tag is must be TAG_BLACK\n- If false, nextHop is required and tag must not be TAG_BLACK"
                             }
                           },
                           "allOf": [
                             {
                               "if": {
                                 "properties": {
-                                  "discard": {
-                                    "const": true
-                                  }
+                                  "discard": { "const": true }
                                 }
                               },
                               "then": {
-                                "not": {
-                                  "required": [
-                                    "nextHop"
-                                    ]
-                                  },
                                 "properties": {
-                                  "tag": {
-                                    "const": "TAG_BLACK"
-                                  }
+                                  "tag": { "const": "TAG_BLACK" }
+                                },
+                                "required": ["tag"],
+                                "not": {
+                                  "required": ["nextHop"]
                                 }
                               }
                             },
                             {
                               "if": {
                                 "properties": {
-                                  "discard": {
-                                    "const": false
-                                    }
-                                  }
+                                  "discard": { "const": false }
+                                }
                               },
                               "then": {
-                                "required": [
-                                  "nextHop"
-                                ],
+                                "required": ["nextHop", "tag"],
                                 "properties": {
                                   "tag": {
                                     "type": "string",
@@ -1207,6 +1219,34 @@
                     }
                   },
                   "additionalProperties": false
+                }
+              }
+            }
+          },
+          "bind":{
+            "type": "array",
+            "title": "Bind",
+            "description": "Bind (List - Object)\n\nElements:\n- nodeName\n- deviceId",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "nodeName",
+                "deviceId"
+              ],
+              "properties": {
+                "nodeName": {
+                  "type": "string",
+                  "title": "Node Name",
+                  "description": "Node Name (String)",
+                  "minLength": 3,
+                  "maxLength": 120,
+                  "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
+                },
+                "deviceId": {
+                  "type": "string",
+                  "title": "Device ID",
+                  "description": "Device ID (String)"
                 }
               }
             }

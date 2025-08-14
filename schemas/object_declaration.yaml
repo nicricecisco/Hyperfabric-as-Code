@@ -33,7 +33,6 @@ managementPorts:
   - name: string, pattern "eth_N" where N is between 0-8
     owner: node
     description: string, max length 2000
-    configOrigin: enum = ["CONFIG_ORIGIN_CLOUD", "CONFIG_ORIGIN_DEVICE"], default = "CONFIG_ORIGIN_CLOUD"
     connectedState: enum = ["CONNECTED_STATE_NOT_CONNECTED", "CONNECTED_STATE_CONNECTED"], default = "CONNECTED_STATE_NOT_CONNECTED"
     ipv4ConfigType: enum = ["CONFIG_TYPE_STATIC", "CONFIG_TYPE_DHCP"], default = "CONFIG_TYPE_STATIC"
     ipv4Address: string, valid IPv4 address, required if ipv4ConfigType is "CONFIG_TYPE_STATIC"
@@ -148,12 +147,12 @@ staticRoutes:
         nextVrf: string, must match pattern "Default VRF" or follow format "Vrf", optionally followed by a hyphen and 1-15 alphanumeric characters with a limit of 7 digits if no letters, required if discard is false or not passed
         tag: enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", "TAG_PURPLE", "TAG_YELLOW"], default = "TAG_AMBER", defaults and required to be "TAG_BLACK" if discard is true, cannot be "TAG_BLACK" if discard is false
         discard: boolean, default = false
-
 # Perhaps add type to all these objects? For the json schema
 newObjects:
   - name: string
     owner: node
     description: string
+    size: integer
     
     
 

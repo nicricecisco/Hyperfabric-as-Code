@@ -1,4 +1,4 @@
-# Last uploaded (success): 2025-08-08 22:08:24 UTC
+# Last uploaded (success): 2025-08-14 18:36:02 UTC
 fabrics:
   - name: jarod-nick-intern-test
     location: CA-95134
@@ -9,11 +9,12 @@ fabrics:
       - TAG_ONE
       - TAG_TWO
     topology: SPINE_LEAF
-    # annotations:
-    #   hello: test
-    # autocabling:
-    #   # enabled: false
-    #   pluggable: QDD-400-AOC2M
+    annotations:
+      hello: test
+    
+    autocabling:
+      enabled: true
+      pluggable: QDD-400-AOC2M
     
     nodes:
       - name: Leaf-01
@@ -44,11 +45,10 @@ fabrics:
         #     proxyPassword: ThisIsMyPassword
         #     enabled: true
         #     ipv4ConfigType: CONFIG_TYPE_STATIC
-        #     ipv6ConfigType: CONFIG_TYPE_DHCP
+        #     ipv6ConfigType: CONFIG_TYPE_STATIC
         #     cloudUrls:
         #       - https://a.example.com
         #       - https://b.example.com
-        #     configOrigin: CONFIG_ORIGIN_CLOUD
         #     setProxyPassword: true
         #     noProxy:
         #       - 10.0.0.5
@@ -115,8 +115,6 @@ fabrics:
 #     bind:
 #       - nodeName: Spine-01
 #         deviceId: b4-4c-90-da-97-90
-#       # - nodeName: jarod-nick-intern-test-HF6100-32D-spine2
-#       #   deviceId: 48-80-02-99-c7-c0
 #       - nodeName: Leaf-01
 #         deviceId: ec-19-2e-c0-68-00
 #       - nodeName: Leaf-02

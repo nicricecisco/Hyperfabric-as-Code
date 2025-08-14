@@ -3,7 +3,7 @@ from pprint import pprint
 from utils.logger import get_logger, log_error_red
 from entities.definitions import ENTITY_KEYS, ENTITY_PATHS
 from code_generation.helpers import camel_to_screaming_snake
-from code_generation.file_editors import add_entity_to_definitions_file, insert_into_json_schema
+from code_generation.file_editors import add_entity_to_definitions_file, insert_into_json_schema, register_attributes, generate_api_function_calls
 
 yaml = YAML()
 yaml.default_flow_style = False
@@ -11,11 +11,8 @@ yaml.default_flow_style = False
 # Setup logger
 logger = get_logger()
 
-# Global constants
-NEW_OBJ_PATH = None
-
 # ----------------- OBJECT SCHEMA -----------------
-object_schema = "object_schema.yaml"
+object_schema = "schemas/object_declaration.yaml"
 
 # ----------------- ENTITY FILES -----------------
 attributes_file = "entities/attributes.py"
@@ -29,17 +26,6 @@ hyperfabric_api = "scripts/hyperfabric_api.py"
 # ----------------- SCHEMA FILES -----------------
 validation_json = "schemas/validation/new_validation_with_desc.json"
 validation_template = "schemas/validation/validation_template.yaml"
-
-def create_new_object(key, obj):
-    global NEW_OBJ_PATH
-
-    parent_obj = obj[0].get("owner", "fabric")
-    NEW_OBJ_PATH = ENTITY_PATHS[camel_to_screaming_snake(parent_obj)] + [key]
-
-    try:
-        add_entity_to_definitions_file(key, NEW_OBJ_PATH, definitions_file)
-    except Exception as e:
-        logger.error(f"Error adding entity '{key}' when writing to file '{definitions_file}'")
 
 def validate_new_object(key, obj):
     if not isinstance(obj, list):
@@ -79,6 +65,7 @@ def read_in_schema():
 
 def main():
     schema_data = read_in_schema()
+    # Before getting just the new keys, we should check the existing objects for new attributers
     new_keys = get_new_keys(schema_data)
     
     for key in new_keys:
@@ -89,12 +76,21 @@ def main():
         if not is_valid:
             return
         
-        parent = new_obj[0]["owner"]
-        new_obj[0].pop("owner", None)
+        parent = new_obj[0].get("owner", "fabric")
+        new_obj_path = ENTITY_PATHS[camel_to_screaming_snake(parent)] + [key]
         
-        # Begin modifying files
-        create_new_object(key, new_obj) # Modifies entities/definitions.py
-        insert_into_json_schema(validation_json, parent + "s", key, new_obj) # Modifies schemas/validation/new_validation_with_desc.json
+        # # Begin modifying files
+        # # Modifies entities/definitions.py
+        # add_entity_to_definitions_file(key, new_obj_path, definitions_file)
+
+        # # Modifies schemas/validation/new_validation_with_desc.json
+        # insert_into_json_schema(validation_json, parent + "s", key, new_obj) 
+
+        # # Modifies entities/attributes.py
+        # register_attributes(attributes_file, key)
+
+        # Modifies scripts/hyperfabric_api.py
+        generate_api_function_calls(hyperfabric_api, key, new_obj_path)
         
     
 if __name__ == "__main__":

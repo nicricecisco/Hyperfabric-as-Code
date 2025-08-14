@@ -33,10 +33,17 @@ def find_key_path(data, target_key, path=None):
                 return result
     return None
 
-
 def get_nested(data, path):
     """Navigate to a nested object given a path list."""
     current = data
     for key in path:
         current = current[key]
     return current
+
+def generate_api_path(path):
+    # f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/devices"
+    api_path = ""
+    for p in path:
+        api_path += ("/" + p + f"{{{p[-1]}Id}}")
+    
+    return api_path

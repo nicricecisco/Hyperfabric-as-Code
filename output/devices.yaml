@@ -1,22 +1,106 @@
-# Generated on 2025-08-07 16:23:18 UTC
+# Generated on 2025-08-14 18:36:40 UTC
 devices:
+  - deviceId: 24-2a-04-54-7d-b8
+    nodeId: 8bc80bc2-adb5-4d62-b95a-3d32143c7fbf
+    serialNumber: FLM27400AMT
+    modelName: HF6100-32D
+    fabricId: b5ee1eda-a367-4a2a-a6dd-72f3b594b4d9
+    roles:
+      - SPINE
+    name: New-fab1-HF6100-32D-spine2
+    nodeType: NODE_SWITCH
+    fabricName: New-fab1
   - deviceId: 48-80-02-99-c7-c0
+    nodeId: 0e0c071a-1333-4c32-82d6-9f0ff9f3734d
     serialNumber: FLM272807U9
     modelName: HF6100-32D
-    name: shaphill-demo-HF6100-32D-spine2
+    fabricId: 4793af71-2cdf-492b-91bd-e4c686b97b4f
+    roles:
+      - SPINE
+    name: TME-fab1-HF6100-32D-spine2
+    nodeType: NODE_SWITCH
+    fabricName: TME-fab1
+    claimedAt: '2025-08-14T16:37:42.952087Z'
+  - deviceId: b4-4c-90-da-97-48
+    nodeId: af36c6cf-cdd7-4e9a-b3d2-ba9401cdfbe9
+    serialNumber: FLM281300W2
+    modelName: HF6100-32D
+    fabricId: b5ee1eda-a367-4a2a-a6dd-72f3b594b4d9
+    roles:
+      - SPINE
+    name: New-fab1-HF6100-32D-spine1
+    nodeType: NODE_SWITCH
+    fabricName: New-fab1
   - deviceId: b4-4c-90-da-97-90
+    nodeId: c7e0a5e6-36ae-4c55-a800-bfa0f37f388f
     serialNumber: FLM281601WX
     modelName: HF6100-32D
-    name: shaphill-demo-HF6100-32D-spine1
+    fabricId: 4793af71-2cdf-492b-91bd-e4c686b97b4f
+    roles:
+      - SPINE
+    name: TME-fab1-HF6100-32D-spine1
+    nodeType: NODE_SWITCH
+    fabricName: TME-fab1
+    claimedAt: '2025-08-14T16:37:42.977685Z'
+  - deviceId: ec-19-2e-78-cc-00
+    nodeId: 1554fb8c-3501-4e4f-83e9-3aebd6de89a5
+    serialNumber: FDO28150Q1J
+    modelName: HF6100-60L4D
+    fabricId: b5ee1eda-a367-4a2a-a6dd-72f3b594b4d9
+    roles:
+      - LEAF
+    name: New-fab1-HF6100-60L4D-leaf3
+    nodeType: NODE_SWITCH
+    fabricName: New-fab1
+  - deviceId: ec-19-2e-78-ec-00
+    nodeId: 870f1433-0fcf-4e63-93a3-f8f23fddf6c0
+    serialNumber: FDO28150Q1K
+    modelName: HF6100-60L4D
+    fabricId: b5ee1eda-a367-4a2a-a6dd-72f3b594b4d9
+    roles:
+      - LEAF
+    name: New-fab1-HF6100-60L4D-leaf1
+    nodeType: NODE_SWITCH
+    fabricName: New-fab1
+  - deviceId: ec-19-2e-78-fc-00
+    nodeId: 64aed707-8929-4ca0-b498-f3c5a73c4d7d
+    serialNumber: FDO28150Q0L
+    modelName: HF6100-60L4D
+    fabricId: b5ee1eda-a367-4a2a-a6dd-72f3b594b4d9
+    roles:
+      - LEAF
+    name: New-fab1-HF6100-60L4D-leaf2
+    nodeType: NODE_SWITCH
+    fabricName: New-fab1
+  - deviceId: ec-19-2e-79-1c-00
+    nodeId: c4226c2c-ff36-4354-9e24-cee16b13e14d
+    serialNumber: FDO28150Q14
+    modelName: HF6100-60L4D
+    fabricId: b5ee1eda-a367-4a2a-a6dd-72f3b594b4d9
+    roles:
+      - LEAF
+    name: New-fab1-HF6100-60L4D-leaf4
+    nodeType: NODE_SWITCH
+    fabricName: New-fab1
   - deviceId: ec-19-2e-c0-4c-00
+    nodeId: 4eb325d6-b523-48b8-8c99-3a8ab5220fe8
     serialNumber: FDO28150Q1A
     modelName: HF6100-60L4D
-    name: shaphill-demo-HF6100-60L4D-leaf2
+    fabricId: 4793af71-2cdf-492b-91bd-e4c686b97b4f
+    roles:
+      - LEAF
+    name: TME-fab1-HF6100-60L4D-leaf1
+    nodeType: NODE_SWITCH
+    fabricName: TME-fab1
+    claimedAt: '2025-08-14T16:39:03.054559Z'
   - deviceId: ec-19-2e-c0-68-00
+    nodeId: 7bb7290c-bd55-4324-999b-25713ea6f2f0
     serialNumber: FDO28150Q1F
     modelName: HF6100-60L4D
-    name: shaphill-demo-HF6100-60L4D-leaf1
-  - deviceId: ec-19-2e-c0-80-00
-    serialNumber: FDO28150Q0Z
-    modelName: HF6100-60L4D
-    name: mihiguch-test-HF6100-60L4D-leaf1
+    fabricId: 4793af71-2cdf-492b-91bd-e4c686b97b4f
+    roles:
+      - LEAF
+    name: TME-fab1-HF6100-60L4D-leaf2
+    nodeType: NODE_SWITCH
+    fabricName: TME-fab1
+    claimedAt: '2025-08-14T16:35:44.388384Z'

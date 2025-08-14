@@ -1,33 +1,52 @@
-import sys
 import json
 from utils.schema_loader import get_schema_path
 from ruamel.yaml import YAML
-from ruamel.yaml.compat import StringIO
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 from jsonschema import Draft7Validator, ValidationError
-from jsonschema.exceptions import best_match
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 """
     from textual.app import App, ComposeResult
     from textual.containers import Horizontal
     from textual.widgets import Static, ScrollView
 """
-from rich.syntax import Syntax
 from rich.text import Text
 from rich.console import Console
 from types import SimpleNamespace
 
-
 REGEX_DESCRIPTIONS = {
-    r"^(?!-)(?!\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$": "allowed characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens",
-    r"^eth\\([0-8]\\)$": "must be in the format 'eth(0)' to 'eth(8)'",
-    r"^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$": "must be in the format 'Ethernet1_1' to 'Ethernet1_64'",
-    r"^(1x40G\\(4\\)|1x100G\\(2\\)|1x100G\\(4\\)|1x200G\\(4\\)|1x400G|1x10G\\(1\\)|1x25G\\(1\\)|1x50G\\(1\\))$": "must be one of the specified port types",
-    r"^Vrf-?(?=.{1,15}$)(?!(?:\d{8,})$)[A-Za-z0-9]+$": "must be 'Vrf' optionally followed by a hyphen and 1–15 alphanumeric characters with a limit of 7 digits if no letters",
-    r"^(Default VRF|^Vrf-?(?=.{1,15}$)(?!(?:\d{8,})$)[A-Za-z0-9]+$": "must be either 'Default VRF' or 'Vrf' optionally followed by a hyphen and 1–15 alphanumeric characters with a limit of 7 digits if no letters"
-}
-console = Console()
+    r"^(?!-)(?!\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$":
+        "allowed characters are letters and digits and hyphens, cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens",
 
+    r"^([0-9A-Fa-f:]+)\\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])$":
+        "must be a valid ipv6 address with optional cidr subnet mask from 0 to 128",
+
+    r"^Ethernet1_([1-9]|[1-5][0-9]|6[0-4])$":
+        "must be in the format 'Ethernet1_1' to 'Ethernet1_64'",
+
+    r"^(1x40G\\(4\\)|1x100G\\(2\\)|1x100G\\(4\\)|1x200G\\(4\\)|1x400G|1x10G\\(1\\)|1x25G\\(1\\)|1x50G\\(1\\))$":
+        "must be one of the specified port types",
+
+    r"^Vrf-?(?=.{1,15}$)(?!(?:\d{8,})$)[A-Za-z0-9]+$":
+        "must be 'Vrf' optionally followed by a hyphen and 1 to 15 alphanumeric characters, with a limit of 7 digits if no letters",
+
+    r"^(Default VRF|Vrf-?(?=.{1,15}$)(?!(?:\d{8,})$)[A-Za-z0-9]+)$":
+        "must be either 'Default VRF' or 'Vrf' optionally followed by a hyphen, followed by 1 to 15 alphanumeric characters with a limit of 7 digits if no letters",
+
+    r"^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\/([0-9]|[1-2][0-9]|3[0-2]))?$":
+        "must be a valid ipv4 address with optional cidr subnet mask from 0 to 32",
+
+    r"^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}(/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8]))?$|^(([0-9a-fA-F]{1,4}:){1,7}:|:((:[0-9a-fA-F]{1,4}){1,7}))((/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8])))?$":
+        "must be a valid ipv6 address with optional cidr subnet mask from 0 to 128",
+   
+    r"^(((25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(\.(?!$)|$)){4}(\/(3[0-2]|[12]?\d))?)$|^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(([0-9a-fA-F]{1,4}:){1,7}:)|(:([0-9a-fA-F]{1,4}:){1,7}))(/(12[0-8]|1[01][0-9]|[1-9]?[0-9]))?$":
+        "must be a valid ipv4 or ipv6 address with optional CIDR ",
+   
+    r"^((25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3})(/(3[0-2]|[12]?\d|0))?$|^(::ffff:(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3})(/(3[0-2]|[12]?\d|0))?$|^([0-9a-fA-F:]+)(/(12[0-8]|1[01][0-9]|[1-9]?\d))?$":
+        "must be a valid ipv4 or ipv6 address with optional CIDR"
+
+}
+
+console = Console()
 
 def load_yaml_file(file_path):
     yaml = YAML()
@@ -45,10 +64,10 @@ def load_json_file(file_path):
 def get_line_number(root, path):
     """
     Walk the absolute_path (`jsonschema` list of keys / indexes) and return the
-    1‑based line number where the failing element starts in the YAML file.
+    1-based line number where the failing element starts in the YAML file.
     Handles:
-      • Mapping keys   – uses obj.lc.key(idx)[0]
-      • Sequence items – uses seq.lc.item(idx)[0]
+      • Mapping keys   - uses obj.lc.key(idx)[0]
+      • Sequence items - uses seq.lc.item(idx)[0]
     """
     try:
         cur = root
@@ -57,7 +76,7 @@ def get_line_number(root, path):
             if isinstance(cur, CommentedSeq) and isinstance(p, int):
                 # Save line of this list item (if available) before descending
                 if hasattr(cur.lc, "item") and cur.lc.item(p):
-                    line = cur.lc.item(p)[0] + 1  # 0‑based → 1‑based
+                    line = cur.lc.item(p)[0] + 1  # 0-based → 1-based
                 else:
                     line = None
                 cur = cur[p]
@@ -183,8 +202,6 @@ def describe_error(error: ValidationError, instance: dict):
     msg.append(repr(user_value), style="cyan")
     msg.append(": ", style="white")
 
-   
-
     # Standard explanation fallbacks
     if error.validator == "pattern":
         pattern = error.validator_value
@@ -221,7 +238,6 @@ def check_for_duplicate_names(instance: Dict[str, Any]) -> List[SimpleNamespace]
 
     def recurse(obj: Any, path: List[Any]):
         if isinstance(obj, dict):
-            name_map: Dict[str, List[Any]] = {}
             for key, value in obj.items():
                 if isinstance(value, list):
                     seen_names = set()
@@ -280,9 +296,7 @@ def validate_json(instance, file_path, schema):
         for e in sorted_errors:
             console.print(e)
         print("=" * 50)
-        # sys.exit(1)
         return False
-
 
 def validate_schema(yaml_path):
     schema_path = get_schema_path()

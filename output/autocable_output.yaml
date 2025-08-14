@@ -1,33 +1,39 @@
-# Generated on 2025-08-05 21:46:50 UTC
-# Last uploaded (success): 2025-08-05 21:47:04 UTC
+# Generated on 2025-08-14 18:36:53 UTC
 fabrics:
-  - name: from-python
+  - name: jarod-nick-intern-test
     connections:
       - local:
-          portName: Ethernet1_1
+          portName: Ethernet1_16
           nodeName: Leaf-01
         remote:
-          portName: Ethernet1_1
+          portName: Ethernet1_16
           nodeName: Spine-01
-        pluggable: QDD-400-CU3M
+        pluggable: QDD-400-CU1M
       - local:
           portName: Ethernet1_1
           nodeName: Leaf-02
         remote:
-          portName: Ethernet1_2
+          portName: Ethernet1_1
           nodeName: Spine-01
-        pluggable: QDD-400-CU3M
+        pluggable: QDD-400-CU1M
       - local:
           portName: Ethernet1_1
           nodeName: Leaf-03
         remote:
-          portName: Ethernet1_3
+          portName: Ethernet1_2
           nodeName: Spine-01
-        pluggable: QDD-400-CU3M
+        pluggable: QDD-400-CU1M
       - local:
           portName: Ethernet1_31
           nodeName: Leaf-04
         remote:
+          portName: Ethernet1_3
+          nodeName: Spine-01
+        pluggable: QDD-400-CU1M
+      - local:
+          portName: Ethernet1_31
+          nodeName: Leaf-05
+        remote:
           portName: Ethernet1_4
           nodeName: Spine-01
-        pluggable: QDD-400-CU3M
+        pluggable: QDD-400-CU1M
