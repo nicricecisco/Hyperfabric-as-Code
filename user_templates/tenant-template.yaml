@@ -1,16 +1,5 @@
 fabrics:
   - name:
-
-    connections:
-      - description:
-        pluggable:
-        local:
-          portName:
-          nodeName:
-        remote:
-          portName:
-          nodeName:
-
     vnis:
       - name:
         description:

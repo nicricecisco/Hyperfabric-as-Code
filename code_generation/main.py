@@ -89,8 +89,11 @@ def main():
         # # Modifies entities/attributes.py
         # register_attributes(attributes_file, key)
 
-        # Modifies scripts/hyperfabric_api.py
+        # # Modifies scripts/hyperfabric_api.py
         generate_api_function_calls(hyperfabric_api, key, new_obj_path)
+
+        # Modifies entities/functions.py
+
         
     
 if __name__ == "__main__":

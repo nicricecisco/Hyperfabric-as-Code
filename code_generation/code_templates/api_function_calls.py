@@ -16,6 +16,7 @@ template_single_portion_of_api_path = Template('''
 /${KEY_A_PARENT_PLURAL}/{{${KEY_A_PARENT_ID_CAMEL}}}
 ''')
 
+# ------------------------------ GET ALL FUNC ------------------------------
 template_get_all_call = Template('''
 def get_fabric_${KEY_LOWER_SNAKE_PLURAL}(${KEY_DATA_OBJ}):
     """
@@ -34,84 +35,88 @@ def get_fabric_${KEY_LOWER_SNAKE_PLURAL}(${KEY_DATA_OBJ}):
     return response
 ''')
 
-template_post_call = '''
+# ------------------------------ POST FUNC ------------------------------
+template_post_call = Template('''
 def add_fabric_${KEY_LOWER_SNAKE_PLURAL}(${KEY_DATA_OBJ}):
     """
-    Creates or updates one or more KEY_CAMEL_SINGULAR objects for a fabric ${KEY_PARENT_SINGULAR} object.
+    Creates or updates one or more ${KEY_CAMEL_SINGULAR} objects for a fabric ${KEY_PARENT_SINGULAR} object.
 
     Args:
-        ${KEY_DATA_OBJ} (dict): A dictionary containing ${KEY_PARENT_ID_LIST} and KEY_CAMEL data. Expected keys:
+        ${KEY_DATA_OBJ} (dict): A dictionary containing ${KEY_PARENT_ID_LIST} and ${KEY_CAMEL} data. Expected keys:
             ${INSERT_PARENT_ARG_LIST}
-            - "${KEY_LOWER_SNAKE_PLURAL}" (dict): A dictionary representing a single KEY_CAMEL_SINGULAR object to add.
+            - "${KEY_LOWER_SNAKE_SINGULAR}" (dict): A dictionary representing a single ${KEY_CAMEL_SINGULAR} object to add.
               
-              Note: The function wraps this single KEY_CAMEL_SINGULAR in a list for the API call.
+              Note: The function wraps this single ${KEY_CAMEL_SINGULAR} in a list for the API call.
 
     Returns:
         dict: JSON response, or None on error.
     """
-    payload = {"KEY_CAMEL": [${KEY_DATA_OBJ}["${KEY_LOWER_SNAKE_PLURAL}"]]}
+    payload = {"${KEY_CAMEL}": [${KEY_DATA_OBJ}["${KEY_LOWER_SNAKE_SINGULAR}"]]}
     ${INSERT_TEMPLATE_EXTRACT_ID}
     response = _make_post_request(headers,f"{BASE_URL}${KEY_PATH_ROOT_TO_KEY}",payload=payload)
     return response
-'''
+''')
 
-template_get_call = '''
-def get_fabric_KEY_LOWER_SNAKE_SINGULAR(${KEY_DATA_OBJ}):
+# ------------------------------ GET FUNC ------------------------------
+template_get_call = Template('''
+def get_fabric_${KEY_LOWER_SNAKE_SINGULAR}(${KEY_DATA_OBJ}):
     """
-     Gets information for a single KEY_CAMEL_SINGULAR.
+    Gets information for a single ${KEY_CAMEL_SINGULAR}.
 
-     Args:
-         ${KEY_DATA_OBJ} (dict): A dictionary containing ${KEY_PARENT_ID_LIST} and KEY_CAMEL_SINGULAR data. Expected keys:
-             ${INSERT_PARENT_ARG_LIST}
-             - "${KEY_LOWER_SNAKE_PLURAL}" (dict): A dictionary containing the KEY_CAMEL_SINGULAR's name.
-               Expected sub-keys:
-                 - "name" (str): The ID or name of the KEY_CAMEL_SINGULAR.
+    Args:
+        ${KEY_DATA_OBJ} (dict): A dictionary containing ${KEY_PARENT_ID_LIST} and ${KEY_CAMEL_SINGULAR} data. Expected keys:
+            ${INSERT_PARENT_ARG_LIST}
+            - "${KEY_LOWER_SNAKE_SINGULAR}" (dict): A dictionary containing the ${KEY_CAMEL_SINGULAR}'s name.
+                Expected sub-keys:
+                - "name" (str): The ID or name of the ${KEY_CAMEL_SINGULAR}.
 
     Returns:
         int: JSON response on success or None on Fail
     """
-    params = {key: ${KEY_DATA_OBJ}["${KEY_LOWER_SNAKE_PLURAL}"][key] for key in ["candidate", "includeMetadata"] if key in ${KEY_DATA_OBJ}["${KEY_LOWER_SNAKE_PLURAL}"]}
+    params = {key: ${KEY_DATA_OBJ}["${KEY_LOWER_SNAKE_SINGULAR}"][key] for key in ["candidate", "includeMetadata"] if key in ${KEY_DATA_OBJ}["${KEY_LOWER_SNAKE_SINGULAR}"]}
     ${INSERT_TEMPLATE_EXTRACT_ID}
-    KEY_CAMEL_SINGULARId = ${KEY_DATA_OBJ}["${KEY_LOWER_SNAKE_PLURAL}"]["name"]
-    response = _make_get_request(headers, f"{BASE_URL}KEY_PATH_ROOT_TO_KEY_FULL", params=params)
+    ${KEY_CAMEL_SINGULAR}Id = ${KEY_DATA_OBJ}["${KEY_LOWER_SNAKE_SINGULAR}"]["name"]
+    response = _make_get_request(headers, f"{BASE_URL}${KEY_PATH_ROOT_TO_KEY_FULL}", params=params)
     return response
-'''
+''')
 
-template_put_call = '''
-def update_fabric_KEY_LOWER_SNAKE_SINGULAR(${KEY_DATA_OBJ}):
+# ------------------------------ PUT FUNC ------------------------------
+template_put_call = Template('''
+def update_fabric_${KEY_LOWER_SNAKE_SINGULAR}(${KEY_DATA_OBJ}):
     """
-     Updates a specific KEY_CAMEL_SINGULAR.
+    Updates a specific ${KEY_CAMEL_SINGULAR}.
 
-     Args:
-         ${KEY_DATA_OBJ} (dict): A dictionary containing ${KEY_PARENT_ID_LIST}, KEY_CAMEL_SINGULAR ID, and updated KEY_CAMEL_SINGULAR properties. Expected keys:
-             ${INSERT_PARENT_ARG_LIST}
-             - "${KEY_LOWER_SNAKE_PLURAL}" (dict): A dictionary containing the updated KEY_CAMEL_SINGULAR properties. Must include "name" for KEY_CAMEL_SINGULAR ID.
+    Args:
+        ${KEY_DATA_OBJ} (dict): A dictionary containing ${KEY_PARENT_ID_LIST}, ${KEY_CAMEL_SINGULAR} ID, and updated ${KEY_CAMEL_SINGULAR} properties. Expected keys:
+            ${INSERT_PARENT_ARG_LIST}
+            - "${KEY_LOWER_SNAKE_SINGULAR}" (dict): A dictionary containing the updated ${KEY_CAMEL_SINGULAR} properties. Must include "name" for ${KEY_CAMEL_SINGULAR} ID.
         
-      Returns:
+    Returns:
         dict: JSON response, or None on error.
     """
     ${INSERT_TEMPLATE_EXTRACT_ID}
-    KEY_CAMEL_SINGULARId = ${KEY_DATA_OBJ}["${KEY_LOWER_SNAKE_PLURAL}"]["name"]
-    payload = ${KEY_DATA_OBJ}["${KEY_LOWER_SNAKE_PLURAL}"]
-    response = _make_put_request(headers, f"{BASE_URL}KEY_PATH_ROOT_TO_KEY_FULL", payload=payload)
+    ${KEY_CAMEL_SINGULAR}Id = ${KEY_DATA_OBJ}["${KEY_LOWER_SNAKE_SINGULAR}"]["name"]
+    payload = ${KEY_DATA_OBJ}["${KEY_LOWER_SNAKE_SINGULAR}"]
+    response = _make_put_request(headers, f"{BASE_URL}${KEY_PATH_ROOT_TO_KEY_FULL}", payload=payload)
     return response
-'''
+''')
 
-template_delete_call = '''
-def delete_fabric_KEY_LOWER_SNAKE_SINGULAR(${KEY_DATA_OBJ}):
-   """
-    Deletes a KEY_CAMEL_SINGULAR.
+# ------------------------------ DELETE FUNC ------------------------------
+template_delete_call = Template('''
+def delete_fabric_${KEY_LOWER_SNAKE_SINGULAR}(${KEY_DATA_OBJ}):
+    """
+    Deletes a ${KEY_CAMEL_SINGULAR}.
 
     Args:
-         ${KEY_DATA_OBJ} (dict): A dictionary containing ${KEY_PARENT_ID_LIST}, and KEY_CAMEL_SINGULAR ID. Expected keys:
-             ${INSERT_PARENT_ARG_LIST}
-             - "${KEY_LOWER_SNAKE_PLURAL}" (dict): A dictionary containing the name of the KEY_CAMEL_SINGULAR to delete.
+        ${KEY_DATA_OBJ} (dict): A dictionary containing ${KEY_PARENT_ID_LIST}, and ${KEY_CAMEL_SINGULAR} ID. Expected keys:
+            ${INSERT_PARENT_ARG_LIST}
+            - "${KEY_LOWER_SNAKE_SINGULAR}" (dict): A dictionary containing the name of the ${KEY_CAMEL_SINGULAR} to delete.
 
     Returns:
         dict: JSON response
-   """
-   ${INSERT_TEMPLATE_EXTRACT_ID}
-   KEY_CAMEL_SINGULARId = ${KEY_DATA_OBJ}["${KEY_LOWER_SNAKE_PLURAL}"]["name"]
-   response = _make_delete_request(headers, f"{BASE_URL}KEY_PATH_ROOT_TO_KEY_FULL")
-   return response
-'''
+    """
+    ${INSERT_TEMPLATE_EXTRACT_ID}
+    ${KEY_CAMEL_SINGULAR}Id = ${KEY_DATA_OBJ}["${KEY_LOWER_SNAKE_SINGULAR}"]["name"]
+    response = _make_delete_request(headers, f"{BASE_URL}${KEY_PATH_ROOT_TO_KEY_FULL}")
+    return response
+''')

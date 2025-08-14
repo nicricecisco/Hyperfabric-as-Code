@@ -86,62 +86,6 @@ fabrics:
           portName:
           nodeName:
 
-    vnis:
-      - name:
-        description:
-        vni:
-        mtu:
-        vrfId:
-        svis:
-          - enabled:
-            ipv4Addresses:
-            ipv6Addresses:
-        protected:
-        members:
-          - untagged:
-            vlanId:
-            port:
-              nodeName:
-              portName:
-
-    vrfs:
-      - name:
-        description:
-        enabled:
-        asn:
-        vni:
-        labels:
-          string[]:
-        protected:
-        annotations:
-          - name:
-            value:
-
-        staticRoutes:
-          - name:
-            description:
-            enabled:
-            labels:
-              string[]:
-            annotations:
-              - name:
-                value:
-            routes:
-              - nodeId:
-                interface:
-                preference:
-                prefix:
-                nextHop:
-                nextVrf:
-                tag: 
-                discard:
-
-    delete:
-      vnis:
-        - name:
-      vrfs:
-        - name:
-
     
 
 

@@ -231,10 +231,21 @@ def generate_api_function_calls(api_file, key, path_to_key):
             arg_lines.append(indented_entry)
         return "\n".join(arg_lines), join_id_list([p[:-1] + " ID" for p in path_to_key[:-1]])
     
-    def generate_id_declarations(indent=" " * 4):
+    def generate_id_declarations(full=True, indent=" " * 4):
+        id_declarations = []
         for i, obj_name in enumerate(path_to_key):
-            pass
-    
+            filled_id_declarations = template_extract_id.substitute(
+                KEY_A_PARENT_ID_CAMEL=obj_name[:-1] + "Id",
+                KEY_A_PARENT_ID_SNAKE=(camel_to_screaming_snake(obj_name, make_singular=True).lower() + "_id"),
+                KEY_DATA_OBJ=KEY_DATA_OBJ
+            )
+            # Apply indentation to every line in this entry
+            currIndent = "" if i == -1 else indent # Not necessary, but here if the indenting issue arises
+            indented_entry = "\n".join(currIndent + line if line.strip() else "" for line in filled_id_declarations.splitlines())
+            id_declarations.append(indented_entry)
+        id_declarations = id_declarations if full else id_declarations[:-1]
+        return "".join(id_declarations)
+
     def generate_api_path(full=True):
         path = ""
         for i, obj_name in enumerate(path_to_key):
@@ -244,6 +255,7 @@ def generate_api_function_calls(api_file, key, path_to_key):
 
     blank_line = cst.EmptyLine()
     screaming_snake_plural = camel_to_screaming_snake(key)
+    KEY_DATA_OBJ = f"{screaming_snake_plural[:-1].lower()}_data_obj"
 
     with open(api_file, "r") as f:
         api_functions = f.read()
@@ -256,36 +268,49 @@ def generate_api_function_calls(api_file, key, path_to_key):
         KEY_UPPER=screaming_snake_plural.replace("_", " ")
     )
 
-    # Fill in get all func template
     arg_list, parent_id_list = generate_arg_list()
     api_path = generate_api_path(full=False)
-    get_all_func = template_get_all_call.substitute(
-        KEY_CAMEL=key,
-        KEY_DATA_OBJ=f"{screaming_snake_plural[:-1].lower()}_data_obj",
-        KEY_LOWER_SNAKE_PLURAL=screaming_snake_plural.lower(),
-        KEY_LOWER_SNAKE_SINGULAR=screaming_snake_plural[:-1].lower(),
-        KEY_PARENT_ID_LIST = parent_id_list,
-        KEY_PARENT_SINGULAR=path_to_key[-2][:-1],
-        KEY_PATH_ROOT_TO_KEY=api_path,
-        INSERT_PARENT_ARG_LIST=arg_list,
-        INSERT_TEMPLATE_EXTRACT_ID="placeholder"
-    )
+    api_path_full = generate_api_path(full=True)
+    id_declarations = generate_id_declarations(full=False)
 
+    template_vars = {
+        "KEY_CAMEL": key,
+        "KEY_CAMEL_SINGULAR": key[:-1],
+        "KEY_DATA_OBJ": KEY_DATA_OBJ,
+        "KEY_LOWER_SNAKE_PLURAL": screaming_snake_plural.lower(),
+        "KEY_LOWER_SNAKE_SINGULAR": screaming_snake_plural[:-1].lower(),
+        "KEY_PARENT_ID_LIST": parent_id_list,
+        "KEY_PARENT_SINGULAR": path_to_key[-2][:-1],
+        "KEY_PATH_ROOT_TO_KEY": api_path,
+        "KEY_PATH_ROOT_TO_KEY_FULL": api_path_full,
+        "INSERT_PARENT_ARG_LIST": arg_list,
+        "INSERT_TEMPLATE_EXTRACT_ID": id_declarations,
+    }
+
+    # Fill in all the function templates
+    get_all_func = template_get_all_call.substitute(**template_vars)
+    post_func = template_post_call.substitute(**template_vars)
+    get_func = template_get_call.substitute(**template_vars)
+    put_func = template_put_call.substitute(**template_vars)
+    delete_func = template_delete_call.substitute(**template_vars)
+
+    # String together all the blocks
     comment_line = EmptyLine(comment=Comment(filled_comment_header.strip()))
     comment_block = [blank_line, blank_line] + [comment_line] + [blank_line, blank_line]
     get_all_func_module = cst.parse_module(get_all_func)
+    post_func_module = cst.parse_module(post_func)
+    get_func_module = cst.parse_module(get_func)
+    put_func_module = cst.parse_module(put_func)
+    delete_func_module = cst.parse_module(delete_func)
 
-
-    new_body = list(module.body) + comment_block + list(get_all_func_module.body)
+    new_body = list(module.body) + comment_block + list(get_all_func_module.body) + [blank_line] + list(post_func_module.body) + [blank_line] + list(get_func_module.body) + [blank_line] + list(put_func_module.body) + [blank_line] + list(delete_func_module.body)
 
     # Parse the generated code into CST nodes
     updated_module = module.with_changes(body=new_body)
-
-    # # Append the new nodes to the original module body
-    # new_body = list(module.body) + list(template_module.body)
-    # updated_module = module.with_changes(body=new_body)
 
     # Write it back — all comments, spacing, and newlines preserved
     with open(api_file, "w") as f:
         f.write(updated_module.code)
 
+    success_message = f"[SUCCESS] Successfully created API function calls and wrote them to {api_file}'"
+    log_success_green(logger, success_message)
