@@ -830,7 +830,7 @@ def get_fabric_static_routes(static_route_data_obj):
      Gets a list of staticRoutes for a vrf
 
      Args:
-         static_route_data_obj (dict): A dictionary containing fabric ID, VRF ID, and static route data. Expected keys:
+         static_route_data_obj (dict): A dictionary containing fabric ID and VRF ID. Expected keys:
             - "fabric_id" (str): The ID or name of the fabric.
             - "vrf_id" (str): The ID or name of the VRF.
 

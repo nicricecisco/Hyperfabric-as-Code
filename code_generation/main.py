@@ -79,15 +79,15 @@ def main():
         parent = new_obj[0].get("owner", "fabric")
         new_obj_path = ENTITY_PATHS[camel_to_screaming_snake(parent)] + [key]
         
-        # Begin modifying files
-        # Modifies entities/definitions.py
-        add_entity_to_definitions_file(key, new_obj_path, definitions_file)
+        # # Begin modifying files
+        # # Modifies entities/definitions.py
+        # add_entity_to_definitions_file(key, new_obj_path, definitions_file)
 
-        # Modifies schemas/validation/new_validation_with_desc.json
-        insert_into_json_schema(validation_json, parent + "s", key, new_obj) 
+        # # Modifies schemas/validation/new_validation_with_desc.json
+        # insert_into_json_schema(validation_json, parent + "s", key, new_obj) 
 
-        # Modifies entities/attributes.py
-        register_attributes(attributes_file, key)
+        # # Modifies entities/attributes.py
+        # register_attributes(attributes_file, key)
 
         # Modifies scripts/hyperfabric_api.py
         generate_api_function_calls(hyperfabric_api, key, new_obj_path)

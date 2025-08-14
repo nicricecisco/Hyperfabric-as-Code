@@ -39,3 +39,11 @@ def get_nested(data, path):
     for key in path:
         current = current[key]
     return current
+
+def generate_api_path(path):
+    # f"{BASE_URL}/fabrics/{fabricId}/nodes/{nodeId}/devices"
+    api_path = ""
+    for p in path:
+        api_path += ("/" + p + f"{{{p[-1]}Id}}")
+    
+    return api_path

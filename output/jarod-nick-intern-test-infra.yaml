@@ -1,8 +1,8 @@
-# Generated on 2025-08-08 16:02:45 UTC
-# Last uploaded (success): 2025-08-08 16:03:54 UTC
+# Generated on 2025-08-13 15:51:06 UTC
+# Last uploaded (success): 2025-08-13 15:53:18 UTC
 fabrics:
   - name: jarod-nick-intern-test
-    description: test fabric
+    description: HELLO
     location: CA-95134
     address: 300 East Tasman Drive
     city: Milpitas
@@ -11,6 +11,8 @@ fabrics:
     labels:
       - TAG_ONE
       - TAG_TWO
+    annotations:
+      hello: test
     nodes:
       - name: Leaf-01
         modelName: HF6100-32D
@@ -46,6 +48,11 @@ fabrics:
         annotations:
           position: LF002
         ports:
+          - name: Ethernet1_1
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
           - name: Ethernet1_5
             mtu: 9100
             enabled: true
@@ -65,6 +72,12 @@ fabrics:
           - TAG_ONE
         annotations:
           position: LF003
+        ports:
+          - name: Ethernet1_1
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
       - name: Leaf-04
         modelName: HF6100-60L4D
         roles:
@@ -74,6 +87,17 @@ fabrics:
           - TAG_ONE
         annotations:
           position: LF004
+        ports:
+          - name: Ethernet1_31
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Leaf-05
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+        description: Leaf Switch 05
       - name: Spine-01
         modelName: HF6100-32D
         roles:
@@ -82,6 +106,21 @@ fabrics:
         annotations:
           position: SP001
         ports:
+          - name: Ethernet1_1
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_2
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_3
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
           - name: Ethernet1_16
             mtu: 9100
             enabled: true
@@ -98,21 +137,31 @@ fabrics:
             roles:
               - FABRIC_PORT
     connections:
-      - local:
+      - pluggable: QDD-400-CU3M
+        local:
           portName: Ethernet1_16
           nodeName: Leaf-01
         remote:
           portName: Ethernet1_16
           nodeName: Spine-01
-      - local:
-          portName: Ethernet1_20
-          nodeName: Leaf-01
+      - pluggable: QDD-400-CU3M
+        local:
+          portName: Ethernet1_1
+          nodeName: Leaf-02
         remote:
-          portName: Ethernet1_20
+          portName: Ethernet1_1
           nodeName: Spine-01
-      - local:
-          portName: Ethernet1_22
-          nodeName: Leaf-01
+      - pluggable: QDD-400-CU1M
+        local:
+          portName: Ethernet1_1
+          nodeName: Leaf-03
         remote:
-          portName: Ethernet1_22
+          portName: Ethernet1_2
+          nodeName: Spine-01
+      - pluggable: QDD-400-CU3M
+        local:
+          portName: Ethernet1_31
+          nodeName: Leaf-04
+        remote:
+          portName: Ethernet1_3
           nodeName: Spine-01

@@ -13,7 +13,7 @@ schema_path = get_schema_path()
 with open(schema_path) as f:
     schema = json.load(f)
 
-EXCLUDE_ATTR = ["fabrics", "nodes", "managementPorts", "ports", "connections", "vnis", "vrfs", "staticRoutes", "autocabling", "delete"]
+EXCLUDE_ATTR = ["fabrics", "nodes", "managementPorts", "ports", "connections", "vnis", "vrfs", "staticRoutes", "autocabling", "delete", "bind"]
 
 def _get_attribute_keys(*args):
     result = schema.get("properties", {})

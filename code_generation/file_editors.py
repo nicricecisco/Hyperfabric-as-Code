@@ -4,6 +4,9 @@ import json
 import astunparse
 import subprocess
 import copy
+import libcst as cst
+import libcst.matchers as m
+from libcst import EmptyLine, Comment
 from pprint import pprint
 from utils.logger import get_logger, log_success_green
 from code_generation.helpers import camel_to_screaming_snake, find_key_path, get_nested
@@ -208,18 +211,81 @@ def generate_api_function_calls(api_file, key, path_to_key):
         path_to_key (str[]): A list of strings representing the complete path from the root object (fabrics) to the new object
     """
 
+    def generate_arg_list(indent=" " * 12):
+        def join_id_list(items):
+            if not items:
+                return ""
+            if len(items) == 1:
+                return items[0]
+            return ", ".join(items[:-1]) + ", and " + items[-1]
+        
+        arg_lines = []
+        for i, obj_name in enumerate(path_to_key[:-1]):
+            filled_args_entry = template_args_entry.substitute(
+                KEY_A_PARENT_ID_SNAKE=(camel_to_screaming_snake(obj_name, make_singular=True).lower() + "_id"),
+                KEY_A_PARENT_SINGULAR=obj_name[:-1]
+            ).lstrip("\n")
+            # Apply indentation to every line in this entry
+            currIndent = "" if i == 0 else indent # Artifact of first line's indent being caused by default new line indentation
+            indented_entry = "\n".join(currIndent + line if line.strip() else "" for line in filled_args_entry.splitlines())
+            arg_lines.append(indented_entry)
+        return "\n".join(arg_lines), join_id_list([p[:-1] + " ID" for p in path_to_key[:-1]])
+    
+    def generate_id_declarations(indent=" " * 4):
+        for i, obj_name in enumerate(path_to_key):
+            pass
+    
+    def generate_api_path(full=True):
+        path = ""
+        for i, obj_name in enumerate(path_to_key):
+            placeholder = "" if not full and i == len(path_to_key) - 1 else f"/{{{obj_name[:-1]}Id}}"
+            path += f"/{obj_name}{placeholder}"
+        return path
+
+    blank_line = cst.EmptyLine()
+    screaming_snake_plural = camel_to_screaming_snake(key)
+
     with open(api_file, "r") as f:
         api_functions = f.read()
-    
-    tree = ast.parse(api_functions)
+        
+    # Create CST from the existing file
+    module = cst.parse_module(api_functions)
+
+    # Fill in comment template
     filled_comment_header = template_comment_header.format(
-        KEY_UPPER = camel_to_screaming_snake(key, make_singular=True)
+        KEY_UPPER=screaming_snake_plural.replace("_", " ")
     )
 
-    template_tree = ast.parse(filled_comment_header)
-    tree.body.extend(template_tree.body)
+    # Fill in get all func template
+    arg_list, parent_id_list = generate_arg_list()
+    api_path = generate_api_path(full=False)
+    get_all_func = template_get_all_call.substitute(
+        KEY_CAMEL=key,
+        KEY_DATA_OBJ=f"{screaming_snake_plural[:-1].lower()}_data_obj",
+        KEY_LOWER_SNAKE_PLURAL=screaming_snake_plural.lower(),
+        KEY_LOWER_SNAKE_SINGULAR=screaming_snake_plural[:-1].lower(),
+        KEY_PARENT_ID_LIST = parent_id_list,
+        KEY_PARENT_SINGULAR=path_to_key[-2][:-1],
+        KEY_PATH_ROOT_TO_KEY=api_path,
+        INSERT_PARENT_ARG_LIST=arg_list,
+        INSERT_TEMPLATE_EXTRACT_ID="placeholder"
+    )
 
-    new_code = ast.unparse(tree)
+    comment_line = EmptyLine(comment=Comment(filled_comment_header.strip()))
+    comment_block = [blank_line, blank_line] + [comment_line] + [blank_line, blank_line]
+    get_all_func_module = cst.parse_module(get_all_func)
+
+
+    new_body = list(module.body) + comment_block + list(get_all_func_module.body)
+
+    # Parse the generated code into CST nodes
+    updated_module = module.with_changes(body=new_body)
+
+    # # Append the new nodes to the original module body
+    # new_body = list(module.body) + list(template_module.body)
+    # updated_module = module.with_changes(body=new_body)
+
+    # Write it back — all comments, spacing, and newlines preserved
     with open(api_file, "w") as f:
-        f.write(new_code)
+        f.write(updated_module.code)
 
