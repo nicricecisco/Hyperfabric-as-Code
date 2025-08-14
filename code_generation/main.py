@@ -12,7 +12,7 @@ yaml.default_flow_style = False
 logger = get_logger()
 
 # ----------------- OBJECT SCHEMA -----------------
-object_schema = "object_schema.yaml"
+object_schema = "schemas/object_declaration.yaml"
 
 # ----------------- ENTITY FILES -----------------
 attributes_file = "entities/attributes.py"
