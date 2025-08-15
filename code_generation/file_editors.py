@@ -6,8 +6,9 @@ import subprocess
 import copy
 import libcst as cst
 import libcst.matchers as m
-from libcst import EmptyLine, Comment
 from pprint import pprint
+from string import Template
+from libcst import EmptyLine, Comment
 from utils.logger import get_logger, log_success_green
 from code_generation.helpers import camel_to_screaming_snake, find_key_path, get_nested
 from code_generation.code_templates.api_function_calls import template_comment_header, template_args_entry, template_extract_id, template_single_portion_of_api_path, \
@@ -314,3 +315,101 @@ def generate_api_function_calls(api_file, key, path_to_key):
 
     success_message = f"[SUCCESS] Successfully created API function calls and wrote them to {api_file}'"
     log_success_green(logger, success_message)
+
+# Modifies entities/functions.py
+def generate_function_object(functions_file, key):
+    """
+    Adds generated functions to FUNCTION_OBJECTS in entities/functions.py
+
+    Args:
+        functions_file (str): Path to functions.py
+        key (str): Key of the new object
+    """
+    class AppendToHyperfabricImport(cst.CSTTransformer):
+        def __init__(self, new_funcs):
+            self.new_funcs = new_funcs
+
+        def leave_ImportFrom(self, original_node, updated_node):
+            if m.matches(
+                original_node,
+                m.ImportFrom(
+                    module=m.Attribute(value=m.Name("scripts"), attr=m.Name("hyperfabric_api"))
+                ),
+            ):
+                current_names = list(updated_node.names)
+                for func in self.new_funcs:
+                    if not any(alias.name.value == func for alias in current_names):
+                        current_names.append(cst.ImportAlias(name=cst.Name(func)))
+                return updated_node.with_changes(names=current_names)
+            return updated_node
+    
+    key_lower_snake = camel_to_screaming_snake(key, make_singular=True).lower()
+    function_names = [f"get_fabric_{key_lower_snake}", f"add_fabric_{key_lower_snake}s", f"update_fabric_{key_lower_snake}", f"delete_fabric_{key_lower_snake}"]
+    template_line = Template(
+        "${key_lower_snake}_func_obj = _make_func_object(get_func=${get_func}, post_func=${post_func}, put_func=${put_func}, del_func=${del_func})"
+    )
+
+    with open(functions_file, "r") as f:
+        api_functions = f.read()
+
+    module = cst.parse_module(api_functions)
+
+    new_module = module.visit(AppendToHyperfabricImport(function_names))
+
+    template_vars = {
+        "key_lower_snake": key_lower_snake,
+        "get_func": function_names[0],
+        "post_func": function_names[1],
+        "put_func": function_names[2],
+        "del_func": function_names[3]
+    }
+    func_obj_declaration = template_line.substitute(**template_vars)
+    func_obj_module = cst.parse_module(func_obj_declaration)
+    func_obj_node = func_obj_module.body[0]  # This is a SimpleStatementLine
+
+    # Build new body by inserting before FUNCTION_OBJECTS assignment
+    new_body = []
+    inserted = False
+    
+    for stmt in new_module.body:
+        if isinstance(stmt, cst.SimpleStatementLine):
+            for i, small_stmt in enumerate(stmt.body):
+                if isinstance(small_stmt, cst.Assign):
+                    target = small_stmt.targets[0].target
+                    if isinstance(target, cst.Name) and target.value == "FUNCTION_OBJECTS":
+                        if not inserted:
+                            new_body.append(func_obj_node)
+                            inserted = True
+
+                        if isinstance(small_stmt.value, cst.Dict):
+                            new_entry = cst.DictElement(
+                                key=cst.SimpleString(f'"{camel_to_screaming_snake(key, make_singular=True)}"'),
+                                value=cst.Name(f"{key_lower_snake}_func_obj"),
+                            )
+                            new_elements = list(small_stmt.value.elements) + [new_entry]
+                            updated_dict = small_stmt.value.with_changes(elements=new_elements)
+                            updated_assign = small_stmt.with_changes(value=updated_dict)
+
+                            # Replace the original small_stmt with the updated one
+                            stmt = stmt.with_changes(body=[updated_assign])
+
+        # Always append the (possibly updated) statement
+        new_body.append(stmt)
+    
+    updated_module = new_module.with_changes(body=new_body)
+
+    with open(functions_file, "w") as f:
+        f.write(updated_module.code)
+    
+    subprocess.run(
+        [sys.executable, "-m", "black", functions_file],
+        capture_output=True,
+        text=True
+    )
+
+    success_message = f"[SUCCESS] Successfully added {key} functions to {functions_file}'"
+    log_success_green(logger, success_message)
+
+# Modifies scripts/handle_json_input.py
+def insert_entity_processing(main_file, key):
+    pass

@@ -1,9 +1,11 @@
 from ruamel.yaml import YAML
 from pprint import pprint
+from utils.schema_loader import get_schema_path
 from utils.logger import get_logger, log_error_red
 from entities.definitions import ENTITY_KEYS, ENTITY_PATHS
 from code_generation.helpers import camel_to_screaming_snake
-from code_generation.file_editors import add_entity_to_definitions_file, insert_into_json_schema, register_attributes, generate_api_function_calls
+from code_generation.file_editors import add_entity_to_definitions_file, insert_into_json_schema, register_attributes, \
+    generate_api_function_calls, generate_function_object, insert_entity_processing
 
 yaml = YAML()
 yaml.default_flow_style = False
@@ -24,7 +26,7 @@ main_pipeline = "scripts/handle_json_input.py"
 hyperfabric_api = "scripts/hyperfabric_api.py"
 
 # ----------------- SCHEMA FILES -----------------
-validation_json = "schemas/validation/new_validation_with_desc.json"
+validation_json = get_schema_path()
 validation_template = "schemas/validation/validation_template.yaml"
 
 def validate_new_object(key, obj):
@@ -79,8 +81,8 @@ def main():
         parent = new_obj[0].get("owner", "fabric")
         new_obj_path = ENTITY_PATHS[camel_to_screaming_snake(parent)] + [key]
         
-        # # Begin modifying files
-        # # Modifies entities/definitions.py
+        # Begin modifying files
+        # Modifies entities/definitions.py
         # add_entity_to_definitions_file(key, new_obj_path, definitions_file)
 
         # # Modifies schemas/validation/new_validation_with_desc.json
@@ -90,10 +92,13 @@ def main():
         # register_attributes(attributes_file, key)
 
         # # Modifies scripts/hyperfabric_api.py
-        generate_api_function_calls(hyperfabric_api, key, new_obj_path)
+        # generate_api_function_calls(hyperfabric_api, key, new_obj_path)
 
-        # Modifies entities/functions.py
+        # # Modifies entities/functions.py
+        # generate_function_object(functions_file, key)
 
+        # Modifies scripts/handle_json_input.py
+        insert_entity_processing(main_pipeline, key)
         
     
 if __name__ == "__main__":
