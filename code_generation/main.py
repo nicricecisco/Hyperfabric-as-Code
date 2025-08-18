@@ -83,22 +83,22 @@ def main():
         
         # Begin modifying files
         # Modifies entities/definitions.py
-        # add_entity_to_definitions_file(key, new_obj_path, definitions_file)
+        add_entity_to_definitions_file(key, new_obj_path, definitions_file)
 
-        # # Modifies schemas/validation/new_validation_with_desc.json
-        # insert_into_json_schema(validation_json, parent + "s", key, new_obj) 
+        # Modifies schemas/validation/validator.json
+        insert_into_json_schema(validation_json, parent + "s", key, new_obj) 
 
-        # # Modifies entities/attributes.py
-        # register_attributes(attributes_file, key)
+        # Modifies entities/attributes.py
+        register_attributes(attributes_file, key)
 
-        # # Modifies scripts/hyperfabric_api.py
-        # generate_api_function_calls(hyperfabric_api, key, new_obj_path)
+        # Modifies scripts/hyperfabric_api.py
+        generate_api_function_calls(hyperfabric_api, key, new_obj_path)
 
-        # # Modifies entities/functions.py
-        # generate_function_object(functions_file, key)
+        # Modifies entities/functions.py
+        generate_function_object(functions_file, key)
 
         # Modifies scripts/handle_json_input.py
-        insert_entity_processing(main_pipeline, key)
+        insert_entity_processing(main_pipeline, key, new_obj_path[:-1])
         
     
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ import json
 import astunparse
 import subprocess
 import copy
+import textwrap
 import libcst as cst
 import libcst.matchers as m
 from pprint import pprint
@@ -13,6 +14,7 @@ from utils.logger import get_logger, log_success_green
 from code_generation.helpers import camel_to_screaming_snake, find_key_path, get_nested
 from code_generation.code_templates.api_function_calls import template_comment_header, template_args_entry, template_extract_id, template_single_portion_of_api_path, \
      template_get_all_call, template_post_call, template_get_call, template_put_call, template_delete_call
+from code_generation.code_templates.entity_processing import template_comment_header_main, template_parent_id_entry, template_entity_processing_standard, template_entity_processing_fabric_child
 
 # Setup logger
 logger = get_logger()
@@ -411,5 +413,107 @@ def generate_function_object(functions_file, key):
     log_success_green(logger, success_message)
 
 # Modifies scripts/handle_json_input.py
-def insert_entity_processing(main_file, key):
-    pass
+def insert_entity_processing(main_file, key, parents):        
+    class InsertAfterProcessEntity(cst.CSTTransformer):
+        def __init__(self, entity_processing_body, parent):
+            self.entity_processing_body = entity_processing_body
+            self.parent_var = f"{parent}_other"
+            self.parent = parent
+            self.inside_target_func = False
+
+        def visit_FunctionDef(self, node):
+            if node.name.value == "_loop_through_attributes":
+                self.inside_target_func = True
+
+        def leave_FunctionDef(self, original_node, updated_node):
+            if not self.inside_target_func:
+                return updated_node
+
+            self.inside_target_func = False
+
+            if self.parent == "fabric":
+                # Insert our block at the top of the function body
+                comment_line = cst.EmptyLine(comment=cst.Comment(filled_comment_header.strip()))
+                new_body = [blank_line, comment_line] + list(self.entity_processing_body.body) + list(updated_node.body.body)
+                return updated_node.with_changes(
+                    body=updated_node.body.with_changes(body=new_body)
+                )
+
+            return updated_node
+
+        def leave_IndentedBlock(self, original_node, updated_node):
+            if not self.inside_target_func or self.parent == "fabric":
+                return updated_node
+
+            # Otherwise: normal case, insert after <parent>_other = _process_entity(...)
+            new_body = []
+            for stmt in updated_node.body:
+                new_body.append(stmt)
+                if m.matches(
+                    stmt,
+                    m.SimpleStatementLine(
+                        body=[
+                            m.Assign(
+                                targets=[m.AssignTarget(target=m.Name(self.parent_var))],
+                                value=m.Call(func=m.Name("_process_entity"))
+                            )
+                        ]
+                    )
+                ):
+                    comment_line = EmptyLine(comment=Comment(filled_comment_header.strip()))
+                    comment_block = [blank_line, comment_line]
+                    new_body.extend(comment_block)
+                    new_body.extend(self.entity_processing_body.body)
+
+            return updated_node.with_changes(body=new_body)
+
+    
+    def generate_id_list(indent):
+        id_list = []
+        for i in range(1, len(parents)):
+            p = camel_to_screaming_snake(parents[i], make_singular=True).lower()
+            id_str = template_parent_id_entry.substitute(
+                A_PARENT_ID=f"{p}_id",
+                A_PARENT_KEY_SNAKE=p
+            ).strip("\n")
+            space = indent if i != 1 else 0
+            id_list.append(space * " " + id_str)
+        return "\n".join(id_list)
+    
+    parent = parents[-1][:-1]
+    parent_id_list = generate_id_list(indent=(len(parents)) * 4)
+
+    # Prepare your entity processing snippet
+    screaming_snake_plural = camel_to_screaming_snake(key)
+    template_vars = {
+        "KEY_DATA_OBJ": f"{screaming_snake_plural[:-1].lower()}_data_obj",
+        "KEY_LOWER_SNAKE_SINGULAR": screaming_snake_plural[:-1].lower(),
+        "KEY_NORMAL": key,
+        "KEY_OTHER": f"{screaming_snake_plural[:-1].lower()}_other",
+        "PARENT_ID_LIST": parent_id_list,
+        "PARENT_OTHER": f"{camel_to_screaming_snake(parent).lower()}_other"
+    }
+    entity_processing = template_entity_processing_fabric_child.substitute(**template_vars) if parent == "fabric" else template_entity_processing_standard.substitute(**template_vars)
+    entity_processing_module = cst.parse_module(entity_processing)
+
+    with open(main_file, "r") as f:
+        main_pipeline = f.read()
+
+    blank_line = cst.EmptyLine()
+
+    # Fill in comment template
+    filled_comment_header = template_comment_header_main.format(
+        KEY_UPPER=screaming_snake_plural.replace("_", " ")
+    )
+
+    module = cst.parse_module(main_pipeline)
+    transformer = InsertAfterProcessEntity(entity_processing_module, camel_to_screaming_snake(parent).lower())
+    new_module = module.visit(transformer)
+
+    with open(main_file, "w") as f:
+        f.write(new_module.code)
+
+    
+    # TO-DO:
+    # Fix the indentation in the id_list for elements after the first
+    # Make sure that it works when it is a fabric level object (has the protected key thing)
