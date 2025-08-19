@@ -58,8 +58,7 @@
           "topology": {
             "type": "string",
             "enum": [
-              "MESH",
-              "SPINE_LEAF"
+              "MESH", "SPINE_LEAF"
             ],
             "title": "Topology",
             "description": "Topology (String)\nDefault value: MESH",
@@ -109,10 +108,7 @@
               },
               "speed": {
                 "type": "integer",
-                "enum": [
-                  100,
-                  400
-                ],
+                "enum": [100, 400],
                 "title": "Speed",
                 "description": "Cable speed in Gbps (String)"
               },
@@ -128,33 +124,15 @@
             "allOf": [
               {
                 "if": {
-                  "properties": {
-                    "enabled": {
-                      "const": false
-                    }
-                  },
-                  "required": [
-                    "enabled"
-                  ]
+                  "properties": { "enabled": { "const": false } },
+                  "required": ["enabled"]
                 },
                 "then": {
                   "not": {
                     "anyOf": [
-                      {
-                        "required": [
-                          "pluggable"
-                        ]
-                      },
-                      {
-                        "required": [
-                          "speed"
-                        ]
-                      },
-                      {
-                        "required": [
-                          "length"
-                        ]
-                      }
+                      { "required": ["pluggable"] },
+                      { "required": ["speed"] },
+                      { "required": ["length"] }
                     ]
                   }
                 }
@@ -165,14 +143,12 @@
           "nodes": {
             "type": "array",
             "title": "Nodes",
-            "description": "Nodes (List - Object)\n\nElements:\n- name (required)\n- model (required)\n- roles (required)\n- description\n- location\n- serial_number\n- labels\n- annotations\n- protected\n- management_port\n- ports",
+            "description": "Nodes (List - Object)\n\nElements:\n- name (required)\n- model (required)\n- roles (required)\n- description\n- location\n- serial_number\n- labels\n- annotations\n- protected\n- management_port\n- ports",                  
             "items": {
               "type": "object",
               "additionalProperties": false,
               "required": [
-                "name",
-                "modelName",
-                "roles"
+                "name", "modelName", "roles"
               ],
               "properties": {
                 "name": {
@@ -186,8 +162,7 @@
                 "modelName": {
                   "type": "string",
                   "enum": [
-                    "HF6100-32D",
-                    "HF6100-60L4D"
+                    "HF6100-32D", "HF6100-60L4D"
                   ],
                   "title": "Model",
                   "description": "Model (String)"
@@ -197,9 +172,7 @@
                   "items": {
                     "type": "string",
                     "enum": [
-                      "LEAF",
-                      "SPINE",
-                      "SERVER"
+                      "LEAF", "SPINE", "SERVER"
                     ]
                   },
                   "title": "Roles",
@@ -236,8 +209,7 @@
                       "airflow": {
                         "type": "string",
                         "enum": [
-                          "AIRFLOW_TYPE_PORT_SIDE_INTAKE",
-                          "AIRFLOW_TYPE_PORT_SIDE_EXHAUST"
+                          "AIRFLOW_TYPE_PORT_SIDE_INTAKE", "AIRFLOW_TYPE_PORT_SIDE_EXHAUST"
                         ],
                         "default": "AIRFLOW_TYPE_PORT_SIDE_INTAKE",
                         "title": "Airflow",
@@ -291,119 +263,120 @@
                     "type": "object",
                     "additionalProperties": false,
                     "properties": {
-                      "name": {
-                        "type": "string",
-                        "title": "Name",
-                        "description": "Name (String)",
-                        "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
-                      },
-                      "description": {
-                        "type": "string",
-                        "title": "Description",
-                        "description": "Description (String)",
-                        "maxLength": 2000
-                      },
-                      "ipv4ConfigType": {
-                        "type": "string",
-                        "enum": [
-                          "CONFIG_TYPE_STATIC",
-                          "CONFIG_TYPE_DHCP"
-                        ],
-                        "default": "CONFIG_TYPE_STATIC",
-                        "title": "IPv4 Config Type",
-                        "description": "IPv4 configuration type (String)"
-                      },
-                      "ipv4Address": {
-                        "type": "string",
-                        "title": "IPv4 Address",
-                        "description": "IPv4 Address (String)",
-                        "pattern": "^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\/([0-9]|[1-2][0-9]|3[0-2]))?$"
-                      },
-                      "ipv4Gateway": {
-                        "type": "string",
-                        "title": "IPv4 Gateway",
-                        "description": "IPv4 Gateway (String)",
-                        "pattern": "^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\/([0-9]|[1-2][0-9]|3[0-2]))?$"
-                      },
-                      "ipv6ConfigType": {
-                        "type": "string",
-                        "enum": [
-                          "CONFIG_TYPE_STATIC",
-                          "CONFIG_TYPE_DHCP"
-                        ],
-                        "default": "CONFIG_TYPE_STATIC",
-                        "title": "IPv6 Config Type",
-                        "description": "IPv6 configuration type (String)"
-                      },
-                      "ipv6Address": {
-                        "type": "string",
-                        "title": "IPv6 Address",
-                        "description": "Ipv6 Address (String)",
-                        "pattern": "^([0-9A-Fa-f:]+)\\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])$"
-                      },
-                      "ipv6Gateway": {
-                        "type": "string",
-                        "title": "IPv6 Gateway",
-                        "description": "IPv6 Gateway (String)",
-                        "pattern": "^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}(\\/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8]))?$|^(([0-9a-fA-F]{1,4}:){1,7}:|:((:[0-9a-fA-F]{1,4}){1,7}))((\\/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8])))?$"
-                      },
-                      "dnsAddresses": {
-                        "type": "array",
-                        "items": {
+                        "name": {
                           "type": "string",
-                          "pattern": "^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)){3})(\\/(3[0-2]|[12]?\\d|0))?$|^(::ffff:(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)){3})(\\/(3[0-2]|[12]?\\d|0))?$|^([0-9a-fA-F:]+)(\\/(12[0-8]|1[01][0-9]|[1-9]?\\d))?$"
+                          "title": "Name",
+                          "description": "Name (String)",
+                          "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
                         },
-                        "title": "DNS Addresses",
-                        "description": "DNS Addresses (List - String)"
-                      },
-                      "proxyAddress": {
-                        "type": "string",
-                        "title": "Proxy Address",
-                        "description": "Proxy Address (String)",
-                        "format": "uri"
-                      },
-                      "proxyUsername": {
-                        "type": "string",
-                        "title": "Proxy Username",
-                        "description": "Proxy Username (String)",
-                        "maxLength": 120
-                      },
-                      "proxyPassword": {
-                        "type": "string",
-                        "title": "Proxy Password",
-                        "description": "Proxy Password (String)",
-                        "maxLength": 120
-                      },
-                      "enabled": {
-                        "type": "boolean",
-                        "title": "Enabled",
-                        "description": "Enabled (Boolean)"
-                      },
-                      "setProxyPassword": {
-                        "type": "boolean",
-                        "title": "Set Proxy Password",
-                        "description": "Set Proxy Password (Boolean)"
-                      },
-                      "cloudUrls": {
-                        "type": "array",
-                        "items": {
+                        "description": {
                           "type": "string",
+                          "title": "Description",
+                          "description": "Description (String)",
+                          "maxLength": 2000
+                        },
+                        "ipv4ConfigType": {
+                          "type": "string",
+                          "enum": [
+                            "CONFIG_TYPE_STATIC",
+                            "CONFIG_TYPE_DHCP"
+                          ],
+                          "default": "CONFIG_TYPE_STATIC",
+                          "title": "IPv4 Config Type",
+                          "description": "IPv4 configuration type (String)"
+                        },
+                        "ipv4Address": {
+                          "type": "string",
+                          "title": "IPv4 Address",
+                          "description": "IPv4 Address (String)",
+                          "pattern": "^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\/([0-9]|[1-2][0-9]|3[0-2]))?$"
+
+                        },
+                        "ipv4Gateway": {
+                          "type": "string",
+                          "title": "IPv4 Gateway",
+                          "description": "IPv4 Gateway (String)",
+                          "pattern": "^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\/([0-9]|[1-2][0-9]|3[0-2]))?$"
+                        },
+                        "ipv6ConfigType": {
+                          "type": "string",
+                          "enum": [
+                            "CONFIG_TYPE_STATIC",
+                            "CONFIG_TYPE_DHCP"
+                          ],
+                          "default": "CONFIG_TYPE_STATIC",
+                          "title": "IPv6 Config Type",
+                          "description": "IPv6 configuration type (String)"
+                        },
+                        "ipv6Address": {
+                          "type": "string",
+                          "title": "IPv6 Address",
+                          "description": "Ipv6 Address (String)",
+                          "pattern": "^([0-9A-Fa-f:]+)\\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])$"
+                        },
+                        "ipv6Gateway": {
+                          "type": "string",
+                          "title": "IPv6 Gateway",
+                          "description": "IPv6 Gateway (String)",
+                          "pattern": "^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}(\\/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8]))?$|^(([0-9a-fA-F]{1,4}:){1,7}:|:((:[0-9a-fA-F]{1,4}){1,7}))((\\/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8])))?$"
+                        },
+                        "dnsAddresses": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "pattern": "^((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)){3})(\\/(3[0-2]|[12]?\\d|0))?$|^(::ffff:(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)){3})(\\/(3[0-2]|[12]?\\d|0))?$|^([0-9a-fA-F:]+)(\\/(12[0-8]|1[01][0-9]|[1-9]?\\d))?$"
+                          },
+                          "title": "DNS Addresses",
+                          "description": "DNS Addresses (List - String)"
+                        },
+                        "proxyAddress": {
+                          "type": "string",
+                          "title": "Proxy Address",
+                          "description": "Proxy Address (String)",
                           "format": "uri"
                         },
-                        "title": "Cloud URLs",
-                        "description": "Cloud URLs (List - String)"
-                      },
-                      "noProxy": {
-                        "type": "array",
-                        "items": {
+                        "proxyUsername": {
                           "type": "string",
-                          "maxLength": 120
+                          "title": "Proxy Username",
+                          "description": "Proxy Username (String)",
+                          "maxLength":120
                         },
-                        "title": "No Proxy",
-                        "description": "No Proxy (List - String)"
-                      }
+                        "proxyPassword": {
+                          "type": "string",
+                          "title": "Proxy Password",
+                          "description": "Proxy Password (String)",
+                          "maxLength":120
+                        },
+                        "enabled": {
+                          "type": "boolean",
+                          "title": "Enabled",
+                          "description": "Enabled (Boolean)"
+                        },
+                        "setProxyPassword": {
+                          "type": "boolean",
+                          "title": "Set Proxy Password",
+                          "description": "Set Proxy Password (Boolean)"
+                        },
+                        "cloudUrls": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "format": "uri"
+                          },
+                          "title": "Cloud URLs",
+                          "description": "Cloud URLs (List - String)"
+                        },
+                        "noProxy": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "maxLength": 120
+                            },
+                            "title": "No Proxy",
+                            "description": "No Proxy (List - String)"
+                        }
                     },
-                    "allOf": [
+                     "allOf": [
                       {
                         "description": "IPv4 conditional validation: if CONFIG_TYPE_STATIC, require address and gateway; if DHCP, disallow them.",
                         "if": {
@@ -415,25 +388,18 @@
                           }
                         },
                         "then": {
-                          "required": [
-                            "ipv4Address",
-                            "ipv4Gateway"
-                          ],
+                          "required": ["ipv4Address", "ipv4Gateway"],
                           "description": "In STATIC mode, ipv4Address and ipv4Gateway must be provided."
                         },
                         "else": {
                           "not": {
                             "anyOf": [
                               {
-                                "required": [
-                                  "ipv4Address"
-                                ],
+                                "required": ["ipv4Address"],
                                 "description": "Disallow ipv4Address if not in STATIC mode (e.g., DHCP)."
                               },
                               {
-                                "required": [
-                                  "ipv4Gateway"
-                                ],
+                                "required": ["ipv4Gateway"],
                                 "description": "Disallow ipv4Gateway if not in STATIC mode (e.g., DHCP)."
                               }
                             ]
@@ -452,25 +418,18 @@
                           }
                         },
                         "then": {
-                          "required": [
-                            "ipv6Address",
-                            "ipv6Gateway"
-                          ],
+                          "required": ["ipv6Address", "ipv6Gateway"],
                           "description": "In STATIC mode, ipv6Address and ipv6Gateway must be provided."
                         },
                         "else": {
                           "not": {
                             "anyOf": [
                               {
-                                "required": [
-                                  "ipv6Address"
-                                ],
+                                "required": ["ipv6Address"],
                                 "description": "Disallow ipv6Address if not in STATIC mode (e.g., DHCP)."
                               },
                               {
-                                "required": [
-                                  "ipv6Gateway"
-                                ],
+                                "required": ["ipv6Gateway"],
                                 "description": "Disallow ipv6Gateway if not in STATIC mode (e.g., DHCP)."
                               }
                             ]
@@ -489,8 +448,7 @@
                     "type": "object",
                     "additionalProperties": false,
                     "required": [
-                      "name",
-                      "roles"
+                      "name", "roles"
                     ],
                     "properties": {
                       "name": {
@@ -517,8 +475,7 @@
                         "title": "FEC",
                         "description": "FEC (String)",
                         "enum": [
-                          "rs",
-                          "none"
+                          "rs", "none"
                         ]
                       },
                       "pluggable": {
@@ -584,7 +541,7 @@
                         "type": "array",
                         "items": {
                           "type": "string",
-                          "pattern": "^([0-9A-Fa-f:]+)\\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])$"
+                          "pattern": "^([0-9A-Fa-f:]+)\\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])$"                        
                         },
                         "title": "IPv6 Addresses",
                         "description": "IPv6 Addresses (List - String)\n- Max Items: 2",
@@ -655,9 +612,7 @@
                     "allOf": [
                       {
                         "if": {
-                          "required": [
-                            "roles"
-                          ],
+                          "required": ["roles"],
                           "properties": {
                             "roles": {
                               "contains": {
@@ -730,8 +685,8 @@
                       "type": "string",
                       "title": "Node Name",
                       "description": "Node Name (String)",
-                      "minLength": 3,
-                      "maxLength": 120,
+                      "minLength":3,
+                      "maxLength":120,
                       "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
                     }
                   }
@@ -755,8 +710,8 @@
                       "type": "string",
                       "title": "Node Name",
                       "description": "Node Name (String)",
-                      "minLength": 3,
-                      "maxLength": 120,
+                      "minLength":3,
+                      "maxLength":120,
                       "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
                     }
                   }
@@ -779,8 +734,8 @@
                   "type": "string",
                   "title": "Name",
                   "description": "Name (String)",
-                  "minLength": 3,
-                  "maxLength": 120,
+                  "minLength":3,
+                  "maxLength":120,
                   "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
                 },
                 "description": {
@@ -890,9 +845,7 @@
                   "items": {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": [
-                      "port"
-                    ],
+                    "required": ["port"],
                     "properties": {
                       "vlanId": {
                         "type": "integer",
@@ -911,10 +864,7 @@
                         "additionalProperties": false,
                         "title": "Port",
                         "description": "Port (Object)\n\nElements:\n- nodeName (required)\n- portName (required)",
-                        "required": [
-                          "nodeName",
-                          "portName"
-                        ],
+                        "required": ["nodeName", "portName"],
                         "properties": {
                           "nodeName": {
                             "type": "string",
@@ -936,34 +886,24 @@
                     "allOf": [
                       {
                         "if": {
-                          "required": [
-                            "vlanId"
-                          ]
+                          "required": ["vlanId"]
                         },
                         "then": {
                           "properties": {
-                            "untagged": {
-                              "const": false
-                            }
+                            "untagged": { "const": false }
                           }
                         }
                       },
                       {
                         "if": {
                           "not": {
-                            "required": [
-                              "vlanId"
-                            ]
+                            "required": ["vlanId"]
                           }
                         },
                         "then": {
-                          "required": [
-                            "untagged"
-                          ],
+                          "required": ["untagged"],
                           "properties": {
-                            "untagged": {
-                              "const": true
-                            }
+                            "untagged": { "const": true }
                           }
                         }
                       }
@@ -1018,10 +958,9 @@
                   "maximum": 4294967294,
                   "not": {
                     "enum": [
-                      23456,
-                      65535
-                    ]
-                  }
+                      23456, 65535
+                      ]
+                    }
                 },
                 "vni": {
                   "type": "integer",
@@ -1128,8 +1067,7 @@
                           "type": "object",
                           "additionalProperties": false,
                           "required": [
-                            "prefix",
-                            "discard"
+                            "prefix", "discard"
                           ],
                           "properties": {
                             "nodeId": {
@@ -1197,40 +1135,27 @@
                             {
                               "if": {
                                 "properties": {
-                                  "discard": {
-                                    "const": true
-                                  }
+                                  "discard": { "const": true }
                                 }
                               },
                               "then": {
                                 "properties": {
-                                  "tag": {
-                                    "const": "TAG_BLACK"
-                                  }
+                                  "tag": { "const": "TAG_BLACK" }
                                 },
-                                "required": [
-                                  "tag"
-                                ],
+                                "required": ["tag"],
                                 "not": {
-                                  "required": [
-                                    "nextHop"
-                                  ]
+                                  "required": ["nextHop"]
                                 }
                               }
                             },
                             {
                               "if": {
                                 "properties": {
-                                  "discard": {
-                                    "const": false
-                                  }
+                                  "discard": { "const": false }
                                 }
                               },
                               "then": {
-                                "required": [
-                                  "nextHop",
-                                  "tag"
-                                ],
+                                "required": ["nextHop", "tag"],
                                 "properties": {
                                   "tag": {
                                     "type": "string",
@@ -1264,9 +1189,7 @@
                 "description": "VNIs (List - String)\n- List of VNI names to delete",
                 "items": {
                   "type": "object",
-                  "required": [
-                    "name"
-                  ],
+                  "required": ["name"],
                   "properties": {
                     "name": {
                       "type": "string",
@@ -1286,9 +1209,7 @@
                 "description": "VRFs (List - String)\n- List of VRF names to delete",
                 "items": {
                   "type": "object",
-                  "required": [
-                    "name"
-                  ],
+                  "required": ["name"],
                   "properties": {
                     "name": {
                       "type": "string",
@@ -1302,7 +1223,7 @@
               }
             }
           },
-          "bind": {
+          "bind":{
             "type": "array",
             "title": "Bind",
             "description": "Bind (List - Object)\n\nElements:\n- nodeName\n- deviceId",
@@ -1326,23 +1247,6 @@
                   "type": "string",
                   "title": "Device ID",
                   "description": "Device ID (String)"
-                }
-              }
-            }
-          },
-          "newObjects": {
-            "items": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "description": {
-                  "type": "string"
-                },
-                "size": {
-                  "type": "integer"
                 }
               }
             }

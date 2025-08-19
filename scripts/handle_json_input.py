@@ -189,16 +189,6 @@ def _process_entity(entity, data_object, key, reset_stack=False):
 
 # Try to separate parts into a generic function
 def _loop_through_attributes(fabric_other, FABRIC_ID):
-    
-    # -------------------- NEW OBJECTS --------------------
-    if "newObjects" in fabric_other:
-        for i, new_object in enumerate(fabric_other["newObjects"]):
-            new_object_data_obj = {
-                "fabric_id": FABRIC_ID,
-            }
-            new_object_other = _process_entity(new_object, new_object_data_obj, "new_object", i == 0) # Reset action stack if first new_object
-            
-            _reset_latest_protected_key() # Reset at the end of processing a new_object
     # -------------------- NODES --------------------
     if "nodes" in fabric_other:
         for i, node in enumerate(fabric_other["nodes"]):
