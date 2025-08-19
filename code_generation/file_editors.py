@@ -513,7 +513,9 @@ def insert_entity_processing(main_file, key, parents):
     with open(main_file, "w") as f:
         f.write(new_module.code)
 
-    
-    # TO-DO:
-    # Fix the indentation in the id_list for elements after the first
-    # Make sure that it works when it is a fabric level object (has the protected key thing)
+    success_message = f"[SUCCESS] Successfully added code to {main_file} to process '{key}' in main pipeline"
+    log_success_green(logger, success_message)
+
+# Modifies get_fabric_config.py
+def add_code_to_fetch(extract_file, key, parents):
+    pass

@@ -6,9 +6,9 @@ ENTITY_KEYS = [
     "CONNECTION",
     "VNI",
     "VRF",
-    "STATIC_ROUTE"
+    "STATIC_ROUTE",
+    "NEW_OBJECT",
 ]
-
 ENTITY_PATHS = {
     "FABRIC": ["fabrics"],
     "NODE": ["fabrics", "nodes"],
@@ -17,5 +17,6 @@ ENTITY_PATHS = {
     "CONNECTION": ["fabrics", "connections"],
     "VNI": ["fabrics", "vnis"],
     "VRF": ["fabrics", "vrfs"],
-    "STATIC_ROUTE": ["fabrics", "vrfs", "staticRoutes"]
+    "STATIC_ROUTE": ["fabrics", "vrfs", "staticRoutes"],
+    "NEW_OBJECT": ["fabrics", "newObjects"],
 }

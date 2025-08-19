@@ -141,8 +141,6 @@ def handle_yaml_file(input_yaml, pluggable):
     output_connections(fabric, connection_result)
 
 def handle_fabric_name(fabric_name, pluggable):
-    # STILL DOESN'T WORK if you are fixing an existing fabric (does not actually delete the connections that should be deleted)
-    # I think I'll have to implement some delete functionality of those connections, because I don't see any other way
     autocabling_data_obj = {
         "fabric_id": fabric_name,
         "autocabling_obj": {}

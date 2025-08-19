@@ -208,7 +208,7 @@ def main(fabric_name):
         "fabrics": [fabric_tenant]
     }
     
-    output_yaml(infra_result, tenant_result)
+    return infra_result, tenant_result
     
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -216,4 +216,6 @@ if __name__ == "__main__":
         sys.exit(1)
 
     fabric_name = sys.argv[1]
-    main(fabric_name)
+    infra_result, tenant_result = main(fabric_name)
+
+    output_yaml(infra_result, tenant_result)
