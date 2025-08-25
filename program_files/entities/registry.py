@@ -1,6 +1,6 @@
-from entities.definitions import ENTITY_KEYS
-from entities.attributes import ATTRIBUTES
-from entities.functions import FUNCTION_OBJECTS
+from program_files.entities.definitions import ENTITY_KEYS
+from program_files.entities.attributes import ATTRIBUTES
+from program_files.entities.functions import FUNCTION_OBJECTS
 
 def _build_entities(keys, attributes_map, functions_map):
     return {

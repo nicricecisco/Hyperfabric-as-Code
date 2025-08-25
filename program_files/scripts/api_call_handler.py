@@ -2,8 +2,8 @@ import json
 import copy
 import requests
 from pprint import pprint
-from utils.logger import get_logger
-from entities.attributes import parse_attributes
+from program_files.utils.logger import get_logger
+from program_files.entities.attributes import parse_attributes
 
 # Setup logger
 logger = get_logger()

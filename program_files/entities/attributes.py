@@ -1,6 +1,6 @@
 import json
-from entities.definitions import ENTITY_PATHS
-from utils.schema_loader import get_schema_path
+from program_files.entities.definitions import ENTITY_PATHS
+from program_files.utils.schema_loader import get_schema_path
 
 def parse_attributes(obj, input_key):
     attributes = ATTRIBUTES[f"{input_key.upper()}"]

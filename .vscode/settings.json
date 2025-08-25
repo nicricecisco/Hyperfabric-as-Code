@@ -2,6 +2,6 @@
   "python.envFile": "${workspaceFolder}/.env",
   "yaml.schemaStore.enable": false,
   "yaml.schemas": {
-      "schemas/validator.json": "input.yaml"    
+      "program_files/schemas/validator.json": "input.yaml"    
   }
 }

@@ -4,11 +4,15 @@ A (YAML) conversion to/from the Hyperfabric cloud controller.
 ## Getting Started
 Create an **API bearer token** in your Nexus Hyperfabric Dashboard. See https://developer.cisco.com/docs/hyperfabric/authentication/#bearer-tokens for more details. 
 
-> Make sure to set the Scope to **Admin**.
-
-Initialize `HYPERFABRIC_TOKEN` by running the following in your terminal:
+Set your `HYPERFABRIC_TOKEN` by either:
+1. Running the following command in your terminal:
 ```
 export HYPERFABRIC_TOKEN={bearerToken}
+```
+
+2. Or adding this line to a `.env` file in the root of your project:
+```
+HYPERFABRIC_TOKEN={bearerToken}
 ```
 
 ## Creating a YAML File
@@ -40,6 +44,19 @@ To upload your fabric specification(s) to the Hyperfabric Cloud Controller, run 
 
 ```
 python3 main.py <file1>.yaml [<file2>.yaml ...]
+```
+
+## Exporting a Fabric to YAML
+To generate a YAML configuration from an existing fabric in the Hyperfabric Cloud Controller, run:
+
+```
+python3 get_fabric_config_to_yaml.py <fabric-name>
+```
+> Replace `<fabric-name>` with the name of the existing fabric.
+
+The YAML file will be saved to:
+```
+output/<fabric-name>.yaml
 ```
 
 > Replace `<file1>.yaml`, `<file2>.yaml`, etc. with the actual names of your YAML configuration files.
@@ -131,15 +148,16 @@ python3 main.py output/autocable_output.yaml output/removed_connections.yaml
 python3 main.py output/autocable_output.yaml
 ```
 
-## Exporting a Fabric to YAML
-To generate a YAML configuration from an existing fabric in the Hyperfabric Cloud Controller, run:
+## List Available Devices
+Run `get_devices.py` to retrieve a list of devices in your organization.
 
+The full list will be saved to:
 ```
-python3 get_fabric_config_to_yaml.py <fabric-name>
+output/devices.py
 ```
-> Replace `<fabric-name>` with the name of the existing fabric.
 
-The YAML file will be saved to:
+To list **only unbound devices**, use the `--unbound` flag:
 ```
-output/<fabric-name>.yaml
+python3 get_devices.py --unbound
 ```
+

@@ -147,12 +147,14 @@ staticRoutes:
         nextVrf: string, must match pattern "Default VRF" or follow format "Vrf", optionally followed by a hyphen and 1-15 alphanumeric characters with a limit of 7 digits if no letters, required if discard is false or not passed
         tag: enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", "TAG_PURPLE", "TAG_YELLOW"], default = "TAG_AMBER", defaults and required to be "TAG_BLACK" if discard is true, cannot be "TAG_BLACK" if discard is false
         discard: boolean, default = false
+
 # Perhaps add type to all these objects? For the json schema
 newObjects:
   - name: string
     owner: node
     description: string
     size: integer
+
     
     
 

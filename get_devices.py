@@ -1,9 +1,10 @@
 import requests
 import argparse
 from ruamel.yaml import YAML
-from utils.logger import get_logger
-from utils.timestamp import generate_timestamp
-from scripts.hyperfabric_api import get_devices
+from program_files.utils.logger import get_logger
+from program_files.utils.timestamp import generate_timestamp
+from program_files.utils.get_output_path import get_output_path
+from program_files.scripts.hyperfabric_api import get_devices
 
 yaml = YAML()
 yaml.indent(mapping=2, sequence=4, offset=2) 
@@ -42,7 +43,8 @@ def filter_attributes(devices):
 
 def main(only_unbound=False):
     devices, response = fetch_devices()
-    output_path = "output/devices.yaml"
+    file_name = "devices"
+    output_path = get_output_path(file_name)
     
     if response:
         now = generate_timestamp()

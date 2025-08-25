@@ -1,10 +1,8 @@
 import json
 from pprint import pprint
 from collections import defaultdict
-from utils.logger import get_logger
-from scripts.hyperfabric_api import get_fabric, get_fabric_nodes, get_fabric_connections
-
-
+from program_files.utils.logger import get_logger
+from program_files.scripts.hyperfabric_api import get_fabric, get_fabric_nodes, get_fabric_connections
 
 # Setup logger
 logger = get_logger()

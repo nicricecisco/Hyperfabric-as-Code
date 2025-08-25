@@ -1,0 +1,1439 @@
+# Generated on 2025-08-18 20:45:56 UTC
+# Last uploaded (failure): 2025-08-18 20:46:53 UTC
+fabrics:
+  - name: Fab-ndqib-Three-Tier-Spine-Leaf
+    topology: DESIGN_BASED
+    nodes:
+      - name: Fab-ndqib-64E-1-1
+        modelName: HF6100-64ED
+        roles:
+          - LEAF
+        psuAirflows:
+          - airflow: AIRFLOW_TYPE_PORT_SIDE_INTAKE
+            psuModel: PSU3KW-HVPI
+        annotations:
+          position: LF001
+        ports:
+          - name: Ethernet1_1
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_2
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_3
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_4
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_5
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_6
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_7
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_8
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_9
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_10
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_11
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_12
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Fab-ndqib-64E-1-2
+        modelName: HF6100-64ED
+        roles:
+          - LEAF
+        psuAirflows:
+          - airflow: AIRFLOW_TYPE_PORT_SIDE_INTAKE
+            psuModel: PSU3KW-HVPI
+        annotations:
+          position: LF002
+        ports:
+          - name: Ethernet1_1
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_2
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_3
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_4
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_5
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_6
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_7
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_8
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_9
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_10
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_11
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_12
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Fab-ndqib-64E-1-3
+        modelName: HF6100-64ED
+        roles:
+          - LEAF
+        psuAirflows:
+          - airflow: AIRFLOW_TYPE_PORT_SIDE_INTAKE
+            psuModel: PSU3KW-HVPI
+        annotations:
+          position: LF003
+        ports:
+          - name: Ethernet1_1
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_2
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_3
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_4
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_5
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_6
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_7
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_8
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_9
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_10
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_11
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_12
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Fab-ndqib-64E-1-4
+        modelName: HF6100-64ED
+        roles:
+          - LEAF
+        psuAirflows:
+          - airflow: AIRFLOW_TYPE_PORT_SIDE_INTAKE
+            psuModel: PSU3KW-HVPI
+        annotations:
+          position: LF004
+        ports:
+          - name: Ethernet1_1
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_2
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_3
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_4
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_5
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_6
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_7
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_8
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_9
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_10
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_11
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_12
+            mtu: 9100
+            speed: 1x400G
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Fab-ndqib-T11-1-1
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        psuAirflows:
+          - airflow: AIRFLOW_TYPE_PORT_SIDE_EXHAUST
+            psuModel: PSU1.4KW-ACPE
+        annotations:
+          position: LF005
+        ports:
+          - name: Ethernet1_1
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_2
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_3
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_4
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_5
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_6
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_7
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_8
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_9
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_10
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_11
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_12
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Fab-ndqib-T11-1-2
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        psuAirflows:
+          - airflow: AIRFLOW_TYPE_PORT_SIDE_EXHAUST
+            psuModel: PSU1.4KW-ACPE
+        annotations:
+          position: LF006
+        ports:
+          - name: Ethernet1_1
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_2
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_3
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_4
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_5
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_6
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_7
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_8
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_9
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_10
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_11
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_12
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Fab-ndqib-T12-1-1
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        psuAirflows:
+          - airflow: AIRFLOW_TYPE_PORT_SIDE_EXHAUST
+            psuModel: PSU1.4KW-ACPE
+        annotations:
+          position: LF007
+        ports:
+          - name: Ethernet1_1
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_2
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_3
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_4
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_5
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_6
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_7
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_8
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_9
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_10
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_11
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_12
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Fab-ndqib-T12-1-2
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        psuAirflows:
+          - airflow: AIRFLOW_TYPE_PORT_SIDE_EXHAUST
+            psuModel: PSU1.4KW-ACPE
+        annotations:
+          position: LF008
+        ports:
+          - name: Ethernet1_1
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_2
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_3
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_4
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_5
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_6
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_7
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_8
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_9
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_10
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_11
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_12
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Fab-ndqib-T13-1-1
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        psuAirflows:
+          - airflow: AIRFLOW_TYPE_PORT_SIDE_EXHAUST
+            psuModel: PSU1.4KW-ACPE
+        annotations:
+          position: LF009
+        ports:
+          - name: Ethernet1_1
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_2
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_3
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_4
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_5
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_6
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_7
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_8
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_9
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_10
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_11
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_12
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Fab-ndqib-T13-1-2
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        psuAirflows:
+          - airflow: AIRFLOW_TYPE_PORT_SIDE_EXHAUST
+            psuModel: PSU1.4KW-ACPE
+        annotations:
+          position: LF010
+        ports:
+          - name: Ethernet1_1
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_2
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_3
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_4
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_5
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_6
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_7
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_8
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_9
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_10
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_11
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_12
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Fab-ndqib-T21-1-1
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+        psuAirflows:
+          - airflow: AIRFLOW_TYPE_PORT_SIDE_INTAKE
+            psuModel: C9K-PWR-1500WAC
+        annotations:
+          position: LF011
+        ports:
+          - name: Ethernet1_31
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_32
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_33
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_34
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Fab-ndqib-T21-1-2
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+        psuAirflows:
+          - airflow: AIRFLOW_TYPE_PORT_SIDE_INTAKE
+            psuModel: C9K-PWR-1500WAC
+        annotations:
+          position: LF012
+        ports:
+          - name: Ethernet1_31
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_32
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_33
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_34
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Fab-ndqib-T22-1-1
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+        psuAirflows:
+          - airflow: AIRFLOW_TYPE_PORT_SIDE_INTAKE
+            psuModel: C9K-PWR-1500WAC
+        annotations:
+          position: LF013
+        ports:
+          - name: Ethernet1_31
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_32
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_33
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_34
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Fab-ndqib-T22-1-2
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+        psuAirflows:
+          - airflow: AIRFLOW_TYPE_PORT_SIDE_INTAKE
+            psuModel: C9K-PWR-1500WAC
+        annotations:
+          position: LF014
+        ports:
+          - name: Ethernet1_31
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_32
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_33
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_34
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Fab-ndqib-T23-1-1
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+        psuAirflows:
+          - airflow: AIRFLOW_TYPE_PORT_SIDE_INTAKE
+            psuModel: C9K-PWR-1500WAC
+        annotations:
+          position: LF015
+        ports:
+          - name: Ethernet1_31
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_32
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_33
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_34
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Fab-ndqib-T23-1-2
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+        psuAirflows:
+          - airflow: AIRFLOW_TYPE_PORT_SIDE_INTAKE
+            psuModel: C9K-PWR-1500WAC
+        annotations:
+          position: LF016
+        ports:
+          - name: Ethernet1_31
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_32
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_33
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_34
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+    connections:
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_1
+          nodeName: Fab-ndqib-T11-1-1
+        remote:
+          portName: Ethernet1_1
+          nodeName: Fab-ndqib-64E-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_2
+          nodeName: Fab-ndqib-T11-1-1
+        remote:
+          portName: Ethernet1_2
+          nodeName: Fab-ndqib-64E-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_3
+          nodeName: Fab-ndqib-T11-1-1
+        remote:
+          portName: Ethernet1_1
+          nodeName: Fab-ndqib-64E-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_4
+          nodeName: Fab-ndqib-T11-1-1
+        remote:
+          portName: Ethernet1_2
+          nodeName: Fab-ndqib-64E-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_5
+          nodeName: Fab-ndqib-T11-1-1
+        remote:
+          portName: Ethernet1_1
+          nodeName: Fab-ndqib-64E-1-3
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_6
+          nodeName: Fab-ndqib-T11-1-1
+        remote:
+          portName: Ethernet1_2
+          nodeName: Fab-ndqib-64E-1-3
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_7
+          nodeName: Fab-ndqib-T11-1-1
+        remote:
+          portName: Ethernet1_1
+          nodeName: Fab-ndqib-64E-1-4
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_8
+          nodeName: Fab-ndqib-T11-1-1
+        remote:
+          portName: Ethernet1_2
+          nodeName: Fab-ndqib-64E-1-4
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_1
+          nodeName: Fab-ndqib-T11-1-2
+        remote:
+          portName: Ethernet1_3
+          nodeName: Fab-ndqib-64E-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_2
+          nodeName: Fab-ndqib-T11-1-2
+        remote:
+          portName: Ethernet1_4
+          nodeName: Fab-ndqib-64E-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_3
+          nodeName: Fab-ndqib-T11-1-2
+        remote:
+          portName: Ethernet1_3
+          nodeName: Fab-ndqib-64E-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_4
+          nodeName: Fab-ndqib-T11-1-2
+        remote:
+          portName: Ethernet1_4
+          nodeName: Fab-ndqib-64E-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_5
+          nodeName: Fab-ndqib-T11-1-2
+        remote:
+          portName: Ethernet1_3
+          nodeName: Fab-ndqib-64E-1-3
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_6
+          nodeName: Fab-ndqib-T11-1-2
+        remote:
+          portName: Ethernet1_4
+          nodeName: Fab-ndqib-64E-1-3
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_7
+          nodeName: Fab-ndqib-T11-1-2
+        remote:
+          portName: Ethernet1_3
+          nodeName: Fab-ndqib-64E-1-4
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_8
+          nodeName: Fab-ndqib-T11-1-2
+        remote:
+          portName: Ethernet1_4
+          nodeName: Fab-ndqib-64E-1-4
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_1
+          nodeName: Fab-ndqib-T12-1-1
+        remote:
+          portName: Ethernet1_5
+          nodeName: Fab-ndqib-64E-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_2
+          nodeName: Fab-ndqib-T12-1-1
+        remote:
+          portName: Ethernet1_6
+          nodeName: Fab-ndqib-64E-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_3
+          nodeName: Fab-ndqib-T12-1-1
+        remote:
+          portName: Ethernet1_5
+          nodeName: Fab-ndqib-64E-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_4
+          nodeName: Fab-ndqib-T12-1-1
+        remote:
+          portName: Ethernet1_6
+          nodeName: Fab-ndqib-64E-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_5
+          nodeName: Fab-ndqib-T12-1-1
+        remote:
+          portName: Ethernet1_5
+          nodeName: Fab-ndqib-64E-1-3
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_6
+          nodeName: Fab-ndqib-T12-1-1
+        remote:
+          portName: Ethernet1_6
+          nodeName: Fab-ndqib-64E-1-3
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_7
+          nodeName: Fab-ndqib-T12-1-1
+        remote:
+          portName: Ethernet1_5
+          nodeName: Fab-ndqib-64E-1-4
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_8
+          nodeName: Fab-ndqib-T12-1-1
+        remote:
+          portName: Ethernet1_6
+          nodeName: Fab-ndqib-64E-1-4
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_1
+          nodeName: Fab-ndqib-T12-1-2
+        remote:
+          portName: Ethernet1_7
+          nodeName: Fab-ndqib-64E-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_2
+          nodeName: Fab-ndqib-T12-1-2
+        remote:
+          portName: Ethernet1_8
+          nodeName: Fab-ndqib-64E-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_3
+          nodeName: Fab-ndqib-T12-1-2
+        remote:
+          portName: Ethernet1_7
+          nodeName: Fab-ndqib-64E-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_4
+          nodeName: Fab-ndqib-T12-1-2
+        remote:
+          portName: Ethernet1_8
+          nodeName: Fab-ndqib-64E-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_5
+          nodeName: Fab-ndqib-T12-1-2
+        remote:
+          portName: Ethernet1_7
+          nodeName: Fab-ndqib-64E-1-3
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_6
+          nodeName: Fab-ndqib-T12-1-2
+        remote:
+          portName: Ethernet1_8
+          nodeName: Fab-ndqib-64E-1-3
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_7
+          nodeName: Fab-ndqib-T12-1-2
+        remote:
+          portName: Ethernet1_7
+          nodeName: Fab-ndqib-64E-1-4
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_8
+          nodeName: Fab-ndqib-T12-1-2
+        remote:
+          portName: Ethernet1_8
+          nodeName: Fab-ndqib-64E-1-4
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_1
+          nodeName: Fab-ndqib-T13-1-1
+        remote:
+          portName: Ethernet1_9
+          nodeName: Fab-ndqib-64E-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_2
+          nodeName: Fab-ndqib-T13-1-1
+        remote:
+          portName: Ethernet1_10
+          nodeName: Fab-ndqib-64E-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_3
+          nodeName: Fab-ndqib-T13-1-1
+        remote:
+          portName: Ethernet1_9
+          nodeName: Fab-ndqib-64E-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_4
+          nodeName: Fab-ndqib-T13-1-1
+        remote:
+          portName: Ethernet1_10
+          nodeName: Fab-ndqib-64E-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_5
+          nodeName: Fab-ndqib-T13-1-1
+        remote:
+          portName: Ethernet1_9
+          nodeName: Fab-ndqib-64E-1-3
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_6
+          nodeName: Fab-ndqib-T13-1-1
+        remote:
+          portName: Ethernet1_10
+          nodeName: Fab-ndqib-64E-1-3
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_7
+          nodeName: Fab-ndqib-T13-1-1
+        remote:
+          portName: Ethernet1_9
+          nodeName: Fab-ndqib-64E-1-4
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_8
+          nodeName: Fab-ndqib-T13-1-1
+        remote:
+          portName: Ethernet1_10
+          nodeName: Fab-ndqib-64E-1-4
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_1
+          nodeName: Fab-ndqib-T13-1-2
+        remote:
+          portName: Ethernet1_11
+          nodeName: Fab-ndqib-64E-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_2
+          nodeName: Fab-ndqib-T13-1-2
+        remote:
+          portName: Ethernet1_12
+          nodeName: Fab-ndqib-64E-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_3
+          nodeName: Fab-ndqib-T13-1-2
+        remote:
+          portName: Ethernet1_11
+          nodeName: Fab-ndqib-64E-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_4
+          nodeName: Fab-ndqib-T13-1-2
+        remote:
+          portName: Ethernet1_12
+          nodeName: Fab-ndqib-64E-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_5
+          nodeName: Fab-ndqib-T13-1-2
+        remote:
+          portName: Ethernet1_11
+          nodeName: Fab-ndqib-64E-1-3
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_6
+          nodeName: Fab-ndqib-T13-1-2
+        remote:
+          portName: Ethernet1_12
+          nodeName: Fab-ndqib-64E-1-3
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_7
+          nodeName: Fab-ndqib-T13-1-2
+        remote:
+          portName: Ethernet1_11
+          nodeName: Fab-ndqib-64E-1-4
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_8
+          nodeName: Fab-ndqib-T13-1-2
+        remote:
+          portName: Ethernet1_12
+          nodeName: Fab-ndqib-64E-1-4
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_31
+          nodeName: Fab-ndqib-T21-1-1
+        remote:
+          portName: Ethernet1_9
+          nodeName: Fab-ndqib-T11-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_32
+          nodeName: Fab-ndqib-T21-1-1
+        remote:
+          portName: Ethernet1_10
+          nodeName: Fab-ndqib-T11-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_33
+          nodeName: Fab-ndqib-T21-1-1
+        remote:
+          portName: Ethernet1_9
+          nodeName: Fab-ndqib-T11-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_34
+          nodeName: Fab-ndqib-T21-1-1
+        remote:
+          portName: Ethernet1_10
+          nodeName: Fab-ndqib-T11-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_31
+          nodeName: Fab-ndqib-T21-1-2
+        remote:
+          portName: Ethernet1_11
+          nodeName: Fab-ndqib-T11-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_32
+          nodeName: Fab-ndqib-T21-1-2
+        remote:
+          portName: Ethernet1_12
+          nodeName: Fab-ndqib-T11-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_33
+          nodeName: Fab-ndqib-T21-1-2
+        remote:
+          portName: Ethernet1_11
+          nodeName: Fab-ndqib-T11-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_34
+          nodeName: Fab-ndqib-T21-1-2
+        remote:
+          portName: Ethernet1_12
+          nodeName: Fab-ndqib-T11-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_31
+          nodeName: Fab-ndqib-T22-1-1
+        remote:
+          portName: Ethernet1_9
+          nodeName: Fab-ndqib-T12-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_32
+          nodeName: Fab-ndqib-T22-1-1
+        remote:
+          portName: Ethernet1_10
+          nodeName: Fab-ndqib-T12-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_33
+          nodeName: Fab-ndqib-T22-1-1
+        remote:
+          portName: Ethernet1_9
+          nodeName: Fab-ndqib-T12-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_34
+          nodeName: Fab-ndqib-T22-1-1
+        remote:
+          portName: Ethernet1_10
+          nodeName: Fab-ndqib-T12-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_31
+          nodeName: Fab-ndqib-T22-1-2
+        remote:
+          portName: Ethernet1_11
+          nodeName: Fab-ndqib-T12-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_32
+          nodeName: Fab-ndqib-T22-1-2
+        remote:
+          portName: Ethernet1_12
+          nodeName: Fab-ndqib-T12-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_33
+          nodeName: Fab-ndqib-T22-1-2
+        remote:
+          portName: Ethernet1_11
+          nodeName: Fab-ndqib-T12-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_34
+          nodeName: Fab-ndqib-T22-1-2
+        remote:
+          portName: Ethernet1_12
+          nodeName: Fab-ndqib-T12-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_31
+          nodeName: Fab-ndqib-T23-1-1
+        remote:
+          portName: Ethernet1_9
+          nodeName: Fab-ndqib-T13-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_32
+          nodeName: Fab-ndqib-T23-1-1
+        remote:
+          portName: Ethernet1_10
+          nodeName: Fab-ndqib-T13-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_33
+          nodeName: Fab-ndqib-T23-1-1
+        remote:
+          portName: Ethernet1_9
+          nodeName: Fab-ndqib-T13-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_34
+          nodeName: Fab-ndqib-T23-1-1
+        remote:
+          portName: Ethernet1_10
+          nodeName: Fab-ndqib-T13-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_31
+          nodeName: Fab-ndqib-T23-1-2
+        remote:
+          portName: Ethernet1_11
+          nodeName: Fab-ndqib-T13-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_32
+          nodeName: Fab-ndqib-T23-1-2
+        remote:
+          portName: Ethernet1_12
+          nodeName: Fab-ndqib-T13-1-1
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_33
+          nodeName: Fab-ndqib-T23-1-2
+        remote:
+          portName: Ethernet1_11
+          nodeName: Fab-ndqib-T13-1-2
+      - pluggable: QDD-400-AOC10M
+        local:
+          portName: Ethernet1_34
+          nodeName: Fab-ndqib-T23-1-2
+        remote:
+          portName: Ethernet1_12
+          nodeName: Fab-ndqib-T13-1-2
