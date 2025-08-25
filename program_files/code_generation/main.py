@@ -14,21 +14,21 @@ yaml.default_flow_style = False
 logger = get_logger()
 
 # ----------------- OBJECT SCHEMA -----------------
-object_schema = "schemas/object_declaration.yaml"
+object_schema = "program_files/schemas/object_declaration.yaml"
 
 # ----------------- ENTITY FILES -----------------
-attributes_file = "entities/attributes.py"
-functions_file = "entities/functions.py"
-definitions_file = "entities/definitions.py"
+attributes_file = "program_files/entities/attributes.py"
+functions_file = "program_files/entities/functions.py"
+definitions_file = "program_files/entities/definitions.py"
 
 # ----------------- SCRIPTS -----------------
-main_pipeline = "scripts/handle_json_input.py"
-hyperfabric_api = "scripts/hyperfabric_api.py"
-get_fabric_config = "get_fabric_config.py"
+main_pipeline = "program_files/scripts/handle_json_input.py"
+hyperfabric_api = "program_files/scripts/hyperfabric_api.py"
+get_fabric_config = "program_files/get_fabric_config.py"
 
 # ----------------- SCHEMA FILES -----------------
 validation_json = get_schema_path()
-validation_template = "schemas/validation/validation_template.yaml"
+validation_template = "program_files/schemas/validation/validation_template.yaml"
 
 def validate_new_object(key, obj):
     if not isinstance(obj, list):
@@ -82,24 +82,24 @@ def main():
         parent = new_obj[0].get("owner", "fabric")
         new_obj_path = ENTITY_PATHS[camel_to_screaming_snake(parent)] + [key]
         
-        # # Begin modifying files
-        # # Modifies entities/definitions.py
-        # add_entity_to_definitions_file(key, new_obj_path, definitions_file)
+        # Begin modifying files
+        # Modifies entities/definitions.py
+        add_entity_to_definitions_file(key, new_obj_path, definitions_file)
 
-        # # Modifies schemas/validator.json
-        # insert_into_json_schema(validation_json, parent + "s", key, new_obj) 
+        # Modifies schemas/validator.json
+        insert_into_json_schema(validation_json, parent + "s", key, new_obj) 
 
-        # # Modifies entities/attributes.py
-        # register_attributes(attributes_file, key)
+        # Modifies entities/attributes.py
+        register_attributes(attributes_file, key)
 
-        # # Modifies scripts/hyperfabric_api.py
-        # generate_api_function_calls(hyperfabric_api, key, new_obj_path)
+        # Modifies scripts/hyperfabric_api.py
+        generate_api_function_calls(hyperfabric_api, key, new_obj_path)
 
-        # # Modifies entities/functions.py
-        # generate_function_object(functions_file, key)
+        # Modifies entities/functions.py
+        generate_function_object(functions_file, key)
 
-        # # Modifies scripts/handle_json_input.py
-        # insert_entity_processing(main_pipeline, key, new_obj_path[:-1])
+        # Modifies scripts/handle_json_input.py
+        insert_entity_processing(main_pipeline, key, new_obj_path[:-1])
 
         # Modifies get_fabric_config.py
         add_code_to_fetch(get_fabric_config, key, new_obj_path[:-1])

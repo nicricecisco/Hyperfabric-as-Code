@@ -1128,7 +1128,7 @@
                             "discard": {
                               "type": "boolean",
                               "title": "Discard",
-                              "description": "Discard (Boolean)\n- If true, nextHop is disallowed and tag is must be TAG_BLACK\n- If false, nextHop is required and tag must not be TAG_BLACK"
+                              "description": "Discard (Boolean)\n- If true, nextHop is disallowed\n- If false, nextHop and tag are required and tag must not be TAG_BLACK"
                             }
                           },
                           "allOf": [
@@ -1139,10 +1139,6 @@
                                 }
                               },
                               "then": {
-                                "properties": {
-                                  "tag": { "const": "TAG_BLACK" }
-                                },
-                                "required": ["tag"],
                                 "not": {
                                   "required": ["nextHop"]
                                 }
