@@ -1,10 +1,10 @@
 from ruamel.yaml import YAML
 from pprint import pprint
-from utils.schema_loader import get_schema_path
-from utils.logger import get_logger, log_error_red
-from entities.definitions import ENTITY_KEYS, ENTITY_PATHS
-from code_generation.helpers import camel_to_screaming_snake
-from code_generation.file_editors import add_entity_to_definitions_file, insert_into_json_schema, register_attributes, \
+from program_files.utils.schema_loader import get_schema_path
+from program_files.utils.logger import get_logger, log_error_red
+from program_files.entities.definitions import ENTITY_KEYS, ENTITY_PATHS
+from program_files.code_generation.helpers import camel_to_screaming_snake
+from program_files.code_generation.file_editors import add_entity_to_definitions_file, insert_into_json_schema, register_attributes, \
     generate_api_function_calls, generate_function_object, insert_entity_processing, add_code_to_fetch
 
 yaml = YAML()
@@ -86,7 +86,7 @@ def main():
         # # Modifies entities/definitions.py
         # add_entity_to_definitions_file(key, new_obj_path, definitions_file)
 
-        # # Modifies schemas/validation/validator.json
+        # # Modifies schemas/validator.json
         # insert_into_json_schema(validation_json, parent + "s", key, new_obj) 
 
         # # Modifies entities/attributes.py

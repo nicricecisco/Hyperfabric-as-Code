@@ -1,5 +1,5 @@
 import sys
-from scripts.validate_submission import validate_schema
+from program_files.scripts.validate_submission import validate_schema
 
 def validate_files(yaml_files):
     all_valid = True

@@ -1,5 +1,5 @@
 import json
-from utils.schema_loader import get_schema_path
+from program_files.utils.schema_loader import get_schema_path
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 from jsonschema import Draft7Validator, ValidationError

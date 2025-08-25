@@ -2,7 +2,9 @@ import sys
 import yaml
 from pprint import pprint
 from get_fabric_config import main as get_fabric_config
-from utils.logger import get_logger
+from program_files.utils.logger import get_logger
+from program_files.utils.timestamp import generate_timestamp
+from program_files.utils.get_output_path import get_output_path
 
 logger = get_logger()
 
@@ -107,10 +109,14 @@ def main(new_data, existing_data):
         logger.error("No existing data to compare with new data")
         return
     
-    output_file = f"output/{new_data.get('name', 'file')}_diff.txt"
+    file_name = f"{new_data.get('name', 'file')}_diff"
+    output_file = f"{get_output_path(file_name)[:-4]}txt"  # get_output_path is meant for yaml output, but we want to output txt
 
     diffs = compare_dicts(new_data, existing_data)
+    now = generate_timestamp()
+    comment = f"(Generated on {now})"
     with open(output_file, "w") as f:
+        f.write(comment + "\n")
         for line in diffs:
             f.write(line + "\n")
 

@@ -1,4 +1,4 @@
-from scripts.hyperfabric_api import \
+from program_files.scripts.hyperfabric_api import \
     get_fabric, create_fabric, update_fabric, delete_fabric, \
     get_fabric_node, add_fabric_nodes, update_fabric_node, delete_fabric_node, \
     get_management_port, add_management_ports, update_management_port, delete_management_port, \

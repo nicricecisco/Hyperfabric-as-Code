@@ -3,9 +3,10 @@ import os
 import yaml
 import argparse
 from pprint import pprint
-from utils.logger import get_logger
-from utils.timestamp import generate_timestamp
-from scripts.autocabling import autocabling
+from program_files.utils.logger import get_logger
+from program_files.utils.timestamp import generate_timestamp
+from program_files.utils.get_output_path import get_output_path
+from program_files.scripts.autocabling import autocabling
 
 # Setup logger
 logger = get_logger()
@@ -41,7 +42,8 @@ def output_connections(fabric, connection_result, output_delete=False):
 
     yaml_fabric = yaml.dump(fabric_json, sort_keys=False, Dumper=IndentListDumper, default_flow_style=False)
 
-    output_path = "output/autocable_output.yaml"
+    file_name = "autocable_output"
+    output_path = get_output_path(file_name)
     logger.info(f"Writing output to '{output_path}'")
 
     now = generate_timestamp()
@@ -72,7 +74,8 @@ def output_connections(fabric, connection_result, output_delete=False):
 
         yaml_unwanted = yaml.dump(unwanted_connections, sort_keys=False, Dumper=IndentListDumper, default_flow_style=False)
 
-        removed_output_path = "output/removed_connections.yaml"
+        file_name = "removed_connections"
+        removed_output_path = get_output_path(file_name)
         logger.info(f"Writing removed connections to '{removed_output_path}' ")
 
         try:

@@ -1,14 +1,14 @@
 import os
 from pathlib import Path
 from dotenv import dotenv_values, load_dotenv
-from utils.logger import get_logger
+from program_files.utils.logger import get_logger
 
 # Setup logger
 logger = get_logger()
 
 def load_token():
     # Define path to .env
-    dotenv_path = Path(__file__).resolve().parents[1] / ".env"
+    dotenv_path = Path(__file__).resolve().parents[2] / ".env"
 
     # Read the token from the .env file (without setting it)
     env_file_values = dotenv_values(dotenv_path) if dotenv_path.exists() else {}

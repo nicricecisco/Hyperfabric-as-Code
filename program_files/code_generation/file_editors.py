@@ -10,11 +10,11 @@ import libcst.matchers as m
 from pprint import pprint
 from string import Template
 from libcst import EmptyLine, Comment
-from utils.logger import get_logger, log_success_green
-from code_generation.helpers import camel_to_screaming_snake, find_key_path, get_nested
-from code_generation.code_templates.api_function_calls import template_comment_header, template_args_entry, template_extract_id, template_single_portion_of_api_path, \
+from program_files.utils.logger import get_logger, log_success_green
+from program_files.code_generation.helpers import camel_to_screaming_snake, find_key_path, get_nested
+from program_files.code_generation.code_templates.api_function_calls import template_comment_header, template_args_entry, template_extract_id, template_single_portion_of_api_path, \
      template_get_all_call, template_post_call, template_get_call, template_put_call, template_delete_call
-from code_generation.code_templates.entity_processing import template_comment_header_main, template_parent_id_entry, template_entity_processing_standard, template_entity_processing_fabric_child
+from program_files.code_generation.code_templates.entity_processing import template_comment_header_main, template_parent_id_entry, template_entity_processing_standard, template_entity_processing_fabric_child
 
 # Setup logger
 logger = get_logger()

@@ -4,8 +4,8 @@ import argparse
 from pprint import pprint
 from copy import deepcopy
 from validate_yaml import validate_files
-from utils.timestamp import generate_timestamp
-from scripts.handle_json_input import handle_json_input
+from program_files.utils.timestamp import generate_timestamp
+from program_files.scripts.handle_json_input import handle_json_input
 
 def merge_fabric_dicts(f1, f2):
     merged = deepcopy(f1)

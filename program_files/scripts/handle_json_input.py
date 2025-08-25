@@ -1,10 +1,9 @@
 from pprint import pprint
-from utils.logger import get_logger
-from get_devices import fetch_devices
-from entities.registry import get_entity
-from scripts.autocabling import autocabling
-from scripts.api_call_handler import handle_get, handle_delete, put_connections, bind_devices
-from scripts.hyperfabric_api import get_fabric_connections, set_fabric_connections, delete_fabric_connection, get_management_ports, bind_device, unbind_device
+from program_files.utils.logger import get_logger
+from program_files.entities.registry import get_entity
+from program_files.scripts.autocabling import autocabling
+from program_files.scripts.api_call_handler import handle_get, handle_delete, put_connections, bind_devices
+from program_files.scripts.hyperfabric_api import get_fabric_connections, set_fabric_connections, delete_fabric_connection, get_management_ports, bind_device, unbind_device
 
 # Setup logger
 logger = get_logger()

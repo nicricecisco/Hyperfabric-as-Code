@@ -3,10 +3,11 @@ import json
 import requests
 from pprint import pprint
 from ruamel.yaml import YAML
-from utils.logger import get_logger
-from utils.timestamp import generate_timestamp
-from utils.schema_loader import get_schema_path
-from scripts.hyperfabric_api import get_fabric, get_fabric_nodes, get_management_ports, get_ports, get_fabric_connections, get_fabric_vnis, get_fabric_vrfs, get_fabric_static_routes
+from program_files.utils.logger import get_logger
+from program_files.utils.timestamp import generate_timestamp
+from program_files.utils.schema_loader import get_schema_path
+from program_files.utils.get_output_path import get_output_path
+from program_files.scripts.hyperfabric_api import get_fabric, get_fabric_nodes, get_management_ports, get_ports, get_fabric_connections, get_fabric_vnis, get_fabric_vrfs, get_fabric_static_routes
 
 logger = get_logger()
 
@@ -103,8 +104,10 @@ def get_object(entity, data_obj, allowed_attr_path, key):
     return None
 
 def output_yaml(infra_result, tenant_result):
-    infra_output_path = f"output/{fabric_name}-infra.yaml"
-    tenant_output_path = f"output/{fabric_name}-tenant.yaml"
+    infra_file_name = f"{fabric_name}-infra"
+    tenant_file_name = f"{fabric_name}-tenant"
+    infra_output_path = get_output_path(infra_file_name)
+    tenant_output_path = get_output_path(tenant_file_name)
 
     now = generate_timestamp()
     comment = f"# Generated on {now}"
