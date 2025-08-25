@@ -335,7 +335,13 @@ def generate_function_object(functions_file, key):
             if m.matches(
                 original_node,
                 m.ImportFrom(
-                    module=m.Attribute(value=m.Name("scripts"), attr=m.Name("hyperfabric_api"))
+                    module = m.Attribute(
+                        value=m.Attribute(
+                            value=m.Name("program_files"),
+                            attr=m.Name("scripts"),
+                        ),
+                        attr=m.Name("hyperfabric_api"),
+                    )
                 ),
             ):
                 current_names = list(updated_node.names)
