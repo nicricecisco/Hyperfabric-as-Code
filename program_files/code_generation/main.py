@@ -68,7 +68,7 @@ def read_in_schema():
 
 def main():
     schema_data = read_in_schema()
-    # Before getting just the new keys, we should check the existing objects for new attributers
+    # Before getting just the new keys, we should check the existing objects for new attributes
     new_keys = get_new_keys(schema_data)
     
     for key in new_keys:

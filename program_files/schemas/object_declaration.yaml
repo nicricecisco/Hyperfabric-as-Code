@@ -151,7 +151,7 @@ staticRoutes:
 # Perhaps add type to all these objects? For the json schema
 newObjects:
   - name: string
-    owner: node
+    owner: fabric
     description: string
     size: integer
 
