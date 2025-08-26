@@ -1,6 +1,5 @@
 fabrics:
   - name: hyperfabric-as-code-test
-    # Last uploaded (success): 2025-08-11 23:43:23 UTC
     vnis:
     - name: VNI01
       vni: 10001
@@ -15,7 +14,7 @@ fabrics:
         - TAG_2
       svis:
         - ipv4Addresses:
-          - 172.222.40.1/24
+            - 172.222.40.1/24
           ipv6Addresses:
             - 2001:db8:100::1/64
           enabled: true
@@ -24,7 +23,7 @@ fabrics:
         vni: 1000
         enabled: true
         staticRoutes:
-          - name: SR001
+          - name: SR002
             enabled: true
             routes:
               - prefix: 14.10.10.0/24
