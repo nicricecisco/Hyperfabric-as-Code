@@ -468,7 +468,7 @@
                         "title": "MTU",
                         "description": "MTU (Integer)\n- Minimum: 1500\n- Maximum: 9100",
                         "minimum": 1500,
-                        "maximum": 9100
+                        "maximum": 9600
                       },
                       "fec": {
                         "type": "string",
@@ -763,7 +763,7 @@
                   "title": "MTU",
                   "description": "MTU (Integer)\n- Minimum: 1500\n- Maximum: 9100",
                   "minimum": 1500,
-                  "maximum": 9100
+                  "maximum": 9600
                 },
                 "vrfId": {
                   "type": "string",

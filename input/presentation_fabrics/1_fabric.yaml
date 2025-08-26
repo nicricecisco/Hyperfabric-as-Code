@@ -41,12 +41,12 @@ fabrics:
               - HOST_PORT
       - name: Spine-01
         description: Spine Switch 01
-        modelName: HF6100-60L4D
+        modelName: HF6100-32D
         roles: 
           - SPINE
       - name: Spine-02
         description: Spine Switch 02
-        modelName: HF6100-60L4D
+        modelName: HF6100-32D
         roles: 
           - SPINE
 
@@ -55,13 +55,13 @@ fabrics:
           portName: Ethernet1_1
           nodeName: Leaf-01
         remote:
-          portName: Ethernet1_32
+          portName: Ethernet1_7
           nodeName: Spine-01
       - local:
           portName: Ethernet1_2
           nodeName: Leaf-01
         remote:
-          portName: Ethernet1_33
+          portName: Ethernet1_8
           nodeName: Spine-01
 
     
