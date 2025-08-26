@@ -25,21 +25,17 @@ fabrics:
         asn:
         vni:
         labels:
-          string[]:
         protected:
         annotations:
-          - name:
-            value:
+          name: value
 
         staticRoutes:
           - name:
             description:
             enabled:
             labels:
-              string[]:
             annotations:
-              - name:
-                value:
+              name: value
             routes:
               - nodeId:
                 interface:

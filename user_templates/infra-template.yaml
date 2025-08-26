@@ -8,16 +8,12 @@ fabrics:
     topology:
     labels:
     annotations:
-      - name:
-        value:
+      name: value
     autocabling:
       - enabled:
         pluggable:
         speed:
-        length: 
-        cablePreference:
-        portType: 
-        
+
     nodes:
       - name:
         description:
@@ -34,8 +30,6 @@ fabrics:
         managementPorts:
           - name:
             description:
-            configOrigin:
-            connectedState:
             ipv4ConfigType:
             ipv4Address:
             ipv4Gateway:
@@ -72,8 +66,7 @@ fabrics:
                 rootGuard:
                 uplinkFast:
             annotations:
-              - name:
-                value:
+              name: value
             labels:
 
     connections:

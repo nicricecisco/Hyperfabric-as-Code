@@ -1,0 +1,250 @@
+#A fabric template for a 2 spine 4 leaf topology with 6 nodes defined
+fabrics:
+  - name: your-fabric-name
+    topology: SPINE_LEAF
+    
+    nodes:
+      - name: Leaf01-your-fabric-name
+        description: Leaf Switch 01
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf02-your-fabric-name
+        description: Leaf Switch 02
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf03-your-fabric-name
+        description: Leaf Switch 03
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf04-your-fabric-name
+        description: Leaf Switch 04
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF 
+      - name: Leaf05-your-fabric-name
+        description: Leaf Switch 05
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf06-your-fabric-name
+        description: Leaf Switch 06
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf07-your-fabric-name
+        description: Leaf Switch 07
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf08-your-fabric-name
+        description: Leaf Switch 08
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf09-your-fabric-name
+        description: Leaf Switch 09
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf10-your-fabric-name
+        description: Leaf Switch 10
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf11-your-fabric-name
+        description: Leaf Switch 11
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf12-your-fabric-name
+        description: Leaf Switch 12
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf13-your-fabric-name
+        description: Leaf Switch 13
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf14-your-fabric-name
+        description: Leaf Switch 14
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf15-your-fabric-name
+        description: Leaf Switch 15
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf16-your-fabric-name
+        description: Leaf Switch 16
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf17-your-fabric-name
+        description: Leaf Switch 17
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf18-your-fabric-name
+        description: Leaf Switch 18
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf19-your-fabric-name
+        description: Leaf Switch 19
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf20-your-fabric-name
+        description: Leaf Switch 20
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf21-your-fabric-name
+        description: Leaf Switch 21
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf22-your-fabric-name
+        description: Leaf Switch 22
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf23-your-fabric-name
+        description: Leaf Switch 23
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf24-your-fabric-name
+        description: Leaf Switch 24
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf25-your-fabric-name
+        description: Leaf Switch 25
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf26-your-fabric-name
+        description: Leaf Switch 26
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf27-your-fabric-name
+        description: Leaf Switch 27
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf28-your-fabric-name
+        description: Leaf Switch 28
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf29-your-fabric-name
+        description: Leaf Switch 29
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf30-your-fabric-name
+        description: Leaf Switch 30
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf31-your-fabric-name
+        description: Leaf Switch 31
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Leaf32-your-fabric-name
+        description: Leaf Switch 32
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+      - name: Spine01-your-fabric-name
+        description: Spine Switch 01
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+      - name: Spine02-your-fabric-name
+        description: Spine Switch 02
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+      - name: Spine03-your-fabric-name
+        description: Spine Switch 03
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+      - name: Spine04-your-fabric-name
+        description: Spine Switch 04
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+      - name: Spine05-your-fabric-name
+        description: Spine Switch 05
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+      - name: Spine06-your-fabric-name
+        description: Spine Switch 06
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+      - name: Spine07-your-fabric-name
+        description: Spine Switch 07
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+      - name: Spine08-your-fabric-name
+        description: Spine Switch 08
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+      - name: Spine09-your-fabric-name
+        description: Spine Switch 09
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+      - name: Spine10-your-fabric-name
+        description: Spine Switch 10
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+      - name: Spine11-your-fabric-name
+        description: Spine Switch 11
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+      - name: Spine12-your-fabric-name
+        description: Spine Switch 12
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+      - name: Spine13-your-fabric-name
+        description: Spine Switch 13
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+      - name: Spine14-your-fabric-name
+        description: Spine Switch 14
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+      - name: Spine15-your-fabric-name
+        description: Spine Switch 15  
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+      - name: Spine16-your-fabric-name
+        description: Spine Switch 16
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+
+    autocabling:
+      enabled: true
+      pluggable: QDD-400-AOC10M
