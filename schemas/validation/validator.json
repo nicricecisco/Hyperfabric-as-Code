@@ -103,7 +103,7 @@
               "pluggable": {
                 "type": "string",
                 "title": "Pluggable",
-                "description": "WIP",
+                "description": "Pluggable (String)\n- QDD-400-CU1M\n- QDD-400-CU2M\n- QDD-400-CU2.5M\n- QDD-400-CU3M\n- QDD-400-AOC5M\n- QDD-400-AOC7M\n- QDD-400-AOC10M\n- QDD-400-AOC15M\n- QDD-400-AOC20M\n- QDD-400-AOC25M\n- QDD-400-AOC30M\n- QDD-400G-SR8-S\n- QDD-400G-SR4.2-BD\n- QDD-400G-ZR-S\n- QSFP-400G-DR4\n- QDD-400G-FR4-S\n- QDD-400G-LR4-S\n- QSFP-100G-CU1M\n- QSFP-100G-CU2M\n- QSFP-100G-CU3M\n- QSFP-100G-CU5M\n- QSFP-100G-AOC1M\n- QSFP-100G-AOC2M\n- QSFP-100G-AOC3M\n- QSFP-100G-AOC5M\n- QSFP-100G-AOC7M\n- QSFP-100G-AOC10M\n- QSFP-100G-AOC15M\n- QSFP-100G-AOC20M\n- QSFP-100G-AOC25M\n- QSFP-100G-AOC30M\n- QSFP-100G-SR4-S\n- QSFP-100G-DR-S\n- QSFP-100G-FR-S",
                 "maxLength": 150
               },
               "speed": {
@@ -481,7 +481,7 @@
                       "pluggable": {
                         "type": "string",
                         "title": "Pluggable",
-                        "description": "Pluggable (String)",
+                        "description": "Pluggable (String)\n- QDD-400-CU1M\n- QDD-400-CU2M\n- QDD-400-CU2.5M\n- QDD-400-CU3M\n- QDD-400-AOC5M\n- QDD-400-AOC7M\n- QDD-400-AOC10M\n- QDD-400-AOC15M\n- QDD-400-AOC20M\n- QDD-400-AOC25M\n- QDD-400-AOC30M\n- QDD-400G-SR8-S\n- QDD-400G-SR4.2-BD\n- QDD-400G-ZR-S\n- QSFP-400G-DR4\n- QDD-400G-FR4-S\n- QDD-400G-LR4-S\n- QSFP-100G-CU1M\n- QSFP-100G-CU2M\n- QSFP-100G-CU3M\n- QSFP-100G-CU5M\n- QSFP-100G-AOC1M\n- QSFP-100G-AOC2M\n- QSFP-100G-AOC3M\n- QSFP-100G-AOC5M\n- QSFP-100G-AOC7M\n- QSFP-100G-AOC10M\n- QSFP-100G-AOC15M\n- QSFP-100G-AOC20M\n- QSFP-100G-AOC25M\n- QSFP-100G-AOC30M\n- QSFP-100G-SR4-S\n- QSFP-100G-DR-S\n- QSFP-100G-FR-S",
                         "maxLength": 150 
                       },
                       "forceCounter": {
@@ -662,7 +662,7 @@
                 "pluggable": {
                   "type": "string",
                   "title": "Pluggable",
-                  "description": "Pluggable (String)",
+                  "description": "Pluggable (String)\n- QDD-400-CU1M\n- QDD-400-CU2M\n- QDD-400-CU2.5M\n- QDD-400-CU3M\n- QDD-400-AOC5M\n- QDD-400-AOC7M\n- QDD-400-AOC10M\n- QDD-400-AOC15M\n- QDD-400-AOC20M\n- QDD-400-AOC25M\n- QDD-400-AOC30M\n- QDD-400G-SR8-S\n- QDD-400G-SR4.2-BD\n- QDD-400G-ZR-S\n- QSFP-400G-DR4\n- QDD-400G-FR4-S\n- QDD-400G-LR4-S\n- QSFP-100G-CU1M\n- QSFP-100G-CU2M\n- QSFP-100G-CU3M\n- QSFP-100G-CU5M\n- QSFP-100G-AOC1M\n- QSFP-100G-AOC2M\n- QSFP-100G-AOC3M\n- QSFP-100G-AOC5M\n- QSFP-100G-AOC7M\n- QSFP-100G-AOC10M\n- QSFP-100G-AOC15M\n- QSFP-100G-AOC20M\n- QSFP-100G-AOC25M\n- QSFP-100G-AOC30M\n- QSFP-100G-SR4-S\n- QSFP-100G-DR-S\n- QSFP-100G-FR-S",
                   "maxLength": 150 
                 },
                 "local": {

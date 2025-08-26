@@ -1,0 +1,84 @@
+fabrics:
+  - name: hyperfabric-as-code-test@
+    location: CA-95134
+    address: 300 East Tasman Drive
+    city: Milpitas
+    country: US
+    labels:
+      - TAG_ONE
+      - TAG_TWO
+    topology: SPINE_LEAF
+    annotations:
+      hello: test
+    
+    nodes:
+      - name: Leaf-01
+        description: Leaf Switch 01 
+        modelName: HF6100-32
+        # roles:
+        #   - LEAF
+        labels:
+          - TAG_ONE
+      - name: Leaf-02
+        description: Leaf Switch 02
+        modelName: HF6100-60L4D
+        roles: 
+          - LEAF
+        location: sj01-1-101-AAA02
+        ports:
+          - name: Ethernet1_5
+            enabled: true
+            roles: 
+              - HOST_PORT
+          - name: Ethernet1_6
+            enabled: true
+            roles: 
+              - HOST_PORT
+      - name: Spine-01
+        description: Spine Switch 01
+        modelName: HF6100-60L4D
+        roles: 
+          - SPINE
+      - name: Spine-02
+        description: Spine Switch 02
+        modelName: HF6100-60L4D
+        roles: 
+          - SPINE
+
+    connections:
+      - local:
+          portName: Ethernet1_1
+          nodeName: Leaf-01
+        remote:
+          portName: Ethernet1_32
+          nodeName: Spine-01
+      - local:
+          portName: Ethernet1_2
+          nodeName: Leaf-01
+        remote:
+          portName: Ethernet1_33
+          nodeName: Spine-01
+
+    vrfs:
+      - name: Vrf-One
+        description: "My first VRF"
+        labels:
+          - MY_TAG
+        vni: 1000
+        enabled: true
+        staticRoutes:
+          - name: SR001
+            description: My first static route
+            enabled: true
+            labels:
+              - MY_TAG
+            routes:
+              - prefix: 14.10.10.0
+                preference: 10
+                discard: false
+                tag: TAG_AMBER
+              - prefix: ddf::10:10::/64
+                preference: 10
+                discard: true
+                tag: TAG_RED
+     

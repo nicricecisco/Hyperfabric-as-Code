@@ -1,0 +1,40 @@
+fabrics:
+  - name: hyperfabric-as-code-test
+    # Last uploaded (success): 2025-08-11 23:43:23 UTC
+    vnis:
+    - name: VNI01
+      vni: 10001
+      mtu: 9100
+      description: "My first VNI"
+      labels:
+        - MY_TAG!
+    - name: VNI02
+      vni: 10002
+      description: "My second VNI"
+      labels:
+        - TAG_2
+      svis:
+        - ipv4Addresses:
+          - 172.222.40.1/24
+          ipv6Addresses:
+            - 2001:db8:100::1/64
+          enabled: true
+    vrfs:
+      - name: Vrf-Two
+        vni: 1000
+        enabled: true
+        staticRoutes:
+          - name: SR001
+            enabled: true
+            routes:
+              - prefix: 14.10.10.0/24
+                preference: 10
+                discard: true
+              - prefix: 15.10.10.0/24
+                preference: 10
+                discard: true
+
+
+
+
+

@@ -1,23 +1,17 @@
-import sys
 import json
 from utils.schema_loader import get_schema_path
 from ruamel.yaml import YAML
-from ruamel.yaml.compat import StringIO
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 from jsonschema import Draft7Validator, ValidationError
-from jsonschema.exceptions import best_match
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 """
     from textual.app import App, ComposeResult
     from textual.containers import Horizontal
     from textual.widgets import Static, ScrollView
 """
-from rich.syntax import Syntax
 from rich.text import Text
 from rich.console import Console
 from types import SimpleNamespace
-from collections import defaultdict
-
 
 REGEX_DESCRIPTIONS = {
     r"^(?!-)(?!\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$":
@@ -54,7 +48,6 @@ REGEX_DESCRIPTIONS = {
 
 console = Console()
 
-
 def load_yaml_file(file_path):
     yaml = YAML()
     with open(file_path, 'r') as f:
@@ -71,10 +64,10 @@ def load_json_file(file_path):
 def get_line_number(root, path):
     """
     Walk the absolute_path (`jsonschema` list of keys / indexes) and return the
-    1‑based line number where the failing element starts in the YAML file.
+    1-based line number where the failing element starts in the YAML file.
     Handles:
-      • Mapping keys   – uses obj.lc.key(idx)[0]
-      • Sequence items – uses seq.lc.item(idx)[0]
+      • Mapping keys   - uses obj.lc.key(idx)[0]
+      • Sequence items - uses seq.lc.item(idx)[0]
     """
     try:
         cur = root
@@ -83,7 +76,7 @@ def get_line_number(root, path):
             if isinstance(cur, CommentedSeq) and isinstance(p, int):
                 # Save line of this list item (if available) before descending
                 if hasattr(cur.lc, "item") and cur.lc.item(p):
-                    line = cur.lc.item(p)[0] + 1  # 0‑based → 1‑based
+                    line = cur.lc.item(p)[0] + 1  # 0-based → 1-based
                 else:
                     line = None
                 cur = cur[p]
@@ -203,13 +196,10 @@ def describe_error(error: ValidationError, instance: dict):
                     msg.append(f"'{gateway_field}' is missing", style="cyan")
                 return msg
 
-
     # Otherwise show value
     msg.append(", value ", style="white")
     msg.append(repr(user_value), style="cyan")
     msg.append(": ", style="white")
-
-    
 
     # Standard explanation fallbacks
     if error.validator == "pattern":
@@ -247,7 +237,6 @@ def check_for_duplicate_names(instance: Dict[str, Any]) -> List[SimpleNamespace]
 
     def recurse(obj: Any, path: List[Any]):
         if isinstance(obj, dict):
-            name_map: Dict[str, List[Any]] = {}
             for key, value in obj.items():
                 if isinstance(value, list):
                     seen_names = set()
@@ -272,45 +261,8 @@ def check_for_duplicate_names(instance: Dict[str, Any]) -> List[SimpleNamespace]
     recurse(instance, [])
     return errors
 
-def get_field_order(schema):
-    """
-    Recursively extract field order from a schema, including handling of allOf and anyOf.
-    Returns a nested dict with field names mapped to sort index and substructure.
-    """
-    def merge_orders(orders):
-        merged = {}
-        for order in orders:
-            for key, value in order.items():
-                if key not in merged:
-                    merged[key] = value
-        return merged
-
-    def recurse(subschema, path=()):
-        order = {}
-
-        if "properties" in subschema:
-            for i, (key, value) in enumerate(subschema["properties"].items()):
-                key_path = path + (key,)
-                order[key] = {
-                    "_index": i,
-                    "_children": recurse(value, key_path)
-                }
-
-        elif "items" in subschema and isinstance(subschema["items"], dict):
-            order = recurse(subschema["items"], path + ("[]",))
-
-        elif "allOf" in subschema or "anyOf" in subschema:
-            combined = subschema.get("allOf", []) + subschema.get("anyOf", []) + subschema.get("oneOf", [])
-            all_orders = [recurse(s, path) for s in combined]
-            order = merge_orders(all_orders)
-
-        return order
-
-    return recurse(schema)
-
-
 def validate_json(instance, file_path, schema):
-    field_order = get_field_order(schema)
+    #field_order = get_field_order(schema)
     validator = Draft7Validator(schema)
 
     # Collect errors
@@ -344,18 +296,10 @@ def validate_json(instance, file_path, schema):
         for e in sorted_errors:
             console.print(e)
         print("=" * 50)
-        # sys.exit(1)
         return False
 
-
 def validate_schema(yaml_path):
-    schema_path = get_schema_path()    # if len(sys.argv) != 4:
-    #     print("Usage: python validate_yaml.py input.yaml schema.json output.json")
-    #     sys.exit(1)
-
-    # yaml_path = sys.argv[1]
-    # schema_path = sys.argv[2]
-    # json_output_path = sys.argv[3]
+    schema_path = get_schema_path()    
 
     yaml_data = load_yaml_file(yaml_path)
     json_schema = load_json_file(schema_path)

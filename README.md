@@ -143,3 +143,50 @@ The YAML file will be saved to:
 ```
 output/<fabric-name>.yaml
 ```
+
+## Getting a List of Devices
+
+This script retrieves device information from the Hyperfabric API and writes it to a YAML file. It supports optional filtering to output only unbound devices.
+
+Usage
+python3 get_devices.py [--unbound]
+
+Options
+Flag	Description
+--unbound	Only output devices that are not bound to nodes (filtered by nodeId)
+Output
+
+The script generates a YAML file at:
+
+output/devices.yaml
+
+
+Each run includes a timestamp comment at the top of the file:
+
+# Generated on 2025-08-14T09:00:00Z
+devices:
+  - deviceId: abc123
+    serialNumber: SN001
+    modelName: XF-1000
+    name: leaf1
+  - deviceId: def456
+    serialNumber: SN002
+    modelName: XF-1000
+    name: leaf2
+
+
+If no devices are returned from the API, the file contains only the timestamp comment.
+
+Description
+
+fetch_devices() — Queries the Hyperfabric API and handles HTTP and network errors.
+
+filter_attributes(devices) — Optional function to return only unbound devices with selected fields (deviceId, serialNumber, modelName, name).
+
+main(only_unbound=False) — Orchestrates fetching, optional filtering, and writing YAML output.
+
+parse_args() — Handles the --unbound command-line argument.
+
+Logging
+
+The script uses a logger (utils.logger.get_logger) to provide information and error messages during execution.

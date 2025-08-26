@@ -1,0 +1,3 @@
+ms-python.debugpy
+ms-python.python
+redhat.vscode-yaml

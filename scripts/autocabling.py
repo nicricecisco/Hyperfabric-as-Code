@@ -48,8 +48,6 @@ cables = [
     {"name": "QSFP-100G-DR-S", "speed": 100, "length": 500},
     {"name": "QSFP-100G-FR-S", "speed": 100, "length": 2000}
 ]
-
-#DEFAULT_PLUGGABLE = "QDD-400-CU3M"
     
 SUPPORTED_MODELS = ["HF6100-32D", "HF6100-60L4D"]
 

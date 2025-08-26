@@ -1,52 +1,71 @@
-# Last uploaded (success): 2025-08-11 23:35:51 UTC
+# Last uploaded (success): 2025-08-11 23:43:23 UTC
 fabrics:
-  - name: frompythontest1
-    location: CA-95134
-    address: 300 East Tasman Drive
-    city: Milpitas
-    country: US
+  - name: hyperfabric-as-code-fabric
     topology: SPINE_LEAF
     labels:
-      - LABEL_ONE
+      - our_intern_project!
     nodes:
-      - name: Leaftest-001
+      - name: Leafswitch01
         description: Leaf Switch 01
         modelName: HF6100-32D
         roles:
           - LEAF
-        serialNumber: FDO28150Q1F
-        labels:
-          - TAG_ONE
-        annotations:
-          position: LF001
-      - name: Leaftest-002
+        ports:
+          - name: Ethernet1_16
+            roles:
+              - FABRIC_PORT
+      - name: Leafswitch02
         description: Leaf Switch 02
-        location: sj01-1-101-AAA02
         modelName: HF6100-32D
         roles:
           - LEAF
-        serialNumber: FDO28150Q1A
-        annotations:
-          position: LF002
-      - name: Leaftest-003
-        description: Leaf Switch 03
-        location: sj01-1-101-AAA03
-        modelName: HF6100-32D
-        roles:
-          - LEAF
-        serialNumber: FDO28150Q1B
-        annotations:
-          position: LF003
-      - name: Spinetest-001
+        ports:
+          - name: Ethernet1_20
+            roles:
+              - FABRIC_PORT
+      - name: Spineswitch01
         description: Spine Switch 01
-        location: sj01-1-101-AAA04
         modelName: HF6100-32D
         roles:
           - SPINE
-        serialNumber: FDO28150Q1C
-        annotations:
-          position: SP001
-    autocabling:
-      enabled: true
-      speed: 100
-      length: 700
+        ports:
+          - name: Ethernet1_16
+            roles:
+              - FABRIC_PORT
+    vnis:
+    - name: VNI01
+      vni: 10001
+      mtu: 9100
+      description: "My first VNI"
+      labels:
+        - MY_TAG!
+    - name: VNI02
+      vni: 10002
+      description: "My second VNI"
+      labels:
+        - TAG_2
+      svis:
+        - ipv4Addresses:
+          - 172.222.40.1/24
+          ipv6Addresses:
+            - 2001:db8:100::1/64
+          enabled: true
+    vrfs:
+      - name: Vrf-Two
+        vni: 1000
+        enabled: true
+        staticRoutes:
+          - name: SR001
+            enabled: true
+            routes:
+              - prefix: 14.10.10.0/24
+                preference: 10
+                discard: true
+              - prefix: 15.10.10.0/24
+                preference: 10
+                discard: true
+
+
+
+
+
