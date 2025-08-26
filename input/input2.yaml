@@ -1,6 +1,6 @@
 # Last uploaded (success): 2025-08-07 17:39:22 UTC
 fabrics:
-  - name: jarod-nick-intern-test
+  - name: jarod-nick-intern-test2
     vnis:
       - name: VNI01
         description: "My first VNI"

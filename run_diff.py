@@ -28,6 +28,9 @@ def compare_dicts(new, old, path="root"):
         new_val, old_val = new[k], old[k]
         new_path = f"{path}['{k}']"
 
+        if new_val in ["autocabling", "delete", "bind"]:
+            continue
+
         if isinstance(new_val, dict) and isinstance(old_val, dict):
             diffs.extend(compare_dicts(new_val, old_val, new_path))
 
