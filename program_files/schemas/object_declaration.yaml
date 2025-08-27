@@ -56,7 +56,7 @@ ports:
   - name: required, string, must match pattern "Ethernet1_N" in which N is between 1-64
     owner: node
     description: string, max length 2000
-    mtu: integer, range 1500-9100, default 9100
+    mtu: integer, range 1500-9100, default 9100 for non FABRIC_PORT, max and default 9216 for FABRIC_PORT
     fec: string, set of {rs, none}, cannot be "none" based on node modelName + port name
     pluggable: string, max length 150, required if fec is rs
     forceCounter: integer, min 0, max 40000000

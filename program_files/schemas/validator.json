@@ -443,7 +443,7 @@
                 "ports": {
                   "type": "array",
                   "title": "Ports",
-                  "description": "Ports (List - Object)\n\nElements:\n- name (required)\n- description\n- mtu\n- fec\n- pluggable\n- forceCounter\n- speed\n- enabled\n- roles (required)\n- linkDown\n- vrfId\n- ipv4Address\n- ipv6Addresses\n- stp\n- labels\n- annotations",
+                  "description": "Ports (List - Object)\n\nElements:\n- name (required)\n- description\n- mtu\n- fec\n- pluggable\n- forceCounter\n- speed\n- enabled\n- roles (required)\n- linkDown\n- vrfId\n- ipv4Addresses\n- ipv6Addresses\n- stp\n- labels\n- annotations",
                   "items": {
                     "type": "object",
                     "additionalProperties": false,
@@ -468,7 +468,7 @@
                         "title": "MTU",
                         "description": "MTU (Integer)\n- Minimum: 1500\n- Maximum: 9100",
                         "minimum": 1500,
-                        "maximum": 9600
+                        "maximum": 9100
                       },
                       "fec": {
                         "type": "string",
@@ -527,7 +527,7 @@
                         "description": "VRF ID (String)",
                         "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
                       },
-                      "ipv4Address": {
+                      "ipv4Addresses": {
                         "type": "array",
                         "items": {
                           "type": "string",
@@ -628,15 +628,37 @@
                           "anyOf": [
                             {
                               "required": [
-                                "ipv4Address"
+                                "ipv4Addresses"
                               ]
                             },
                             {
                               "required": [
-                                "ipv6Address"
+                                "ipv6Addresses"
                               ]
                             }
                           ]
+                        }
+                      },
+                      {
+                        "if": {
+                          "required": ["roles"],
+                          "properties": {
+                            "roles": {
+                              "contains": {
+                                "const": "FABRIC_PORT"
+                              }
+                            }
+                          }
+                        },
+                        "then": {
+                          "properties": {
+                            "mtu": {
+                              "type": "integer",
+                              "default": 9216,
+                              "minimum": 576,
+                              "maximum": 9216
+                            }
+                          }
                         }
                       }
                     ]
@@ -763,7 +785,7 @@
                   "title": "MTU",
                   "description": "MTU (Integer)\n- Minimum: 1500\n- Maximum: 9100",
                   "minimum": 1500,
-                  "maximum": 9600
+                  "maximum": 9100
                 },
                 "vrfId": {
                   "type": "string",
