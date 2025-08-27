@@ -70,7 +70,7 @@ def add_entity_to_definitions_file(new_key, new_path, definitions_file):
     success_message = f"[SUCCESS] Successfully added entity '{orig_key}' to ENTITY_KEYS and ENTITY_PATHS in file '{definitions_file}'"
     log_success_green(logger, success_message)
 
-# Modifies schemas/validation/new_validation_with_desc.json
+# Modifies schemas/validation/new_validation_with_desc.json for a new object
 def insert_into_json_schema(schema_file, parent_key, new_key, new_value):
     """
     Find parent_key anywhere in schema and insert the new object under it.
@@ -128,6 +128,47 @@ def insert_into_json_schema(schema_file, parent_key, new_key, new_value):
 
     success_message = f"[SUCCESS] Successfully added entity '{new_key}' to json schema in file '{schema_file}'"
     log_success_green(logger, success_message)
+
+# Modifies schemas/validation/new_validation_with_desc.json for a new attribute
+def insert_new_attribute(schema_file, key, new_attributes):
+    """
+    Inserts new attributes for an existing object key
+    Args:
+        schema_file (str): The path to new_validation_with_desc.json
+        key (str): The name of the existing object
+        new_attributes ([dict]): List containing new attributes and their associated types
+    """
+
+    with open(schema_file, "r") as f:
+        json_schema = json.load(f)
+
+    if not json_schema:
+        return
+
+    path = find_key_path(json_schema, key)
+    if not path:
+        raise KeyError(f"Key '{key}' not found in schema")
+    
+    target = get_nested(json_schema, path)
+    if not isinstance(target, dict):
+        raise TypeError(f"Target at '{key}' is not a dict")
+
+    for val in new_attributes:
+        if "items" in target and "properties" in target["items"]:
+            target["items"]["properties"][val] = {}
+        # Or if it has direct "properties", insert there
+        elif "properties" in target:
+            target["properties"][val] = {}
+        else:
+            raise ValueError(f"No properties found under '{key}'")
+        
+    with open(schema_file, "w") as f:
+        json.dump(json_schema, f, indent=2)
+
+    success_message = f"[SUCCESS] Successfully added attributes {', '.join(new_attributes)} under {key} to json schema'"
+    log_success_green(logger, success_message)
+
+    return
 
 # Modifies entities/attributes.py
 def register_attributes(attributes_file, key):
