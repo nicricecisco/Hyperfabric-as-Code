@@ -527,7 +527,7 @@
                         "description": "VRF ID (String)",
                         "pattern": "^(?!-)(?!\\d+$)(?!-+$)[A-Za-z0-9-]+(?<!-)$"
                       },
-                      "ipv4Address": {
+                      "ipv4Addresses": {
                         "type": "array",
                         "items": {
                           "type": "string",

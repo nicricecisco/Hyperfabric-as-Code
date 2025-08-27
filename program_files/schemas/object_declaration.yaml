@@ -33,7 +33,6 @@ managementPorts:
   - name: string, pattern "eth_N" where N is between 0-8
     owner: node
     description: string, max length 2000
-    connectedState: enum = ["CONNECTED_STATE_NOT_CONNECTED", "CONNECTED_STATE_CONNECTED"], default = "CONNECTED_STATE_NOT_CONNECTED"
     ipv4ConfigType: enum = ["CONFIG_TYPE_STATIC", "CONFIG_TYPE_DHCP"], default = "CONFIG_TYPE_STATIC"
     ipv4Address: string, valid IPv4 address, required if ipv4ConfigType is "CONFIG_TYPE_STATIC"
     ipv4Gateway: string, valid IPv4 address, required if ipv4ConfigType is "CONFIG_TYPE_STATIC"
@@ -65,8 +64,8 @@ ports:
     roles: enum = ["UNUSED_PORT", "FABRIC_PORT", "HOST_PORT", "ROUTED_PORT", "LAG_PORT"], default ["UNUSED PORT]
     linkDown: boolean
     vrfId: string, must match pattern "Default VRF" or "Vrf", optionally followed by a hyphen and 1-15 alphanumeric characters with a limit of 7 digits if no letters, required if roles is "ROUTED_PORT"
-    ipv4Address: string[], required if roles is "ROUTED_PORT" and no ipv6Address, max two addresses
-    ipv6Address: string[], required if roles is "ROUTED_PORT" and no ipv4Address, max two addresses
+    ipv4Addresses: string[], required if roles is "ROUTED_PORT" and no ipv6Address, max two addresses
+    ipv6Addresses: string[], required if roles is "ROUTED_PORT" and no ipv4Address, max two addresses
     stp:
       - bpduGuard: boolean, only used when VLAN is deployed on port
         enabled: boolean, only used when VLAN is deployed on port

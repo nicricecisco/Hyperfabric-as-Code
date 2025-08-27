@@ -1,6 +1,5 @@
 fabrics:
   - name: hyperfabric-as-code-test
-    # Last uploaded (success): 2025-08-11 23:43:23 UTC
     vnis:
     - name: VNI01
       vni: 10001
