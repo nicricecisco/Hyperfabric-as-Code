@@ -210,7 +210,7 @@ Use the following command to save your workspace in the container to a named vol
 podman run -it --rm -p 8080:8080 -v hyperfabric_workspace:/workspace --name hyperfabric-as-vscode hyperfabric-as-code-container
 ```
 ## Using the Container
-On run, the container will automatically clone the Hyperfabric-as-Code repository (if not detected) or pull the latest version of the repo into your /workspace. 
+On run, the container will automatically clone the Hyperfabric-as-Code repository (if not detected) or pull the latest version of the repo into your /workspace. From here, please reference the beginning of this README on how to set up your Hyperfabric API bearer token. 
 
 ## Helper Command Shortcuts
 
