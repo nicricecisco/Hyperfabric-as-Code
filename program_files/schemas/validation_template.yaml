@@ -73,8 +73,8 @@ fabrics:
             roles: enum = ["UNUSED_PORT", "FABRIC_PORT", "HOST_PORT", "ROUTED_PORT", "LAG_PORT"], default ["UNUSED PORT]
             linkDown: boolean
             vrfId: string, must match pattern "Default VRF" or "Vrf", optionally followed by a hyphen and 1–15 alphanumeric characters with a limit of 7 digits if no letters, required if roles is "ROUTED_PORT"
-            ipv4Address: string[], required if roles is "ROUTED_PORT" and no ipv6Address, max two addresses
-            ipv6Address: string[], required if roles is "ROUTED_PORT" and no ipv4Address, max two addresses
+            ipv4Addresses: string[], required if roles is "ROUTED_PORT" and no ipv6Address, max two addresses
+            ipv6Addresses: string[], required if roles is "ROUTED_PORT" and no ipv4Address, max two addresses
             stp:
               - bpduGuard: boolean, only used when VLAN is deployed on port
                 enabled: boolean, only used when VLAN is deployed on port
