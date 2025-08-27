@@ -57,8 +57,8 @@ fabrics:
             roles:
             linkDown:
             vrfId:
-            ipv4Address:
-            ipv6Address:
+            ipv4Addresses:
+            ipv6Addresses:
             stp:
               - bpduGuard:
                 enabled:

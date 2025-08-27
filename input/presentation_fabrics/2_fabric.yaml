@@ -1,29 +1,32 @@
 fabrics:
   - name: hyperfabric-as-code-test
+
     vnis:
-    - name: VNI01
-      vni: 10001
-      mtu: 9100
-      description: "My first VNI"
-      labels:
-        - MY_TAG!
-    - name: VNI02
-      vni: 10002
-      description: "My second VNI"
-      labels:
-        - TAG_2
-      svis:
-        - ipv4Addresses:
-          - 172.222.40.1/24
-          ipv6Addresses:
-            - 2001:db8:100::1/64
-          enabled: true
+      - name: VNI01
+        vni: 10001
+        mtu: 9100
+        description: "My first VNI"
+        labels:
+          - MY_TAG!
+
+      - name: VNI02
+        vni: 10002
+        description: "My second VNI"
+        labels:
+          - TAG_2
+        svis:
+          - ipv4Addresses:
+              - 172.222.40.1/24
+            ipv6Addresses:
+              - 2001:db8:100::1/64
+            enabled: true
+
     vrfs:
       - name: Vrf-Two
-        vni: 1000
+        vni: 1001
         enabled: true
         staticRoutes:
-          - name: SR001
+          - name: SR002
             enabled: true
             routes:
               - prefix: 14.10.10.0/24

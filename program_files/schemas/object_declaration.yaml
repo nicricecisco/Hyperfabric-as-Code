@@ -30,7 +30,7 @@ nodes:
         value: string, min length 1, max length 512, required if name is passed
 
 managementPorts:
-  - name: string, pattern "eth_N" where N is between 0-8
+  - name: string, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
     owner: node
     description: string, max length 2000
     ipv4ConfigType: enum = ["CONFIG_TYPE_STATIC", "CONFIG_TYPE_DHCP"], default = "CONFIG_TYPE_STATIC"
@@ -55,15 +55,15 @@ ports:
   - name: required, string, must match pattern "Ethernet1_N" in which N is between 1-64
     owner: node
     description: string, max length 2000
-    mtu: integer, range 1500-9100, default 9100
+    mtu: integer, range 1500-9100, max and default 9216 for FABRIC_PORT
     fec: string, set of {rs, none}, cannot be "none" based on node modelName + port name
     pluggable: string, max length 150, required if fec is rs
     forceCounter: integer, min 0, max 40000000
-    speed: string, set of {1x40G(4), 1x100G(2), 1x100G(4), 1x200G(4), 1x400G} or set of {1x10G(1), 1x25G(1), 1x50G(1)} based on node modelName + port name, required if pluggable is passed and fec is rs
+    speed: string, set of {1x40G(4), 1x100G(2), 1x100G(4), 1x200G(4), 1x400G, 1x10G(1), 1x25G(1), 1x50G(1)}, required if pluggable is passed and fec is rs
     enabled: boolean
     roles: enum = ["UNUSED_PORT", "FABRIC_PORT", "HOST_PORT", "ROUTED_PORT", "LAG_PORT"], default ["UNUSED PORT]
     linkDown: boolean
-    vrfId: string, must match pattern "Default VRF" or "Vrf", optionally followed by a hyphen and 1-15 alphanumeric characters with a limit of 7 digits if no letters, required if roles is "ROUTED_PORT"
+    vrfId: string, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
     ipv4Addresses: string[], required if roles is "ROUTED_PORT" and no ipv6Address, max two addresses
     ipv6Addresses: string[], required if roles is "ROUTED_PORT" and no ipv4Address, max two addresses
     stp:
@@ -84,7 +84,7 @@ connections:
     pluggable: string, max length 150
     local:
       portName: required, string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64
-      nodeName: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, must match remote node name
+      nodeName: required, string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, must match remote node name
     remote:
       portName: required, string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64 based on node modelName 
       nodeName: required, string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens, must not match local node name
@@ -94,8 +94,8 @@ vnis:
     owner: fabric
     description: string, max length 2000
     vni: integer, range 2-6000000
-    mtu: integer, range 1500-9100, default 9100
-    vrfId: string, must follow format "Vrf", optionally followed by a hyphen and 1-15 alphanumeric characters with a limit of 7 digits if no letters
+    mtu: integer, range 1500-9100
+    vrfId: string, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
     svis:
       - enabled: boolean
         ipv4Addresses:
@@ -115,12 +115,12 @@ vnis:
           portName: required, string, predefined immutable Ethernet1_N where N is range 1-32 / 1-64
 
 vrfs:
-  - name: required, string, must follow format "Vrf", optionally followed by a hyphen and 1-15 alphanumeric characters with a limit of 7 digits if no letters
+  - name: required, string, must follow format "Vrf", optionally followed by a hyphen and 1-15 alphanumeric characters with a limit of 7 digits if no letters OR "Vrf12000000" for Default VRF
     owner: fabric
     description: string, max length 2000 
     enabled: true
     asn: integer, range 1-4294967294, not 23456 or 65535
-    vni: integer, range 2-6000000
+    vni: integer, range 2-6000000, Default Vrf's vni is 12000000
     labels: 
       string[], max length 120
     annotations:
@@ -142,10 +142,10 @@ staticRoutes:
         interface: string, min length 3, max length 120, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
         preference: integer, range 1-255 
         prefix: required, string, valid IPv4 or IPv6 address
-        nextHop: string, valid IPv4 or IPv6 address, required if discard is false or not passed
-        nextVrf: string, must match pattern "Default VRF" or follow format "Vrf", optionally followed by a hyphen and 1-15 alphanumeric characters with a limit of 7 digits if no letters, required if discard is false or not passed
-        tag: enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", "TAG_PURPLE", "TAG_YELLOW"], default = "TAG_AMBER", defaults and required to be "TAG_BLACK" if discard is true, cannot be "TAG_BLACK" if discard is false
-        discard: boolean, default = false
+        nextHop: string, valid IPv4 or IPv6 address, required if discard is false
+        nextVrf: string, accepted characters are letters, digits, hyphens and cannot start or end with a hyphen, cannot be only digits, and cannot be only hyphens
+        tag: enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", "TAG_PURPLE", "TAG_YELLOW"], default = "TAG_AMBER", cannot be "TAG_BLACK" if discard is false
+        discard: required, boolean, default = false
 
 # Perhaps add type to all these objects? For the json schema
 newObjects:
