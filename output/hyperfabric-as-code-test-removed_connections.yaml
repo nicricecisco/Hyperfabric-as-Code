@@ -1,10 +1,10 @@
-# Generated on 2025-08-27 23:05:33 UTC
-# Last uploaded (success): 2025-08-27 23:06:00 UTC
+# Generated on 2025-08-28 17:44:02 UTC
+# Last uploaded (success): 2025-08-28 17:49:42 UTC
 fabrics:
   - name: hyperfabric-as-code-test
     delete:
       connections:
-        - id: b7083f10-6a73-45fd-aad7-33a324574f32
+        - id: e0b44fbd-98c4-4640-b940-eccc50773f0d
           local:
             portName: Ethernet1_2
             nodeName: Leaf-01

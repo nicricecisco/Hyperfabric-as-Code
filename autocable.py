@@ -36,13 +36,14 @@ def output_connections(fabric, connection_result, output_delete=False):
     fabric["connections"] = wanted_connections
     fabric.pop("autocabling", None) # Remove autocabling attribute
 
+    fabric_name = fabric["name"]
     fabric_json = {
         "fabrics": [fabric]
     }
 
     yaml_fabric = yaml.dump(fabric_json, sort_keys=False, Dumper=IndentListDumper, default_flow_style=False)
 
-    file_name = "autocable_output"
+    file_name = f"{fabric_name}-autocable_output"
     output_path = get_output_path(file_name)
     logger.info(f"Writing output to '{output_path}'")
 
@@ -74,7 +75,7 @@ def output_connections(fabric, connection_result, output_delete=False):
 
         yaml_unwanted = yaml.dump(unwanted_connections, sort_keys=False, Dumper=IndentListDumper, default_flow_style=False)
 
-        file_name = "removed_connections"
+        file_name = f"{fabric_name}-removed_connections"
         removed_output_path = get_output_path(file_name)
         logger.info(f"Writing removed connections to '{removed_output_path}' ")
 

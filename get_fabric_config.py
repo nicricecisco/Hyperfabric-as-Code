@@ -144,7 +144,7 @@ def main(fabric_name):
     fabric_result = get_object("FABRIC", fabric_data_obj, fabric_keys_path, "fabric")
     if not fabric_result:
         logger.error(f"No fabric with name '{fabric_name}' found.")    
-        return  
+        return None, None
 
     fabric_level_data_obj = {
         "fabric_id": fabric_name
@@ -220,5 +220,8 @@ if __name__ == "__main__":
 
     fabric_name = sys.argv[1]
     infra_result, tenant_result = main(fabric_name)
+
+    if not infra_result and not tenant_result:
+        sys.exit(1)
 
     output_yaml(infra_result, tenant_result)

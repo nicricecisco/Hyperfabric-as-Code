@@ -1,0 +1,97 @@
+# Generated on 2025-08-28 17:43:41 UTC
+fabrics:
+  - name: hyperfabric-as-code-test
+    description: This was updated again via Hyperfabric-as-Code
+    location: CA-95134
+    address: 300 East Tasman Drive
+    city: Milpitas
+    country: US
+    topology: SPINE_LEAF
+    labels:
+      - TAG_ONE
+      - TAG_TWO
+    annotations:
+      hello: test
+    nodes:
+      - name: Leaf-01
+        modelName: HF6100-32D
+        roles:
+          - LEAF
+        description: Leaf Switch 01
+        labels:
+          - TAG_ONE
+        annotations:
+          position: LF001
+        managementPorts:
+          - name: eth0
+            description: Management Ethernet Port Configuration
+            ipv4ConfigType: CONFIG_TYPE_DHCP
+            ipv6ConfigType: CONFIG_TYPE_DHCP
+        ports:
+          - name: Ethernet1_1
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_2
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Leaf-02
+        modelName: HF6100-60L4D
+        roles:
+          - LEAF
+        description: Leaf Switch 02
+        location: sj01-1-101-AAA02
+        annotations:
+          position: LF002
+        ports:
+          - name: Ethernet1_5
+            mtu: 9100
+            enabled: true
+            roles:
+              - HOST_PORT
+          - name: Ethernet1_6
+            mtu: 9100
+            enabled: true
+            roles:
+              - HOST_PORT
+      - name: Spine-01
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+        description: Spine Switch 01
+        annotations:
+          position: SP001
+        ports:
+          - name: Ethernet1_7
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+          - name: Ethernet1_8
+            mtu: 9100
+            enabled: true
+            roles:
+              - FABRIC_PORT
+      - name: Spine-02
+        modelName: HF6100-32D
+        roles:
+          - SPINE
+        description: Spine Switch 02
+        annotations:
+          position: SP002
+    connections:
+      - local:
+          portName: Ethernet1_1
+          nodeName: Leaf-01
+        remote:
+          portName: Ethernet1_7
+          nodeName: Spine-01
+      - local:
+          portName: Ethernet1_2
+          nodeName: Leaf-01
+        remote:
+          portName: Ethernet1_8
+          nodeName: Spine-01

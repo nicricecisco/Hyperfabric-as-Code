@@ -26,16 +26,16 @@ Item root['nodes'][Spine-01]['annotations'] removed: {'position': 'SP001'}
 Example Output:
 ----------------
 Added:
-['fabrics'][jarod-nick-intern-test]['nodes'][Leaf-05] 
-['fabrics'][jarod-nick-intern-test]['nodes'][Leaf-04]['ports'][Ethernet1_1]['mtu'][3600] 
+['fabrics']['nodes'][Leaf-05] 
+['fabrics']['nodes'][Leaf-04]['ports'][Ethernet1_1]['mtu']
 
 
 Missing:
-['fabrics'][jarod-nick-intern-test]['nodes'][Leaf-07] missing in file {jarod-nick-intern-test-infra.yaml}
+['fabrics']['nodes'][Leaf-07]
 
 
-Discrepancies:
-Attribute ['fabrics']['description'] to be changed from ['456] to ['123']
+Modifications:
+Attribute ['fabrics']['description'] to be changed from ['456'] to ['123']
 
 
 
