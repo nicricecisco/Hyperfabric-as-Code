@@ -161,3 +161,84 @@ To list **only unbound devices**, use the `--unbound` flag:
 python3 get_devices.py --unbound
 ```
 
+# Hyperfabric-as-Code Container
+A container using code-server to host a web version of VS-Code including all required VS-Code extensions and python packages.
+> Replace 'podman' with 'docker' in all of the following if using the Docker application
+
+## Getting Started
+Create an **API bearer token** for your github account. The required permissions are **read packages** and **read repositories**.
+
+Set your `GITHUB_TOKEN` by running the following command in your terminal, only replacing GITHUB_TOKEN with your token and GITHUB_USERNAME with your username:
+```
+echo GITHUB_TOKEN | podman login ghcr.io -u GITHUB_USERNAME --password-stdin
+```
+Next, make sure you have a podman machine initialized and started with the following commands:
+```
+podman machine init
+```
+```
+podman machine start
+```
+## Auto-Installation and Run Using `run_container.sh` 
+Use the following commmand to run a shell script which will configure (if missing) and run (using named volume mounting) the container:
+```bash
+#Linux or MacOS
+chmod +x run_container.sh && ./run_container.sh
+
+#Windows -- must have git bash or bash installed
+bash run_container.sh
+```
+## Manual Installation and Run
+
+### Downloading the Container
+To pull the latest version of the package, run the following command in your terminal:
+```
+podman pull ghcr.io/nicricecisco/hyperfabric-as-code-container:latest
+```
+### Running the Container
+To run your container, run the following command in your terminal:
+```
+podman run -it --rm -p 8080:8080 --name hyperfabric-as-vscode hyperfabric-as-code-container
+```
+This will run the container under the name 'hyperfabric-as-vscode' in an interactive session listening on the localport 8080, which can be accessed via any web browser application.
+
+### Running the Container Using Volume Mounting
+To save your files between sessions of container running, you can use volume mounting with podman.
+
+Use the following command to save your workspace in the container to a named volume called "hyperfabric_workspace":
+```
+podman run -it --rm -p 8080:8080 -v hyperfabric_workspace:/workspace --name hyperfabric-as-vscode hyperfabric-as-code-container
+```
+## Using the Container
+On run, the container will automatically clone the Hyperfabric-as-Code repository (if not detected) or pull the latest version of the repo into your /workspace. From here, please reference the beginning of this README on how to set up your Hyperfabric API bearer token. 
+
+## Helper Command Shortcuts
+
+To simplify working in the container, the following shortcut functions are available in the terminal (defined in `.bashrc` during container build). These shortcut functions still work with any and all optional flags of the scripts for which they reference, and can be thought of as aliases.
+>For all of the following, `$@` represents the file inputs.
+
+- **`upload`** 
+  Calls `python3 /workspace/main.py` to upload one or fabric YAML files to the Hyperfabric Cloud Controller.
+  ```bash
+  upload $@ 
+- **`validate`**  
+  Calls `python3 /workspace/validate_yaml.py` to validate one or more fabric YAML files without uploading.
+  ```bash
+  validate $@
+- **`autocable`**  
+  Calls `python3 /workspace/autocable.py` to autocable a fabric YAML file.
+  ```bash
+  autocable $@
+- **`download`**  
+  Calls `python3 /workspace/get_fabric_config.py` to download a fabric from the Hyperfabric Cloud Controller.
+  ```bash
+  download $@
+- **`devices`**  
+  Calls `python3 /workspace/get_devices.py` to get a list of devices.
+  ```bash
+  devices
+- **`diff`**  
+  Calls `python3 /workspace/run_diff.py` to get a diff between a fabric YAML file and the current configuration of that fabric on the Hyperfabric Cloud Controller.  
+  ```bash
+  diff $@
+  ```
