@@ -274,7 +274,7 @@ def autocabling(autocabling_data_obj, pull_nodes_from_yaml=False):
    
     if not pluggable:
         speed = autocabling_data_obj["autocabling_obj"].get("speed", 400)
-        length = autocabling_data_obj["autocabling_obj"].get("length", 1)
+        length = autocabling_data_obj["autocabling_obj"].get("length", 10)
         pluggable = select_cable(cables, speed, length)
 
     if len(spine_nodes) > 0:
