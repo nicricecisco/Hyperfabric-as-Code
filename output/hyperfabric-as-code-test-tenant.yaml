@@ -1,0 +1,57 @@
+# Generated on 2025-08-28 17:43:41 UTC
+fabrics:
+  - name: hyperfabric-as-code-test
+    vnis:
+      - name: VNI01
+        description: My first VNI
+        vni: 10001
+        labels:
+          - MY_TAG!
+      - name: VNI02
+        description: My second VNI
+        vni: 10002
+        vrfId: f0d8b792-1e84-42bc-8e94-cccac74abbf2
+        svis:
+          - ipv4Addresses:
+              - 172.222.40.1/24
+            ipv6Addresses:
+              - 2001:db8:100::1/64
+            enabled: true
+        labels:
+          - TAG_2
+    vrfs:
+      - name: Vrf-Two
+        enabled: true
+        vni: 1001
+        staticRoutes:
+          - name: SR002
+            enabled: true
+            routes:
+              - prefix: 14.10.10.0/24
+                preference: 10
+                discard: true
+                tag: TAG_BLACK
+              - prefix: 15.10.10.0/24
+                preference: 10
+                discard: true
+                tag: TAG_BLACK
+      - name: Vrf-test
+        description: My first VRF
+        enabled: true
+        vni: 1000
+        labels:
+          - MY_TAG
+        staticRoutes:
+          - name: SR001
+            description: My first static route
+            enabled: true
+            labels:
+              - MY_TAG
+            routes:
+              - prefix: 15.10.10.0/24
+                preference: 10
+                discard: true
+                tag: TAG_RED
+      - name: Vrf12000000
+        enabled: true
+        vni: 12000000

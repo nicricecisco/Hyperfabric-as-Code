@@ -1,0 +1,13 @@
+# Last uploaded (failure): 2025-08-28 18:34:43 UTC
+fabrics:
+  - name: jarod-nick-intern-test
+    location: CA-95134
+    address: 300 East Tasman Drive
+    city: Milpitas
+    country: US
+    labels:
+      - TAG_ONE
+      - TAG_TWO
+    topology: DESIGN_BASED
+    annotations:
+      hello: test

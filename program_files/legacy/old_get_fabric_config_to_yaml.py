@@ -3,10 +3,10 @@ import json
 import requests
 from pprint import pprint
 from ruamel.yaml import YAML
-from utils.logger import get_logger
-from utils.timestamp import generate_timestamp
-from utils.schema_loader import get_schema_path
-from scripts.hyperfabric_api import get_fabric_configurations
+from program_files.utils.logger import get_logger
+from program_files.utils.timestamp import generate_timestamp
+from program_files.utils.schema_loader import get_schema_path
+from program_files.scripts.hyperfabric_api import get_fabric_configurations
 
 # Setup logger
 logger = get_logger()
