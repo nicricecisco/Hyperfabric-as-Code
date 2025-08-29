@@ -56,8 +56,10 @@ python3 get_fabric_config_to_yaml.py <fabric-name>
 
 The YAML file will be saved to:
 ```
-output/<fabric-name>.yaml
+output/<fabric-name>-infra.yaml
+output/<fabric-name>-tenant.yaml
 ```
+
 
 > Replace `<file1>.yaml`, `<file2>.yaml`, etc. with the actual names of your YAML configuration files.
 You may provide one or multiple files in a single command.
