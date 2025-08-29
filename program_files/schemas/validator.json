@@ -467,9 +467,8 @@
                       "mtu": {
                         "type": "integer",
                         "title": "MTU",
-                        "description": "MTU (Integer)\n- Minimum: 1500\n- Maximum: 9100",
-                        "minimum": 1500,
-                        "maximum": 9100
+                        "description": "MTU (Integer)\n- Minimum: 1500\n- Maximum: 9100 for non FABRIC_PORT\n- Maximum: 9216 for FABRIC_PORT",
+                        "minimum": 1500
                       },
                       "fec": {
                         "type": "string",
@@ -643,12 +642,11 @@
                       },
                       {
                         "if": {
-                          "required": ["roles"],
                           "properties": {
-                            "roles": {
-                              "contains": {
-                                "const": "FABRIC_PORT"
-                              }
+                            "roles": { 
+                              "contains": { 
+                                "const": "FABRIC_PORT" 
+                              } 
                             }
                           }
                         },
@@ -656,9 +654,17 @@
                           "properties": {
                             "mtu": {
                               "type": "integer",
-                              "default": 9216,
                               "minimum": 576,
                               "maximum": 9216
+                            }
+                          }
+                        },
+                        "else": {
+                          "properties": {
+                            "mtu": {
+                              "type": "integer",
+                              "minimum": 576,
+                              "maximum": 9100
                             }
                           }
                         }
