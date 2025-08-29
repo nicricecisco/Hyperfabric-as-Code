@@ -104,12 +104,12 @@ def get_object(entity, data_obj, allowed_attr_path, key):
     return None
 
 def output_yaml(infra_result, tenant_result):
-    infra_file_name = f"{fabric_name}-infra"
-    tenant_file_name = f"{fabric_name}-tenant"
+    now = generate_timestamp()
+    infra_file_name = f"{fabric_name}-infra-{now}"
+    tenant_file_name = f"{fabric_name}-tenant-{now}"
     infra_output_path = get_output_path(infra_file_name)
     tenant_output_path = get_output_path(tenant_file_name)
 
-    now = generate_timestamp()
     comment = f"# Generated on {now}"
     if infra_result:        
         with open(infra_output_path, "w") as f:
