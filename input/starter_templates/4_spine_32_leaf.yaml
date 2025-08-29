@@ -1,4 +1,7 @@
-#A fabric template for a 2 spine 4 leaf topology with 6 nodes defined
+# A fabric template for a 4 spine 32 leaf topology
+
+# Replace your-fabric-name with your desired fabric name
+
 fabrics:
   - name: your-fabric-name
     topology: SPINE_LEAF

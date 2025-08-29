@@ -1,4 +1,4 @@
-#A fabric template for a 2 spine 4 leaf topology with 6 nodes defined
+#A fabric template for a 2 spine 6 leaf 
 fabrics:
   - name: hyperfabric-as-code-test-2
     topology: SPINE_LEAF
@@ -34,46 +34,15 @@ fabrics:
         modelName: HF6100-60L4D
         roles:
           - LEAF
-      - name: Leaf07-hyperfabric-as-code-test-2
-        description: Leaf Switch 07
-        modelName: HF6100-60L4D
-        roles:
-          - LEAF
-      - name: Leaf08-hyperfabric-as-code-test-2
-        description: Leaf Switch 08
-        modelName: HF6100-60L4D
-        roles:
-          - LEAF
-      - name: Leaf09-hyperfabric-as-code-test-2
-        description: Leaf Switch 09
-        modelName: HF6100-60L4D
-        roles:
-          - LEAF
-      - name: Leaf10-hyperfabric-as-code-test-2
-        description: Leaf Switch 10
-        modelName: HF6100-60L4D
-        roles:
-          - LEAF
-      - name: Leaf11-hyperfabric-as-code-test-2
-        description: Leaf Switch 11
-        modelName: HF6100-60L4D
-        roles:
-          - LEAF
-      - name: Leaf12-hyperfabric-as-code-test-2
-        description: Leaf Switch 12
-        modelName: HF6100-60L4D
-        roles:
-          - LEAF
       - name: Spine01-hyperfabric-as-code-test-2
         description: Spine Switch 01
         modelName: HF6100-32D
         roles:
           - SPINE
-      - name: Spine01-hyperfabric-as-code-test-2
+      - name: Spine-02
         description: Spine Switch 02
         modelName: HF6100-32D
         roles:
           - SPINE
-          
-    #
+
     
