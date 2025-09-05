@@ -129,7 +129,8 @@ def handle_yaml_file(input_yaml, pluggable):
     logger.info(f"[AUTOCABLE] Processing fabric: {filtered['name']}")
 
     # REMEMBER TO VALIDATE IT AGAINST OUR VALIDATOR!!!! DON'T FORGET THAT STEP! I AM WRITING A LONG COMMENT IN ALL CAPS SO IT HOPEFULLY CATCHES YOUR ATTENTION SO YOU DON'T FORGET IT!!! HERE ARE SOME MORE EXCLAMATION MARKS!!!!!!!!!!
-    
+    # Rip :P
+
     autocabling_data_obj = {
         "fabric_id": filtered["name"],
         "nodes": filtered["nodes"],
