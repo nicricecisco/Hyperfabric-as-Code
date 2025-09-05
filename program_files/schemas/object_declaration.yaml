@@ -147,11 +147,12 @@ staticRoutes:
         tag: enum = ["TAG_AMBER", "TAG_BLACK", "TAG_BLUE", "TAG_GREEN", "TAG_RED", "TAG_PURPLE", "TAG_YELLOW"], default = "TAG_AMBER", cannot be "TAG_BLACK" if discard is false
         discard: required, boolean, default = false
 
-newObjects:
-  - name: string
-    owner: fabric
-    description: string
-    size: integer
+### Example new object
+# newObjects:
+#   - name: string
+#     owner: fabric
+#     description: string
+#     size: integer
 
     
     
